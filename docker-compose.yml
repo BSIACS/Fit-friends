@@ -1,0 +1,37 @@
+version: '3.5'
+services:
+  db:
+    container_name: postgres
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_USER: 'admin'
+      POSTGRES_PASSWORD: 'testpass'
+      POSTGRES_DB: 'fit-friends'
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./db:/postgresql/data
+    networks:
+      - postgres
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: 'admin@mail.local'
+      PGADMIN_DEFAULT_PASSWORD: 'testpass'
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - 5050:80
+    restart: unless-stopped
+    networks:
+      - postgres
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+  db-data:
