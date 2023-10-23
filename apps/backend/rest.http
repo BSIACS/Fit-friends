@@ -1,0 +1,55 @@
+# Register new user
+POST   http://localhost:3042/api/users/register  HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Джон",
+  "email": "jasondoe42@somemail.com",
+  "password": "testpass",
+  "sex": "male",
+  "role": "trainer",
+  "description": "At tellus at urna condimentum. Odio morbi quis commodo odio aenean sed. Malesuada nunc vel risus commodo viverra.",
+  "location": "Petrogradskaya",
+  "trainingLevel": "professional",
+  "trainingType": ["running", "box", "crossfit"],
+  "merits": "Vestibulum mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare. Ipsum dolor sit amet tristique sollicitudin. Amet nisl.",
+  "isReadyForTraining": false
+}
+###
+
+# Register new user
+POST   http://localhost:3042/api/users/register  HTTP/1.1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="email"
+johndoe@somemail.com
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="name"
+Джон
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="password"
+"testpass"
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="sex"
+"male"
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="role"
+"trainer"
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+# Register new user
+POST   http://localhost:3042/api/users/register  HTTP/1.1
+Content-Type: application/json
+
+{
+
+}
+###
