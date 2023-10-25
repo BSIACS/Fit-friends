@@ -1,0 +1,150 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                      String                    @id @unique @default(uuid()) @db.Uuid
+  name                    String                    @db.VarChar(64)
+  email                   String                    @unique @db.VarChar(64)
+  avatarSrc               String                    @map("avatar_src") @db.VarChar(256)
+  passwordHash            String                    @map("password_hash") @db.VarChar(64)
+  sex                     String                    @db.VarChar(64)
+  birthDate               DateTime                  @map("birth_date")
+  role                    String                    @db.VarChar(64)
+  description             String                    @db.VarChar(256)
+  location                String                    @db.VarChar(64)
+  backgroundImageSrc      String                    @map("background_image_src") @db.VarChar(256)
+  createdAt               DateTime
+  trainingLevel           String                    @map("training_level") @db.VarChar(64)
+  trainingType            String[]                  @map("training_type") @db.VarChar(64)
+  trainingDuration        String                    @map("training_duration") @db.VarChar(64)
+  calories                Int
+  caloriesPerDay          Int                       @map("calories_per_day")
+  isReadyForTraining      Boolean                   @default(false) @map("is_ready_for_training") @db.Boolean
+  Review                  Review[]
+  Purchase                Purchase[]
+  PersonalTrainingRequest PersonalTrainingRequest[]
+  Notification            Notification[]
+  UserBalance             UserBalance[]
+
+  @@map("users")
+}
+
+model Trainer {
+  id                      String                    @id @unique @default(uuid()) @db.Uuid
+  name                    String                    @db.VarChar(64)
+  email                   String                    @unique @db.VarChar(64)
+  avatarSrc               String                    @map("avatar_src") @db.VarChar(256)
+  passwordHash            String                    @map("password_hash") @db.VarChar(64)
+  sex                     String                    @db.VarChar(64)
+  birthDate               DateTime                  @map("birth_date")
+  role                    String                    @db.VarChar(64)
+  description             String                    @db.VarChar(256)
+  location                String                    @db.VarChar(64)
+  backgroundImageSrc      String                    @map("background_image_src") @db.VarChar(256)
+  createdAt               DateTime
+  trainingLevel           String                    @map("training_level") @db.VarChar(64)
+  trainingType            String[]                  @map("training_type") @db.VarChar(64)
+  certificateSrc          String                    @map("certificate_src") @db.VarChar(256)
+  merits                  String                    @db.VarChar(256)
+  isReadyForTraining      Boolean                   @default(false) @map("is_ready_for_training") @db.Boolean
+  Training                Training[]
+  PersonalTrainingRequest PersonalTrainingRequest[]
+
+  @@map("trainers")
+}
+
+model Training {
+  id                String        @id @unique @default(uuid()) @db.Uuid
+  name              String        @db.VarChar(64)
+  backgroundImgSrc  String        @map("background_img_src") @db.VarChar(256)
+  trainingLevel     String        @map("training_level") @db.VarChar(64)
+  trainingType      String        @map("training_type") @db.VarChar(64)
+  trainingDuration  String        @map("training_duration") @db.VarChar(64)
+  price             Int
+  calories          Int
+  description       String        @db.VarChar(256)
+  sex               String        @db.VarChar(64)
+  videoDemoSrc      String        @map("video_demo_src") @db.VarChar(256)
+  rating            Float
+  trainer           Trainer       @relation(fields: [trainingCreatorId], references: [id])
+  trainingCreatorId String        @map("training_creator_id") @db.Uuid
+  isSpecial         Boolean       @default(false) @map("is_special") @db.Boolean
+  Review            Review[]
+  Purchase          Purchase[]
+  UserBalance       UserBalance[]
+
+  @@map("trainings")
+}
+
+model Review {
+  id         String   @id @unique @default(uuid()) @db.Uuid
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String   @map("user_id") @db.Uuid
+  training   Training @relation(fields: [trainingId], references: [id])
+  trainingId String   @map("training_id") @db.Uuid
+  rating     Int
+  text       String   @db.VarChar(1024)
+  createdAt  DateTime
+
+  @@map("reviews")
+}
+
+model Purchase {
+  id            String   @id @unique @default(uuid()) @db.Uuid
+  user          User     @relation(fields: [userId], references: [id])
+  userId        String   @map("user_id") @db.Uuid
+  purchaseType  String   @map("purchase_type") @db.VarChar(64)
+  training      Training @relation(fields: [trainingId], references: [id])
+  trainingId    String   @map("training_id") @db.Uuid
+  price         Int
+  quantity      Int
+  totalPrice    Int
+  paymentMethod String   @map("payment_method") @db.VarChar()
+  createdAt     DateTime
+
+  @@map("purchases")
+}
+
+model PersonalTrainingRequest {
+  id              String   @id @unique @default(uuid()) @db.Uuid
+  user            User     @relation(fields: [requestorId], references: [id])
+  requestorId     String   @map("requestor_id") @db.Uuid
+  trainer         Trainer  @relation(fields: [responserId], references: [id])
+  responserId     String   @map("responser_id") @db.Uuid
+  createdAt       DateTime
+  statusChangedAt DateTime
+  status          String   @db.VarChar(64)
+
+  @@map("personal_training_requests")
+}
+
+model Notification {
+  id        String   @id @unique @default(uuid()) @db.Uuid
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @map("user_id") @db.Uuid
+  createdAt DateTime
+  text      String   @db.VarChar(256)
+
+  @@map("notifications")
+}
+
+model UserBalance {
+  id         String   @id @unique @default(uuid()) @db.Uuid
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String   @map("user_id") @db.Uuid
+  training   Training @relation(fields: [trainingId], references: [id])
+  trainingId String   @map("training_id") @db.Uuid
+  remained   Int
+
+  @@map("user_balances")
+}
