@@ -18,12 +18,12 @@ model User {
   avatarSrc               String                    @map("avatar_src") @db.VarChar(256)
   passwordHash            String                    @map("password_hash") @db.VarChar(64)
   sex                     String                    @db.VarChar(64)
-  birthDate               DateTime                  @map("birth_date")
+  birthDate               DateTime                  @map("birth_date") @db.Timestamptz()
   role                    String                    @db.VarChar(64)
   description             String                    @db.VarChar(256)
   location                String                    @db.VarChar(64)
   backgroundImageSrc      String                    @map("background_image_src") @db.VarChar(256)
-  createdAt               DateTime
+  createdAt               DateTime                  @map("created_at") @db.Timestamptz()
   trainingLevel           String                    @map("training_level") @db.VarChar(64)
   trainingType            String[]                  @map("training_type") @db.VarChar(64)
   trainingDuration        String                    @map("training_duration") @db.VarChar(64)
@@ -46,12 +46,12 @@ model Trainer {
   avatarSrc               String                    @map("avatar_src") @db.VarChar(256)
   passwordHash            String                    @map("password_hash") @db.VarChar(64)
   sex                     String                    @db.VarChar(64)
-  birthDate               DateTime                  @map("birth_date")
+  birthDate               DateTime                  @map("birth_date") @db.Timestamptz()
   role                    String                    @db.VarChar(64)
   description             String                    @db.VarChar(256)
   location                String                    @db.VarChar(64)
   backgroundImageSrc      String                    @map("background_image_src") @db.VarChar(256)
-  createdAt               DateTime
+  createdAt               DateTime                  @map("created_at") @db.Timestamptz()
   trainingLevel           String                    @map("training_level") @db.VarChar(64)
   trainingType            String[]                  @map("training_type") @db.VarChar(64)
   certificateSrc          String                    @map("certificate_src") @db.VarChar(256)
@@ -94,7 +94,7 @@ model Review {
   trainingId String   @map("training_id") @db.Uuid
   rating     Int
   text       String   @db.VarChar(1024)
-  createdAt  DateTime
+  createdAt  DateTime @map("created_at") @db.Timestamptz()
 
   @@map("reviews")
 }
@@ -110,7 +110,7 @@ model Purchase {
   quantity      Int
   totalPrice    Int
   paymentMethod String   @map("payment_method") @db.VarChar()
-  createdAt     DateTime
+  createdAt     DateTime @map("created_at")
 
   @@map("purchases")
 }
@@ -121,8 +121,8 @@ model PersonalTrainingRequest {
   requestorId     String   @map("requestor_id") @db.Uuid
   trainer         Trainer  @relation(fields: [responserId], references: [id])
   responserId     String   @map("responser_id") @db.Uuid
-  createdAt       DateTime
-  statusChangedAt DateTime
+  createdAt       DateTime @map("created_at") @db.Timestamptz()
+  statusChangedAt DateTime @map("status_changed_at") @db.Timestamptz()
   status          String   @db.VarChar(64)
 
   @@map("personal_training_requests")
@@ -132,7 +132,7 @@ model Notification {
   id        String   @id @unique @default(uuid()) @db.Uuid
   user      User     @relation(fields: [userId], references: [id])
   userId    String   @map("user_id") @db.Uuid
-  createdAt DateTime
+  createdAt DateTime @map("created_at") @db.Timestamptz()
   text      String   @db.VarChar(256)
 
   @@map("notifications")
@@ -147,4 +147,14 @@ model UserBalance {
   remained   Int
 
   @@map("user_balances")
+}
+
+model RefreshToken {
+  id           String   @id @unique @default(uuid()) @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  refreshToken String   @map("refresh_token")
+  createdAt    DateTime @map("created_at") @db.Timestamptz()
+  expiresIn    DateTime @map("expires_in") @db.Timestamptz()
+
+  @@map("refresh_tokens")
 }

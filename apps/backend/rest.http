@@ -4,9 +4,10 @@ Content-Type: application/json
 
 {
   "name": "Джон",
-  "email": "jasondoe42@somemail.com",
-  "password": "testpass",
+  "email": "johndoe@somemail.com",
+  "password": "123qwezxc",
   "sex": "male",
+  "birthDate": "2000-09-27 18:00:00.000",
   "role": "trainer",
   "description": "At tellus at urna condimentum. Odio morbi quis commodo odio aenean sed. Malesuada nunc vel risus commodo viverra.",
   "location": "Petrogradskaya",
@@ -45,3 +46,30 @@ Content-Disposition: form-data; name="role"
 
 ###
 
+# Login
+POST   http://localhost:3042/api/users/login  HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "olga@somemail.com",
+  "password": "qwerty2"
+}
+
+###
+
+# Login
+POST   http://localhost:3042/api/users/login  HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "johndoe@somemail.com",
+  "password": "123qwezxc"
+}
+
+###
+
+# Refresh tokens pair
+POST   http://localhost:3042/api/users/refresh  HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5MTExOWFmNy01NGY3LTRmZTAtOGFlZS02ZjRjZjYwOTgyYTkiLCJlbWFpbCI6InRyYWluaGFyZHdpdGh2YWxlckBzb21lbWFpbC5jb20iLCJuYW1lIjoi0JTQttC-0L0iLCJyb2xlIjoidHJhaW5lciIsImlhdCI6MTY5ODQzOTE2NSwiZXhwIjoxNjk4NDM5NDY1fQ.xAeoByTF79WzyjLiBJPTVGMnrFtllO0-NXWXxllPlmg
+
+###
