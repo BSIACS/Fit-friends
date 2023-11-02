@@ -10,7 +10,7 @@ export class CreateTrainingDto {
   @MaxLength(15)
   name: string;
 
-  backgroundImg: string;                    //jpg/png взять из макета
+  backgroundImgSrc: string;                    //jpg/png взять из макета
 
   @IsEnum(TrainingLevelEnum)
   trainingLevel: TrainingLevelEnum;
@@ -37,10 +37,13 @@ export class CreateTrainingDto {
   @IsEnum(SexEnum)
   sex: SexEnum;
 
-  videoDemo: string;                        //mov/avi/mp4
+  videoDemoSrc: string;                        //mov/avi/mp4
+
+
+  rating: number;
 
   @IsUUID()
-  trainingCreator: string;
+  trainingCreatorId: string;
 
   @IsBoolean()
   isSpecial: boolean;

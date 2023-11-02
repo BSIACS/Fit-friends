@@ -1,0 +1,30 @@
+
+{
+  "version": "0.2.0",
+  "configurations": [
+      {
+          "name": "Attach to nestjs",
+          "request": "attach",
+          "cwd": "${workspaceFolder}/apps/backend",
+          "type": "node",
+          "port": 9229,
+      },
+      {
+        "name": "Launch my-nest-project",
+        "request": "launch",
+        "type": "node",
+        "runtimeExecutable": "npx",
+        "runtimeArgs": [
+            "nx",
+            "serve",
+            "backend"
+        ],
+        "console": "integratedTerminal",
+        "cwd": "${workspaceFolder}/apps/backend"
+    }
+  ]
+}
+
+
+
+

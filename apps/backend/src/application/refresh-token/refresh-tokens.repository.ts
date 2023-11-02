@@ -28,7 +28,7 @@ export class RefreshTokenRepository {
     });
   }
 
-  remove(email: string, token: string) {
+  public async remove(email: string, token: string) {
     throw new NotImplementedException();
   }
 }

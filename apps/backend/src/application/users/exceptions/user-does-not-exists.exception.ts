@@ -1,7 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 
 export class UserDoesNotExistsException extends NotFoundException {
-  constructor(email: string) {
-    super(`User with this email <${email}> does not exists`);
+  constructor(paramData: string, paramName: string) {
+    super(`User with this ${paramName} <${paramData}> does not exists`);
   }
 }

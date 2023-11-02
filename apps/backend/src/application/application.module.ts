@@ -5,6 +5,7 @@ import { ENV_FILE_PATH } from '../constants';
 import { validateEnvironments } from '../config/validation/env.validation';
 import { jwtOptions } from '../config/jwt.config';
 import { UsersModule } from './users/users.module';
+import { TrainerAccountModule } from './trainer-account/trainer-account.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { UsersModule } from './users/users.module';
       load: [applicationConfig, jwtOptions],
       validate: validateEnvironments,
     }),
-    UsersModule
+    UsersModule,
+    TrainerAccountModule
   ],
   controllers: [],
   providers: [],

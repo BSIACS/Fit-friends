@@ -10,6 +10,7 @@ import { UsersService } from './users.service';
 import { UsersRepository } from './users.repository';
 import { RefreshTokenRepository } from '../refresh-token/refresh-tokens.repository';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh-strategy';
+import { AuthorizationController } from './authorization.controller';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { JwtRefreshStrategy } from './strategies/jwt-refresh-strategy';
       useFactory: getJwtConfig
     })
   ],
-  controllers: [UsersController],
+  controllers: [AuthorizationController, UsersController],
   providers: [PrismaService, UsersService, UsersRepository, JwtStrategy, RefreshTokenRepository, JwtRefreshStrategy],
 })
 export class UsersModule { }

@@ -5,6 +5,9 @@ import { PaymentMethodEnum } from '../../../types/payment-method.enum';
 
 
 export class CreatePurchaseDto {
+  @IsUUID()
+  userId: UUID;
+
   @IsEnum(PurchaseTypeEnum)
   purchaseType: PurchaseTypeEnum;
 

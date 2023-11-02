@@ -3,6 +3,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { CreateTrainerDto } from './dto/create-trainer.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { setPasswordHash } from '../../utils/password.util';
+import { UpdateTrainerDto } from './dto/update-trainer.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UUID } from '../../types/uuid.type';
+import { TrainerEntityInterface } from './trainer-entity.interface';
+import { UserEntityInterface } from './user-entity.interface';
 
 
 @Injectable()
@@ -10,8 +15,8 @@ export class UsersRepository {
 
   constructor(private readonly prisma: PrismaService) { }
 
-  public async findTrainerByEmail(email: string) {
-    const foundUser = await this.prisma.trainer.findFirst({
+  public async findTrainerByEmail(email: string): Promise<TrainerEntityInterface | null> {
+    const foundUser: TrainerEntityInterface | null = await this.prisma.trainer.findFirst({
       where: {
         email: email,
       }
@@ -30,11 +35,10 @@ export class UsersRepository {
     return foundUser;
   }
 
-  public async createTrainer(dto: CreateTrainerDto) {
-    console.log(dto);
+  public async createTrainer(dto: CreateTrainerDto): Promise<TrainerEntityInterface | null> {
     const passwordHash = await setPasswordHash(dto.password);
 
-    const createdTrainer = await this.prisma.trainer.create({
+    const createdTrainer: TrainerEntityInterface | null = await this.prisma.trainer.create({
       data: {
         name: dto.name,
         email: dto.email,
@@ -58,10 +62,10 @@ export class UsersRepository {
     return createdTrainer;
   }
 
-  public async createUser(dto: CreateUserDto) {
+  public async createUser(dto: CreateUserDto): Promise<UserEntityInterface | null> {
     const passwordHash = await setPasswordHash(dto.password);
 
-    await this.prisma.user.create({
+    const createdUser = await this.prisma.user.create({
       data: {
         name: dto.name,
         email: dto.email,
@@ -82,5 +86,49 @@ export class UsersRepository {
         isReadyForTraining: dto.isReadyForTraining
       }
     });
+
+    return createdUser;
+  }
+
+  public async updateTrainer(dto: UpdateTrainerDto): Promise<TrainerEntityInterface | null> {
+    const updatedTrainer: TrainerEntityInterface | null = await this.prisma.trainer.update({
+      where: {
+        id: dto.id
+      },
+      data: dto
+    });
+
+    return updatedTrainer;
+  }
+
+  public async updateUser(dto: UpdateUserDto): Promise<UserEntityInterface | null> {
+    const updatedUser: UserEntityInterface | null = await this.prisma.user.update({
+      where: {
+        id: dto.id
+      },
+      data: dto
+    });
+
+    return updatedUser;
+  }
+
+  public async findTrainerDetail(id: UUID): Promise<TrainerEntityInterface | null> {
+    const foundUser: TrainerEntityInterface | null  = await this.prisma.trainer.findFirst({
+      where: {
+        id: id,
+      }
+    });
+
+    return foundUser;
+  }
+
+  public async findUserDetail(id: UUID): Promise<UserEntityInterface | null> {
+    const foundUser = await this.prisma.user.findFirst({
+      where: {
+        id: id
+      }
+    });
+
+    return foundUser;
   }
 }

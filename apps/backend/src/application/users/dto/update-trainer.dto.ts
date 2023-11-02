@@ -1,12 +1,12 @@
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsEnum, IsInt, IsOptional, Matches, Max, MaxLength, Min, MinLength } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsEmail, IsEnum, IsOptional, Matches, MaxLength, MinLength } from 'class-validator';
 import { LocationEnum } from '../../../types/location.enum';
 import { SexEnum } from '../../../types/sex.enum';
-import { TrainingDurationEnum } from '../../../types/training-duration.enum';
 import { TrainingLevelEnum } from '../../../types/training-level.enum';
 import { TrainingTypeEnum } from '../../../types/training-type.enum';
+import { UserRoleEnum } from '../../../types/user-role.enum';
 import { UUID } from '../../../types/uuid.type';
 
-export class UpdateUserDto {
+export class UpdateTrainerDto {
   id: UUID;
 
   @Matches(/^[a-zа-яА-Я]+$/i)
@@ -15,7 +15,15 @@ export class UpdateUserDto {
   @IsOptional()
   name?: string;
 
+  @IsEmail()
+  email?: string;
+
   //avatar: string;
+
+  @MinLength(6)
+  @MaxLength(12)
+  @IsOptional()
+  password?: string;
 
   @IsEnum(SexEnum)
   @IsOptional()
@@ -24,6 +32,9 @@ export class UpdateUserDto {
   @IsOptional()
   @IsOptional()
   birthDate?: Date;
+
+  @IsEnum(UserRoleEnum)
+  role?: UserRoleEnum;
 
   @MinLength(10)
   @MaxLength(140)
@@ -45,21 +56,12 @@ export class UpdateUserDto {
   @IsOptional()
   trainingType?: TrainingTypeEnum[];
 
-  @IsEnum(TrainingDurationEnum)
-  @IsOptional()
-  trainingDuration?: TrainingDurationEnum;
+  // certificates: string;                 //PDF. Только один файл
 
-  @IsInt()
-  @Min(1000)
-  @Max(5000)
+  @MinLength(10)
+  @MaxLength(140)
   @IsOptional()
-  calories?: number;
-
-  @IsInt()
-  @Min(1000)
-  @Max(5000)
-  @IsOptional()
-  caloriesPerDay?: number;
+  merits?: string;
 
   @IsBoolean()
   @IsOptional()
