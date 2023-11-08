@@ -8,12 +8,35 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UUID } from '../../types/uuid.type';
 import { TrainerEntityInterface } from './trainer-entity.interface';
 import { UserEntityInterface } from './user-entity.interface';
+import { GetUsersListQuery } from './query/get-users-list.query';
+import { GetUsersFilterParams } from './query/get-users-filter-params.interface';
+import { GetUsersSortParams } from './query/get-users-sort-params.interface';
 
 
 @Injectable()
 export class UsersRepository {
 
   constructor(private readonly prisma: PrismaService) { }
+
+  public async findTrainerById(id: UUID): Promise<TrainerEntityInterface | null> {
+    const foundUser: TrainerEntityInterface | null = await this.prisma.trainer.findFirst({
+      where: {
+        id: id,
+      }
+    });
+
+    return foundUser;
+  }
+
+  public async findUserById(id: UUID) {
+    const foundUser = await this.prisma.user.findFirst({
+      where: {
+        id: id,
+      }
+    });
+
+    return foundUser;
+  }
 
   public async findTrainerByEmail(email: string): Promise<TrainerEntityInterface | null> {
     const foundUser: TrainerEntityInterface | null = await this.prisma.trainer.findFirst({
@@ -131,4 +154,113 @@ export class UsersRepository {
 
     return foundUser;
   }
+
+  public async findUsers(filterParams: GetUsersFilterParams, sortParams: GetUsersSortParams) {
+    const foundUsers = await this.prisma.user.findMany({
+      where: {
+        location: filterParams.location ? filterParams.location : undefined,
+        trainingLevel: filterParams.trainingLevel ? filterParams.trainingLevel : undefined,
+        trainingType: filterParams.trainingType ? { hasSome: filterParams.trainingType} : undefined,
+      }
+    });
+
+    return foundUsers;
+  }
+
+  public async findTrainers(filterParams: GetUsersFilterParams, sortParams: GetUsersSortParams) {
+    const foundTrainers = await this.prisma.trainer.findMany({
+      where: {
+        location: filterParams.location ? filterParams.location : undefined,
+        trainingLevel: filterParams.trainingLevel ? filterParams.trainingLevel : undefined,
+        trainingType: filterParams.trainingType ? { hasSome: filterParams.trainingType} : undefined,
+      }
+    });
+
+    return foundTrainers;
+  }
+
+  public async findFriendsIds(id: UUID): Promise<string[]> {
+    const foundFriendsIds = (await this.prisma.user.findFirst({
+      where: {
+        id: id
+      },
+      select: {
+        friends: true
+      }
+    })).friends;
+
+    return foundFriendsIds;
+  }
+
+  public async findFriends(id: UUID): Promise<any> {
+    const foundFriendsIds = (await this.prisma.user.findFirst({
+      where: {
+        id: id
+      },
+      select: {
+        friends: true
+      }
+    })).friends;
+
+    const foundFriends = await this.prisma.user.findMany({
+      where: {
+        id: {
+          in: foundFriendsIds
+        }
+      }
+    });
+
+    return foundFriends;
+  }
+
+  public async addToFriendsList(userId: UUID, newFriendId: UUID): Promise<void>{
+    const foundFriendsIds = (await this.prisma.user.findFirst({
+      where: {
+        id: userId
+      },
+      select: {
+        friends: true
+      }
+    })).friends;
+
+    foundFriendsIds.push(newFriendId);
+
+    await this.prisma.user.update({
+      where: {
+        id: userId
+      },
+      data: {
+        friends: foundFriendsIds
+      }
+    })
+  }
+
+  public async removeFromFriendsList(userId: UUID, friendId: UUID): Promise<void>{
+    const foundFriendsIds = (await this.prisma.user.findFirst({
+      where: {
+        id: userId
+      },
+      select: {
+        friends: true
+      }
+    })).friends;
+
+    const elementToRemoveIndex = foundFriendsIds.indexOf(friendId);
+
+    if(elementToRemoveIndex < 0){
+      return;
+    }
+
+    foundFriendsIds.splice(elementToRemoveIndex, 1);
+
+    await this.prisma.user.update({
+      where: {
+        id: userId
+      },
+      data: {
+        friends: foundFriendsIds
+      }
+    })
+  }
+
 }

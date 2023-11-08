@@ -4,6 +4,7 @@ import { UUID } from '../../types/uuid.type';
 import { CreateTrainingDto } from './dto/create-training.dto';
 import { UpdateTrainingDto } from './dto/update-training.dto';
 import { PurchasesRepository } from '../purchases/purchases.repository';
+import { GetTrainingsListQuery } from './query/get-trainings-list.query';
 
 @Injectable()
 export class TrainerAccountService {
@@ -40,11 +41,11 @@ export class TrainerAccountService {
     return createdTraining;
   }
 
-  public async getTrainingList(id: UUID) {
+  public async getTrainingList(id: UUID, filter: GetTrainingsListQuery) {
     let trainingList;
 
     try {
-      trainingList = await this.trainingsRepository.findTrainingsByCreatorId(id);
+      trainingList = await this.trainingsRepository.findTrainingsByCreatorId(id, filter);
     } catch (error) {
       throw new HttpException('message', HttpStatus.BAD_REQUEST)
     }

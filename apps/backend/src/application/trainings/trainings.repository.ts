@@ -4,6 +4,7 @@ import { CreateTrainingDto } from './dto/create-training.dto';
 import { TrainingEntityInterface } from './training-entity.interface';
 import { UUID } from '../../types/uuid.type';
 import { UpdateTrainingDto } from './dto/update-training.dto';
+import { GetTrainingsListQuery } from '../trainer-account/query/get-trainings-list.query';
 
 
 
@@ -56,11 +57,22 @@ export class TrainingsRepository {
     return foundTraining;
   }
 
-  public async findTrainingsByCreatorId(id: UUID): Promise<TrainingEntityInterface[] | null> {
+  public async findTrainingsByCreatorId(id: UUID, filter: GetTrainingsListQuery): Promise<TrainingEntityInterface[] | null> {
     const foundTrainings = await this.prisma.training.findMany({
       where: {
-        trainingCreatorId: id
-      }
+        trainingCreatorId: id,
+        calories: filter.caloriesRange ? {
+          lte: filter.caloriesRange[1],
+          gte: filter.caloriesRange[0]
+        } : {},
+        price: filter.priceRange ? {
+          lte: filter.priceRange[1],
+          gte: filter.priceRange[0]
+        } : {},
+        rating: filter.rate,
+        trainingDuration: filter.duration,
+      },
+
     });
 
     return foundTrainings;

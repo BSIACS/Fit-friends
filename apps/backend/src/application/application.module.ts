@@ -6,6 +6,7 @@ import { validateEnvironments } from '../config/validation/env.validation';
 import { jwtOptions } from '../config/jwt.config';
 import { UsersModule } from './users/users.module';
 import { TrainerAccountModule } from './trainer-account/trainer-account.module';
+import { UserAccountModule } from './user-account/user-account.module';
 
 @Module({
   imports: [
@@ -17,9 +18,10 @@ import { TrainerAccountModule } from './trainer-account/trainer-account.module';
       validate: validateEnvironments,
     }),
     UsersModule,
-    TrainerAccountModule
+    TrainerAccountModule,
+    UserAccountModule
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class ApplicationModule { }

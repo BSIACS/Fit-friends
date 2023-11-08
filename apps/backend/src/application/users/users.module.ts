@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { UsersController } from './users.controller';
 import { PrismaService } from '../prisma/prisma.service';
 import { PassportModule } from '@nestjs/passport';
@@ -12,6 +12,7 @@ import { RefreshTokenRepository } from '../refresh-token/refresh-tokens.reposito
 import { JwtRefreshStrategy } from './strategies/jwt-refresh-strategy';
 import { AuthorizationController } from './authorization.controller';
 
+@Global()
 @Module({
   imports: [
     PassportModule,
@@ -23,5 +24,6 @@ import { AuthorizationController } from './authorization.controller';
   ],
   controllers: [AuthorizationController, UsersController],
   providers: [PrismaService, UsersService, UsersRepository, JwtStrategy, RefreshTokenRepository, JwtRefreshStrategy],
+  exports: [UsersService]
 })
 export class UsersModule { }

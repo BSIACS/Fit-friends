@@ -18,5 +18,6 @@ export interface UserEntityInterface {
   trainingDuration: string,
   calories: number,
   caloriesPerDay: number,
-  isReadyForTraining: boolean
+  isReadyForTraining: boolean,
+  friends: string[],
 }

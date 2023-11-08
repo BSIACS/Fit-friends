@@ -30,6 +30,7 @@ model User {
   calories                Int
   caloriesPerDay          Int                       @map("calories_per_day")
   isReadyForTraining      Boolean                   @default(false) @map("is_ready_for_training") @db.Boolean
+  friends                 String[]                  @db.Uuid
   Review                  Review[]
   Purchase                Purchase[]
   PersonalTrainingRequest PersonalTrainingRequest[]
