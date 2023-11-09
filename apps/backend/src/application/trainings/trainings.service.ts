@@ -13,7 +13,7 @@ export class TrainingsService {
   constructor(private readonly trainingsRepository: TrainingsRepository) { }
 
   public async findTrainingById(id: UUID): Promise<TrainingEntityInterface | null> {
-    const foundTraining = await this.trainingsRepository.findTrainingById(id)
+    const foundTraining = await this.trainingsRepository.findTrainingById(id);
 
     if (!foundTraining) {
       throw new TrainingDoesNotExistsException(id, 'id');
@@ -23,7 +23,7 @@ export class TrainingsService {
   }
 
   public async findTrainings(query: GetTrainingsCatalogueQuery): Promise<TrainingEntityInterface[]> {
-    const foundTrainings = await this.trainingsRepository.findTrainings(query.priceRange, query.caloriesRange, query.rate, query.trainingType, query.sortDirection)
+    const foundTrainings = await this.trainingsRepository.findTrainings(query);
 
     if (!foundTrainings) {
       throw new NotFoundException();

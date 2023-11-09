@@ -41,24 +41,24 @@ model User {
 }
 
 model Trainer {
-  id                        String                      @id @unique @default(uuid()) @db.Uuid
-  name                      String                      @db.VarChar(64)
-  email                     String                      @unique @db.VarChar(64)
-  avatarSrc                 String                      @map("avatar_src") @db.VarChar(256)
-  passwordHash              String                      @map("password_hash") @db.VarChar(64)
-  sex                       String                      @db.VarChar(64)
-  birthDate                 DateTime                    @map("birth_date") @db.Timestamptz()
-  role                      String                      @db.VarChar(64)
-  description               String                      @db.VarChar(256)
-  location                  String                      @db.VarChar(64)
-  backgroundImageSrc        String                      @map("background_image_src") @db.VarChar(256)
-  createdAt                 DateTime                    @map("created_at") @db.Timestamptz()
-  trainingLevel             String                      @map("training_level") @db.VarChar(64)
-  trainingType              String[]                    @map("training_type") @db.VarChar(64)
-  certificateSrc            String                      @map("certificate_src") @db.VarChar(256)
-  merits                    String                      @db.VarChar(256)
-  isReadyForTraining        Boolean                     @default(false) @map("is_ready_for_training") @db.Boolean
-  subscribers               String[]                    @db.Uuid
+  id                        String                               @id @unique @default(uuid()) @db.Uuid
+  name                      String                               @db.VarChar(64)
+  email                     String                               @unique @db.VarChar(64)
+  avatarSrc                 String                               @map("avatar_src") @db.VarChar(256)
+  passwordHash              String                               @map("password_hash") @db.VarChar(64)
+  sex                       String                               @db.VarChar(64)
+  birthDate                 DateTime                             @map("birth_date") @db.Timestamptz()
+  role                      String                               @db.VarChar(64)
+  description               String                               @db.VarChar(256)
+  location                  String                               @db.VarChar(64)
+  backgroundImageSrc        String                               @map("background_image_src") @db.VarChar(256)
+  createdAt                 DateTime                             @map("created_at") @db.Timestamptz()
+  trainingLevel             String                               @map("training_level") @db.VarChar(64)
+  trainingType              String[]                             @map("training_type") @db.VarChar(64)
+  certificateSrc            String                               @map("certificate_src") @db.VarChar(256)
+  merits                    String                               @db.VarChar(256)
+  isReadyForTraining        Boolean                              @default(false) @map("is_ready_for_training") @db.Boolean
+  subscribers               String[]                             @db.Uuid
   Training                  Training[]
   PersonalTrainingRequest   PersonalTrainingRequest[]
   newTrainingsNotifications NewTrainingsScheduledNotifications[]
@@ -67,21 +67,22 @@ model Trainer {
 }
 
 model Training {
-  id                        String                      @id @unique @default(uuid()) @db.Uuid
-  name                      String                      @db.VarChar(64)
-  backgroundImgSrc          String                      @map("background_img_src") @db.VarChar(256)
-  trainingLevel             String                      @map("training_level") @db.VarChar(64)
-  trainingType              String                      @map("training_type") @db.VarChar(64)
-  trainingDuration          String                      @map("training_duration") @db.VarChar(64)
+  id                        String                               @id @unique @default(uuid()) @db.Uuid
+  name                      String                               @db.VarChar(64)
+  backgroundImgSrc          String                               @map("background_img_src") @db.VarChar(256)
+  trainingLevel             String                               @map("training_level") @db.VarChar(64)
+  trainingType              String                               @map("training_type") @db.VarChar(64)
+  trainingDuration          String                               @map("training_duration") @db.VarChar(64)
   price                     Int
   calories                  Int
-  description               String                      @db.VarChar(256)
-  sex                       String                      @db.VarChar(64)
-  videoDemoSrc              String                      @map("video_demo_src") @db.VarChar(256)
-  rating                    Float
-  trainer                   Trainer                     @relation(fields: [trainingCreatorId], references: [id])
-  trainingCreatorId         String                      @map("training_creator_id") @db.Uuid
-  isSpecial                 Boolean                     @default(false) @map("is_special") @db.Boolean
+  description               String                               @db.VarChar(256)
+  sex                       String                               @db.VarChar(64)
+  videoDemoSrc              String                               @map("video_demo_src") @db.VarChar(256)
+  rating                    Int
+  votesNumber               Int                                  @map("votes_number")
+  trainer                   Trainer                              @relation(fields: [trainingCreatorId], references: [id])
+  trainingCreatorId         String                               @map("training_creator_id") @db.Uuid
+  isSpecial                 Boolean                              @default(false) @map("is_special") @db.Boolean
   Review                    Review[]
   Purchase                  Purchase[]
   UserBalance               UserBalance[]

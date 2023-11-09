@@ -1,5 +1,4 @@
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsEnum, IsNumber, IsNumberString, IsOptional, IsString, Max, Min } from 'class-validator';
-import { TrainingDurationEnum } from '../../../types/training-duration.enum';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsEnum, IsNumber, IsOptional, Max, Min } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { TrainingTypeEnum } from '../../../types/training-type.enum';
 import { SortEnum } from '../../../types/sort.enum';

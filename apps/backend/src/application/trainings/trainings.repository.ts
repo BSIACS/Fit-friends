@@ -6,7 +6,6 @@ import { UUID } from '../../types/uuid.type';
 import { UpdateTrainingDto } from './dto/update-training.dto';
 import { GetTrainingsListQuery } from '../trainer-account/query/get-trainings-list.query';
 import { GetTrainingsCatalogueQuery } from './query/get-trainings-catalogue.query';
-import { SortEnum } from '../../types/sort.enum';
 
 
 
@@ -29,7 +28,8 @@ export class TrainingsRepository {
         description: dto.description,
         sex: dto.sex,
         videoDemoSrc: dto.videoDemoSrc,
-        rating: dto.rating,
+        rating: 0,
+        votesNumber: 0,
         trainingCreatorId: dto.trainingCreatorId,
         isSpecial: dto.isSpecial,
       }
@@ -47,6 +47,26 @@ export class TrainingsRepository {
     });
 
     return updatedTraining;
+  }
+
+  public async updateTrainingsRating(id: UUID, rate: number): Promise<void> {
+    const foundTraining = await this.prisma.training.findFirst({
+      where: {
+        id: id
+      }
+    });
+
+    await this.prisma.training.update({
+      where: {
+        id: id
+      },
+      data: {
+        votesNumber: ++foundTraining.votesNumber,
+        rating: foundTraining.rating + rate
+      }
+    });
+
+    return;
   }
 
   public async findTrainingById(id: UUID): Promise<TrainingEntityInterface | null> {
@@ -92,22 +112,22 @@ export class TrainingsRepository {
     return foundIds.map((id) => id.id);
   }
 
-  public async findTrainings(priceRange, caloriesRange, rate, trainingType, sort: SortEnum): Promise<TrainingEntityInterface[] | null> {
+  public async findTrainings(query: GetTrainingsCatalogueQuery): Promise<TrainingEntityInterface[] | null> {
     const foundTrainings = await this.prisma.training.findMany({
       where: {
-        calories: caloriesRange ? {
-          lte: +caloriesRange[1],
-          gte: +caloriesRange[0]
+        calories: query.caloriesRange ? {
+          lte: +query.caloriesRange[1],
+          gte: +query.caloriesRange[0]
         } : {},
-        price: priceRange ? {
-          lte: +priceRange[1],
-          gte: +priceRange[0]
+        price: query.priceRange ? {
+          lte: +query.priceRange[1],
+          gte: +query.priceRange[0]
         } : {},
-        rating: rate ? +rate : undefined,
-        trainingType: trainingType ? trainingType : undefined
+        rating: query.rate ? +query.rate : undefined,
+        trainingType: query.trainingType ? query.trainingType : undefined
       },
       orderBy: {
-        price: sort
+        price: query.sortDirection
       }
     });
 

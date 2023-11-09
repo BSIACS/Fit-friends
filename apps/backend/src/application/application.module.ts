@@ -9,6 +9,7 @@ import { TrainerAccountModule } from './trainer-account/trainer-account.module';
 import { UserAccountModule } from './user-account/user-account.module';
 import { mailOptions } from '../config/mail.config';
 import { TrainingsModule } from './trainings/training.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { TrainingsModule } from './trainings/training.module';
     UsersModule,
     TrainerAccountModule,
     UserAccountModule,
-    TrainingsModule
+    TrainingsModule,
+    ReviewsModule
   ],
   controllers: [],
   providers: [],

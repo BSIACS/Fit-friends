@@ -1,4 +1,4 @@
-import { IsDateString, IsInt, IsUUID, Max, MaxLength, Min, MinLength } from 'class-validator';
+import { IsInt, IsUUID, Max, MaxLength, Min, MinLength } from 'class-validator';
 import { UUID } from '../../../types/uuid.type';
 
 
@@ -17,7 +17,4 @@ export class CreateReviewDto{
   @MinLength(100)
   @MaxLength(1024)
   text: string;
-
-  @IsDateString()
-  createdAt: Date;
 }

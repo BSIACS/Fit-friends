@@ -8,6 +8,7 @@ import { PaymentMethodEnum } from '../src/types/payment-method.enum';
 import { TrainingDurationEnum } from '../src/types/training-duration.enum';
 import { SexEnum } from '../src/types/sex.enum';
 import { getRandomDate } from '../src/utils/random';
+import { setPasswordHash } from '../src/utils/password.util';
 
 
 const prisma = new PrismaClient();
@@ -22,6 +23,8 @@ async function fillDb() {
 }
 
 async function fillUsers() {
+  const passwordHash = await setPasswordHash('testpass');
+
   await prisma.user.upsert({
     where: { id: '2bd0ea5f-7e5e-452f-8c7a-d83c00ca5442' },
     update: {},
@@ -30,7 +33,7 @@ async function fillUsers() {
       name: 'Маша',
       email: 'masha@somemail.com',
       avatarSrc: 'photo-4.png',
-      passwordHash: '$2b$10$Ipf4gcUHWG743vw8BcJ/Muzr.1Z8KWp3mqhIZrIJqspnQ7AQCTsjC',
+      passwordHash: passwordHash,
       sex: SexEnum.FEMALE,
       birthDate: getRandomDate(new Date('1975-1-1'), new Date('2005-1-1')),
       role: UserRoleEnum.USER,
@@ -55,7 +58,7 @@ async function fillUsers() {
       name: 'Ярослав',
       email: 'yaroslav@somemail.com',
       avatarSrc: 'photo-1.png',
-      passwordHash: '$2b$10$Ipf4gcUHWG743vw8BcJ/Muzr.1Z8KWp3mqhIZrIJqspnQ7AQCTsjC',
+      passwordHash: passwordHash,
       sex: SexEnum.MALE,
       birthDate: getRandomDate(new Date('1975-1-1'), new Date('2005-1-1')),
       role: UserRoleEnum.USER,
@@ -80,7 +83,7 @@ async function fillUsers() {
       name: 'Сергей',
       email: 'sergey@somemail.com',
       avatarSrc: 'photo-1.png',
-      passwordHash: '$2b$10$Ipf4gcUHWG743vw8BcJ/Muzr.1Z8KWp3mqhIZrIJqspnQ7AQCTsjC',
+      passwordHash: passwordHash,
       sex: SexEnum.MALE,
       birthDate: getRandomDate(new Date('1975-1-1'), new Date('2005-1-1')),
       role: UserRoleEnum.USER,
@@ -105,7 +108,7 @@ async function fillUsers() {
       name: 'Анна',
       email: 'anna@somemail.com',
       avatarSrc: 'photo-2.png',
-      passwordHash: '$2b$10$Ipf4gcUHWG743vw8BcJ/Muzr.1Z8KWp3mqhIZrIJqspnQ7AQCTsjC',
+      passwordHash: passwordHash,
       sex: SexEnum.FEMALE,
       birthDate: getRandomDate(new Date('1975-1-1'), new Date('2005-1-1')),
       role: UserRoleEnum.USER,
@@ -130,7 +133,7 @@ async function fillUsers() {
       name: 'Света',
       email: 'sveta@somemail.com',
       avatarSrc: 'photo-3.png',
-      passwordHash: '$2b$10$Ipf4gcUHWG743vw8BcJ/Muzr.1Z8KWp3mqhIZrIJqspnQ7AQCTsjC',
+      passwordHash: passwordHash,
       sex: SexEnum.FEMALE,
       birthDate: getRandomDate(new Date('1975-1-1'), new Date('2005-1-1')),
       role: UserRoleEnum.USER,
@@ -155,7 +158,7 @@ async function fillUsers() {
       name: 'Ольга',
       email: 'olga@somemail.com',
       avatarSrc: 'photo-3.png',
-      passwordHash: '$2b$10$Ipf4gcUHWG743vw8BcJ/Muzr.1Z8KWp3mqhIZrIJqspnQ7AQCTsjC',
+      passwordHash: passwordHash,
       sex: SexEnum.FEMALE,
       birthDate: getRandomDate(new Date('1975-1-1'), new Date('2005-1-1')),
       role: UserRoleEnum.USER,
@@ -174,6 +177,8 @@ async function fillUsers() {
 }
 
 async function fillTrainers() {
+  const passwordHash = await setPasswordHash('testpass');
+
   await prisma.trainer.upsert({
     where: { id: '9584ad02-ed85-438e-aead-797fd55978d8' },
     update: {},
@@ -182,7 +187,7 @@ async function fillTrainers() {
       name: 'Валерия',
       email: 'trainhardwithvalery@somemail.com',
       avatarSrc: 'img/content/avatars/coaches/photo-4.png',
-      passwordHash: '$2b$10$Ipf4gcUHWG743vw8BcJ/Muzr.1Z8KWp3mqhIZrIJqspnQ7AQCTsjC',
+      passwordHash: passwordHash,
       sex: SexEnum.FEMALE,
       birthDate: getRandomDate(new Date('1975-1-1'), new Date('2005-1-1')),
       role: UserRoleEnum.TRAINER,
@@ -206,7 +211,7 @@ async function fillTrainers() {
       name: 'Ярослав',
       email: 'yaroslavthetrainer@somemail.com',
       avatarSrc: 'img/content/avatars/coaches/photo-1.png',
-      passwordHash: '$2b$10$Ipf4gcUHWG743vw8BcJ/Muzr.1Z8KWp3mqhIZrIJqspnQ7AQCTsjC',
+      passwordHash: passwordHash,
       sex: SexEnum.MALE,
       birthDate: getRandomDate(new Date('1975-1-1'), new Date('2005-1-1')),
       role: UserRoleEnum.TRAINER,
@@ -239,7 +244,8 @@ async function fillTrainings() {
       description: '',
       sex: SexEnum.NOT_STATED,
       videoDemoSrc: '',
-      rating: 5,
+      rating: 0,
+      votesNumber: 0,
       trainingCreatorId: '9584ad02-ed85-438e-aead-797fd55978d8',
       isSpecial: false,
     }
@@ -260,7 +266,8 @@ async function fillTrainings() {
       description: '',
       sex: SexEnum.NOT_STATED,
       videoDemoSrc: '',
-      rating: 5,
+      rating: 0,
+      votesNumber: 0,
       trainingCreatorId: '9584ad02-ed85-438e-aead-797fd55978d8',
       isSpecial: false,
     }
@@ -281,7 +288,8 @@ async function fillTrainings() {
       description: '',
       sex: SexEnum.NOT_STATED,
       videoDemoSrc: '',
-      rating: 5,
+      rating: 0,
+      votesNumber: 0,
       trainingCreatorId: '9584ad02-ed85-438e-aead-797fd55978d8',
       isSpecial: false,
     }
@@ -302,7 +310,8 @@ async function fillTrainings() {
       description: '',
       sex: SexEnum.NOT_STATED,
       videoDemoSrc: '',
-      rating: 5,
+      rating: 0,
+      votesNumber: 0,
       trainingCreatorId: '6c81306f-beb0-495d-a044-4fc6a2209724',
       isSpecial: false,
     }
@@ -323,7 +332,8 @@ async function fillTrainings() {
       description: '',
       sex: SexEnum.NOT_STATED,
       videoDemoSrc: '',
-      rating: 5,
+      rating: 0,
+      votesNumber: 0,
       trainingCreatorId: '6c81306f-beb0-495d-a044-4fc6a2209724',
       isSpecial: false,
     }
