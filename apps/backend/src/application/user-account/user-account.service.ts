@@ -17,7 +17,7 @@ export class UserAccountService {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly userBalanceRepository: UserBalanceRepository,
-    private readonly trainingsRepository: TrainingsRepository
+    private readonly trainingsRepository: TrainingsRepository,
     ) { }
 
   public async getFriendList(id: UUID): Promise<UserEntityInterface[]> {

@@ -38,6 +38,21 @@ export class UsersRepository {
     return foundUser;
   }
 
+  public async findUsersEmailsByIds(ids: UUID[]): Promise<string[]> {
+    const foundUsersEmails = (await this.prisma.user.findMany({
+      where: {
+        id: {
+          in: ids
+        }
+      },
+      select: {
+        email: true
+      }
+    })).map((user) => user.email);
+
+    return foundUsersEmails;
+  }
+
   public async findTrainerByEmail(email: string): Promise<TrainerEntityInterface | null> {
     const foundUser: TrainerEntityInterface | null = await this.prisma.trainer.findFirst({
       where: {
@@ -192,6 +207,19 @@ export class UsersRepository {
     return foundFriendsIds;
   }
 
+  public async findSubscribersIds(id: UUID): Promise<UUID[]> {
+    const foundSubscribersIds = (await this.prisma.trainer.findFirst({
+      where: {
+        id: id
+      },
+      select: {
+        subscribers: true
+      }
+    })).subscribers;
+
+    return foundSubscribersIds;
+  }
+
   public async findFriends(id: UUID): Promise<any> {
     const foundFriendsIds = (await this.prisma.user.findFirst({
       where: {
@@ -259,6 +287,56 @@ export class UsersRepository {
       },
       data: {
         friends: foundFriendsIds
+      }
+    })
+  }
+
+  public async addToSubscribers(trainerId: UUID, newSubscriberId: UUID): Promise<void>{
+    const foundSubscribersIds = (await this.prisma.trainer.findFirst({
+      where: {
+        id: trainerId
+      },
+      select: {
+        subscribers: true
+      }
+    })).subscribers;
+
+    foundSubscribersIds.push(newSubscriberId);
+
+    await this.prisma.trainer.update({
+      where: {
+        id: trainerId
+      },
+      data: {
+        subscribers: foundSubscribersIds
+      }
+    })
+  }
+
+  public async removeFromSubscribers(trainerId: UUID, subscriberId: UUID): Promise<void>{
+    const foundFriendsIds = (await this.prisma.trainer.findFirst({
+      where: {
+        id: trainerId
+      },
+      select: {
+        subscribers: true
+      }
+    })).subscribers;
+
+    const elementToRemoveIndex = foundFriendsIds.indexOf(subscriberId);
+
+    if(elementToRemoveIndex < 0){
+      return;
+    }
+
+    foundFriendsIds.splice(elementToRemoveIndex, 1);
+
+    await this.prisma.trainer.update({
+      where: {
+        id: trainerId
+      },
+      data: {
+        subscribers: foundFriendsIds
       }
     })
   }

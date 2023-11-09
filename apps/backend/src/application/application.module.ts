@@ -7,6 +7,7 @@ import { jwtOptions } from '../config/jwt.config';
 import { UsersModule } from './users/users.module';
 import { TrainerAccountModule } from './trainer-account/trainer-account.module';
 import { UserAccountModule } from './user-account/user-account.module';
+import { mailOptions } from '../config/mail.config';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { UserAccountModule } from './user-account/user-account.module';
       cache: true,
       isGlobal: true,
       envFilePath: ENV_FILE_PATH,
-      load: [applicationConfig, jwtOptions],
+      load: [applicationConfig, jwtOptions, mailOptions],
       validate: validateEnvironments,
     }),
     UsersModule,

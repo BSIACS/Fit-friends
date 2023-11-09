@@ -15,6 +15,8 @@ import { UpdateTrainerDto } from './dto/update-trainer.dto';
 import { UserRoleEnum } from '../../types/user-role.enum';
 import { UnconsistentTokenException } from '../exceptions/unconsistent-token.exception';
 import { GetUsersListQuery } from './query/get-users-list.query';
+import { AlreadyAddedToSubscribers } from '../exceptions/already-added-to-subscribers.exception';
+import { NotFoundInSubscribers } from '../exceptions/not-found-in-friends-list.exception copy';
 
 @Injectable()
 export class UsersService {
@@ -148,5 +150,61 @@ export class UsersService {
       [...foundUsers, ...foundTrainers];
 
     return result;
+  }
+
+  public async addToSubscribers(id, newSubscriberId): Promise<void> {
+    const foundTrainer = await this.usersRepository.findTrainerById(id);
+
+    if (!foundTrainer) {
+      throw new UserDoesNotExistsException(id, 'id');
+    }
+
+    const foundNewSubscriber = await this.usersRepository.findUserById(newSubscriberId);
+
+    if (!foundNewSubscriber) {
+      throw new UserDoesNotExistsException(newSubscriberId, 'id');
+    }
+
+    const foundSubscribersIds = await this.usersRepository.findSubscribersIds(id);
+
+    if (foundSubscribersIds.includes(newSubscriberId)) {
+      throw new AlreadyAddedToSubscribers(newSubscriberId);
+    }
+
+    await this.usersRepository.addToSubscribers(id, newSubscriberId);
+  }
+
+  public async removeFromSubscribers(id, subscriberId): Promise<void> {
+    const foundTrainer = await this.usersRepository.findTrainerById(id);
+
+    if (!foundTrainer) {
+      throw new UserDoesNotExistsException(id, 'id');
+    }
+
+    const foundSubscribersIds = await this.usersRepository.findSubscribersIds(id);
+
+    if (!foundSubscribersIds.includes(subscriberId)) {
+      throw new NotFoundInSubscribers(subscriberId);
+    }
+
+    await this.usersRepository.removeFromSubscribers(id, subscriberId);
+  }
+
+  public async getSubscribersIds(trainerId: UUID): Promise<UUID[]> {
+    const foundTrainer = await this.usersRepository.findTrainerById(trainerId);
+
+    if (!foundTrainer) {
+      throw new UserDoesNotExistsException(trainerId, 'id');
+    }
+
+    const subscribersIds = await this.usersRepository.findSubscribersIds(trainerId);
+
+    return subscribersIds;
+  }
+
+  public async getUsersEmailsByIds(ids: UUID[]): Promise<string[]>{
+    const foundUsersEmails = await this.usersRepository.findUsersEmailsByIds(ids);
+
+    return foundUsersEmails;
   }
 }

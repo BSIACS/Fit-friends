@@ -9,6 +9,9 @@ import { GetTrainingsListQuery } from './query/get-trainings-list.query';
 import { UsersService } from '../users/users.service';
 import { JwtGuard } from '../guards/jwtGuard.guard';
 import { IsTrainerRoleGuard } from '../guards/is-trainer-role.guard';
+import { MailService } from '../mail/mail.service';
+import { SendNewTrainingNotificationsDto } from './dto/send-new-training-notifications.dto';
+import { TrainingsService } from '../trainings/trainings.service';
 
 
 interface GetTrainingByIdParamsInterface {
@@ -18,15 +21,42 @@ interface GetTrainingByIdParamsInterface {
 @Controller('trainerAccount')
 export class TrainerAccountController {
 
-  constructor(private trainerAccountService: TrainerAccountService, private userService: UsersService){} ///!!!!Добавлен, проверить
+  constructor(
+    private trainerAccountService: TrainerAccountService,
+    private userService: UsersService,
+    private mailService: MailService,
+    private trainingsService: TrainingsService
+
+  ) { }
 
   @UseGuards(JwtGuard)
   @UseGuards(IsTrainerRoleGuard)
   @Post('createTraining')
   public async createTraining(@Body() dto: CreateTrainingDto) {
-    const createdTraining = this.trainerAccountService.createTraining(dto);
+    const createdTraining = await this.trainerAccountService.createTraining(dto);
+
+    await this.trainerAccountService.createNewTrainingScheduledNotification(createdTraining.trainingCreatorId, createdTraining.id);
 
     return createdTraining;
+  }
+
+  @UseGuards(JwtGuard)
+  @UseGuards(IsTrainerRoleGuard)
+  @Post('sendNewTrainingNotifications')
+  public async sendNewTrainingNotifications(@Body() dto: SendNewTrainingNotificationsDto) {
+    const foundTrainer = await this.userService.getUserDetail(dto.trainingCreatorId);
+
+    const subscribersIds = await this.trainerAccountService.getSubscribersIdsForNotifications(dto.trainingCreatorId, dto.trainingId);
+
+    const subscribersEmails = await this.userService.getUsersEmailsByIds(subscribersIds);
+
+    const foundTraining = await this.trainingsService.findTrainingById(dto.trainingId);
+
+    await this.mailService.sendNewTrainingNotification(foundTrainer.name, foundTraining.name, subscribersEmails);
+
+    await this.trainerAccountService.removeNewTrainingScheduledNotification(dto.trainingCreatorId, dto.trainingId)
+
+    return;
   }
 
   @UseGuards(JwtGuard)
@@ -40,10 +70,10 @@ export class TrainerAccountController {
 
   @UseGuards(JwtGuard)
   @Get('training/:id')
-  public async getTrainingById(@Param() {id}: GetTrainingByIdParamsInterface){
+  public async getTrainingById(@Param() { id }: GetTrainingByIdParamsInterface) {
     const foundTraining = await this.trainerAccountService.findTrainingById(id);
 
-    return { result: foundTraining};
+    return { result: foundTraining };
   }
 
   @UseGuards(JwtGuard)

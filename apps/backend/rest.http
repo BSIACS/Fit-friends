@@ -102,9 +102,31 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYmQwZ
 
 ###
 
+
+#
+######## TRAINER ACCOUNT ########
+###
+
+# TEST
+GET   http://localhost:3042/api/trainerAccount/index  HTTP/1.1
+
+###
+
+# Send new training notifications
+POST   http://localhost:3042/api/trainerAccount/sendNewTrainingNotifications  HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI4ZThiOTQyNy1hNzVmLTRjNWEtYmQ1My1hMmVmOWEyN2YxZmEiLCJlbWFpbCI6ImpvaG5kb2VAc29tZW1haWwuY29tIiwibmFtZSI6ItCU0LbQvtC9Iiwicm9sZSI6InRyYWluZXIiLCJpYXQiOjE2OTkyOTkzNTcsImV4cCI6MTY5OTI5OTY1N30.NMCT5EVtDNGVUkTPAnBeTXP6dSFSYD8Y5s_7wqCHYYg
+Content-Type: application/json
+
+{
+  "trainingCreatorId": "7f1cfe6d-c684-436e-ab9d-c8308eb534df",
+  "trainingId": "79bab13d-f236-4b5c-af2f-3207d5902fa2"
+}
+
+###
+
 # Create new training
 POST   http://localhost:3042/api/trainerAccount/createTraining  HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI4ZThiOTQyNy1hNzVmLTRjNWEtYmQ1My1hMmVmOWEyN2YxZmEiLCJlbWFpbCI6ImpvaG5kb2VAc29tZW1haWwuY29tIiwibmFtZSI6ItCU0LbQvtC9Iiwicm9sZSI6InRyYWluZXIiLCJpYXQiOjE2OTkyOTkzNTcsImV4cCI6MTY5OTI5OTY1N30.NMCT5EVtDNGVUkTPAnBeTXP6dSFSYD8Y5s_7wqCHYYg
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI3ZjFjZmU2ZC1jNjg0LTQzNmUtYWI5ZC1jODMwOGViNTM0ZGYiLCJlbWFpbCI6ImpvaG5kb2VAc29tZW1haWwuY29tIiwibmFtZSI6ItCU0LbQvtC9Iiwicm9sZSI6InRyYWluZXIiLCJpYXQiOjE2OTk1NjI0MjksImV4cCI6MTY5OTU2MjcyOX0.eVZmMO60mqRYaIpKHUodb7SdbgvcekoSIZ-HCo7bjgs
 Content-Type: application/json
 
 {
@@ -119,7 +141,7 @@ Content-Type: application/json
   "sex": "male",
   "videoDemoSrc": "",
   "rating": 0,
-  "trainingCreatorId": "6c81306f-beb0-495d-a044-4fc6a2209724",
+  "trainingCreatorId": "7f1cfe6d-c684-436e-ab9d-c8308eb534df",
   "isSpecial": true
 }
 
@@ -127,11 +149,11 @@ Content-Type: application/json
 
 # Update exist training
 POST   http://localhost:3042/api/trainerAccount/updateTraining  HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI4ZThiOTQyNy1hNzVmLTRjNWEtYmQ1My1hMmVmOWEyN2YxZmEiLCJlbWFpbCI6ImpvaG5kb2VAc29tZW1haWwuY29tIiwibmFtZSI6ItCU0LbQvtC9Iiwicm9sZSI6InRyYWluZXIiLCJpYXQiOjE2OTkyOTkzNTcsImV4cCI6MTY5OTI5OTY1N30.NMCT5EVtDNGVUkTPAnBeTXP6dSFSYD8Y5s_7wqCHYYg
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI3ZjFjZmU2ZC1jNjg0LTQzNmUtYWI5ZC1jODMwOGViNTM0ZGYiLCJlbWFpbCI6ImpvaG5kb2VAc29tZW1haWwuY29tIiwibmFtZSI6ItCU0LbQvtC9Iiwicm9sZSI6InRyYWluZXIiLCJpYXQiOjE2OTk1NjI0MjksImV4cCI6MTY5OTU2MjcyOX0.eVZmMO60mqRYaIpKHUodb7SdbgvcekoSIZ-HCo7bjgs
 Content-Type: application/json
 
 {
-  "id": "522f597a-22f2-4834-bfff-8b1aadd700f3",
+  "id": "79bab13d-f236-4b5c-af2f-3207d5902fa2",
   "name": "Пархай как бабочка, жаль как пчела."
 }
 
@@ -217,3 +239,23 @@ Content-Type: application/json
 GET   http://localhost:3042/api/userAccount/balance/2bd0ea5f-7e5e-452f-8c7a-d83c00ca5451  HTTP/1.1
 
 ###
+
+# Add to new trainings subscribers
+POST    http://localhost:3042/api/userAccount/subscribe  HTTP/1.1
+Content-Type: application/json
+
+{
+  "trainerId": "7f1cfe6d-c684-436e-ab9d-c8308eb534df",
+  "newSubscriberId": "2bd0ea5f-7e5e-452f-8c7a-d83c00ca5449"
+}
+
+###
+
+# Remove from new trainings subscribers
+DELETE    http://localhost:3042/api/userAccount/unsubscribe  HTTP/1.1
+Content-Type: application/json
+
+{
+  "trainerId": "7f1cfe6d-c684-436e-ab9d-c8308eb534df",
+  "subscriberId": "2bd0ea5f-7e5e-452f-8c7a-d83c00ca5442"
+}

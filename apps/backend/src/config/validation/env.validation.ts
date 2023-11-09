@@ -32,6 +32,34 @@ class EnvironmentsConfig {
     message: EnvValidationMessage.DBPasswordRequired
   })
   public DB_PASSWORD: string;
+
+
+  @IsString({
+    message: EnvValidationMessage.MailServerHostRequired
+  })
+  public MAIL_SMTP_HOST: string;
+
+  @IsNumber({}, {
+    message: EnvValidationMessage.MailServerPortRequired
+  })
+  @Min(MIN_PORT)
+  @Max(MAX_PORT)
+  public MAIL_SMTP_PORT: number;
+
+  @IsString({
+    message: EnvValidationMessage.MailServerUserNameRequired
+  })
+  public MAIL_USER_NAME: string;
+
+  @IsString({
+    message: EnvValidationMessage.MailServerPasswordRequired
+  })
+  public MAIL_USER_PASSWORD: string;
+
+  @IsString({
+    message: EnvValidationMessage.MailServerDefaultFromRequired
+  })
+  public MAIL_FROM: string;
 }
 
 export function validateEnvironments(config: Record<string, unknown>) {

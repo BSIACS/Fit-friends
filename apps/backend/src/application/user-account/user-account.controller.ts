@@ -4,8 +4,10 @@ import { JwtGuard } from '../guards/jwtGuard.guard';
 import { IsUserRoleGuard } from '../guards/is-user-role.guard';
 import { AddFriendDto } from './dto/add-friend.dto';
 import { RemoveFrindDto } from './dto/remove-friend.dto';
-import { UserBalanceRepository } from '../user-balance/user-balance.repository';
-import { AddToBalanceDto } from './dto/add-friend.dto copy';
+import { AddToBalanceDto } from './dto/add-to-balance.dto';
+import { SubscribeNewTrainingNotificationDto } from './dto/subscribe-new-training-notification.dto';
+import { UsersService } from '../users/users.service';
+import { UnsubscribeNewTrainingNotificationDto } from './dto/unsubscribe-new-training-notification.dto';
 
 
 // @UseGuards(JwtGuard)
@@ -15,6 +17,7 @@ export class UserAccountController {
 
   constructor(
     private readonly userAccountService: UserAccountService,
+    private readonly usersService: UsersService,
     ) { }
 
   @Get('friends/:id')
@@ -49,5 +52,15 @@ export class UserAccountController {
   @Delete('balance')
   public async removeFromBalance() {
     throw new BadRequestException();
+  }
+
+  @Post('subscribe')
+  public async subscribeNewTrainingNotification(@Body() dto: SubscribeNewTrainingNotificationDto) {
+    await this.usersService.addToSubscribers(dto.trainerId, dto.newSubscriberId);
+  }
+
+  @Delete('unsubscribe')
+  public async unsubscribeNewTrainingNotification(@Body() dto: UnsubscribeNewTrainingNotificationDto) {
+    await this.usersService.removeFromSubscribers(dto.trainerId, dto.subscriberId);
   }
 }
