@@ -259,3 +259,19 @@ Content-Type: application/json
   "trainerId": "7f1cfe6d-c684-436e-ab9d-c8308eb534df",
   "subscriberId": "2bd0ea5f-7e5e-452f-8c7a-d83c00ca5442"
 }
+
+#
+######## TRAININGS CATALOGUE ########
+###
+
+# Get trainings catalogue
+GET   http://localhost:3042/api/trainings/catalogue?sortDirection=desc  HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI4ZThiOTQyNy1hNzVmLTRjNWEtYmQ1My1hMmVmOWEyN2YxZmEiLCJlbWFpbCI6ImpvaG5kb2VAc29tZW1haWwuY29tIiwibmFtZSI6ItCU0LbQvtC9Iiwicm9sZSI6InRyYWluZXIiLCJpYXQiOjE2OTkyOTkzNTcsImV4cCI6MTY5OTI5OTY1N30.NMCT5EVtDNGVUkTPAnBeTXP6dSFSYD8Y5s_7wqCHYYg
+
+###
+
+# Get trainings catalogue
+GET   http://localhost:3042/api/trainings/catalogue?priceRange[0]=100&priceRange[1]=5000&caloriesRange[0]=0&caloriesRange[1]=5000&rate=5&trainingType=box  HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI4ZThiOTQyNy1hNzVmLTRjNWEtYmQ1My1hMmVmOWEyN2YxZmEiLCJlbWFpbCI6ImpvaG5kb2VAc29tZW1haWwuY29tIiwibmFtZSI6ItCU0LbQvtC9Iiwicm9sZSI6InRyYWluZXIiLCJpYXQiOjE2OTkyOTkzNTcsImV4cCI6MTY5OTI5OTY1N30.NMCT5EVtDNGVUkTPAnBeTXP6dSFSYD8Y5s_7wqCHYYg
+
+###

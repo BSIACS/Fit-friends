@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { TrainerAccountModule } from './trainer-account/trainer-account.module';
 import { UserAccountModule } from './user-account/user-account.module';
 import { mailOptions } from '../config/mail.config';
+import { TrainingsModule } from './trainings/training.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { mailOptions } from '../config/mail.config';
     }),
     UsersModule,
     TrainerAccountModule,
-    UserAccountModule
+    UserAccountModule,
+    TrainingsModule
   ],
   controllers: [],
   providers: [],

@@ -1,38 +1,22 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { CreateTrainingDto } from './dto/create-training.dto';
+import { Body, Controller, Get, Post, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { TrainingsService } from './trainings.service';
+import { GetTrainingsCatalogueQuery } from './query/get-trainings-catalogue.query';
+import { JwtGuard } from '../guards/jwtGuard.guard';
 
-
+@UseGuards(JwtGuard)
 @Controller('trainings')
 export class TrainingsController {
 
+  constructor(
+    private readonly trainingsService: TrainingsService
+  ){}
 
-  @Post('create')
-  public async createTraining(@Body() data: CreateTrainingDto) {
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @Get('/catalogue')
+  public async trainingsCatalogue(@Body() data: any, @Query() query: GetTrainingsCatalogueQuery) {
+    const foundTrainings = await this.trainingsService.findTrainings(query);
 
-    return data;
+    return foundTrainings;
   }
 
-  @Post('update')
-  public async updateTraining(@Body() data: CreateTrainingDto) {
-
-    return data;
-  }
-
-  @Post('detail')
-  public async trainingDetail(@Body() data: CreateTrainingDto) {
-
-    return data;
-  }
-
-  @Post('trainingList')
-  public async trainingList(@Body() data: CreateTrainingDto) {
-
-    return data;
-  }
-
-  @Post('purchases')
-  public async purchases(@Body() data: CreateTrainingDto) {
-
-    return data;
-  }
 }

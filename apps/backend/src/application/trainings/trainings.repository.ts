@@ -5,6 +5,8 @@ import { TrainingEntityInterface } from './training-entity.interface';
 import { UUID } from '../../types/uuid.type';
 import { UpdateTrainingDto } from './dto/update-training.dto';
 import { GetTrainingsListQuery } from '../trainer-account/query/get-trainings-list.query';
+import { GetTrainingsCatalogueQuery } from './query/get-trainings-catalogue.query';
+import { SortEnum } from '../../types/sort.enum';
 
 
 
@@ -71,8 +73,7 @@ export class TrainingsRepository {
         } : {},
         rating: filter.rate,
         trainingDuration: filter.duration,
-      },
-
+      }
     });
 
     return foundTrainings;
@@ -89,5 +90,27 @@ export class TrainingsRepository {
     });
 
     return foundIds.map((id) => id.id);
+  }
+
+  public async findTrainings(priceRange, caloriesRange, rate, trainingType, sort: SortEnum): Promise<TrainingEntityInterface[] | null> {
+    const foundTrainings = await this.prisma.training.findMany({
+      where: {
+        calories: caloriesRange ? {
+          lte: +caloriesRange[1],
+          gte: +caloriesRange[0]
+        } : {},
+        price: priceRange ? {
+          lte: +priceRange[1],
+          gte: +priceRange[0]
+        } : {},
+        rating: rate ? +rate : undefined,
+        trainingType: trainingType ? trainingType : undefined
+      },
+      orderBy: {
+        price: sort
+      }
+    });
+
+    return foundTrainings;
   }
 }

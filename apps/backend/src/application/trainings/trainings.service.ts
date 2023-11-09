@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { TrainingEntityInterface } from './training-entity.interface';
 import { UUID } from '../../types/uuid.type';
 import { TrainingsRepository } from './trainings.repository';
 import { TrainingDoesNotExistsException } from '../exceptions/training-does-not-exists.exception';
+import { GetTrainingsCatalogueQuery } from './query/get-trainings-catalogue.query';
 
 
 
@@ -21,5 +22,14 @@ export class TrainingsService {
     return foundTraining;
   }
 
+  public async findTrainings(query: GetTrainingsCatalogueQuery): Promise<TrainingEntityInterface[]> {
+    const foundTrainings = await this.trainingsRepository.findTrainings(query.priceRange, query.caloriesRange, query.rate, query.trainingType, query.sortDirection)
+
+    if (!foundTrainings) {
+      throw new NotFoundException();
+    }
+
+    return foundTrainings;
+  }
 
 }

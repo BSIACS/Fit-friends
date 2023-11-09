@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TrainerAccountController } from './trainer-account.controller';
 import { TrainerAccountService } from './trainer-account.service';
-import { TrainingModule } from '../trainings/training.module';
+import { TrainingsModule } from '../trainings/training.module';
 import { PrismaService } from '../prisma/prisma.service';
 import { PurchasesModule } from '../purchases/purchases.module';
 import { JwtService } from '@nestjs/jwt';
@@ -16,7 +16,7 @@ import { TrainingsService } from '../trainings/trainings.service';
 
 
 @Module({
-  imports: [TrainingModule, PurchasesModule, UsersModule, MailModule, NewTrainingsScheduledNotificationsModule],
+  imports: [TrainingsModule, PurchasesModule, UsersModule, MailModule, NewTrainingsScheduledNotificationsModule],
   controllers: [TrainerAccountController],
   providers: [
     TrainerAccountService,
