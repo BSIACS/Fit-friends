@@ -1,12 +1,14 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UUID } from '../../types/uuid.type';
+import { ApiTags } from '@nestjs/swagger';
 
 interface GetReviewsParamsInterface{
   id: UUID
 }
 
+@ApiTags('reviews')
 @Controller('reviews')
 export class ReviewsController {
 

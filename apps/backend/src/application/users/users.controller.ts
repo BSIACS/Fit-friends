@@ -8,20 +8,19 @@ import { TokenPayload } from '../../types/token-payload.interface';
 import { JwtRefreshGuard } from '../guards/jwtRefreshGuard.guard';
 import { RequestWithTokenPayload } from '../../types/request-with-token-payload.interface';
 import { TokensPairRdo } from './rdo/tokens-pair.rdo';
-import { ParseFormDataJsonPipe } from '../pipes/parse-form-data-json.pipe';
 import { UUID } from '../../types/uuid.type';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateTrainerDto } from './dto/update-trainer.dto';
 import { JwtGuard } from '../guards/jwtGuard.guard';
-import { WrongUserRoleException } from '../exceptions/wrong-user-role.exception';
-import { UserRoleEnum } from '../../types/user-role.enum';
 import { GetUsersListQuery } from './query/get-users-list.query';
 import { IsUserRoleGuard } from '../guards/is-user-role.guard';
+import { ApiTags } from '@nestjs/swagger';
 
 interface UserDetailParamsInterface {
   id: UUID
 }
 
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
 

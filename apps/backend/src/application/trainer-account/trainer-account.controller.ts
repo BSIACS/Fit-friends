@@ -12,12 +12,14 @@ import { IsTrainerRoleGuard } from '../guards/is-trainer-role.guard';
 import { MailService } from '../mail/mail.service';
 import { SendNewTrainingNotificationsDto } from './dto/send-new-training-notifications.dto';
 import { TrainingsService } from '../trainings/trainings.service';
+import { ApiTags } from '@nestjs/swagger';
 
 
 interface GetTrainingByIdParamsInterface {
   id: UUID;
 }
 
+@ApiTags('trainerAccount')
 @Controller('trainerAccount')
 export class TrainerAccountController {
 

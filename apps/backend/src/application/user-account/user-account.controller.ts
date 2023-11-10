@@ -8,10 +8,11 @@ import { AddToBalanceDto } from './dto/add-to-balance.dto';
 import { SubscribeNewTrainingNotificationDto } from './dto/subscribe-new-training-notification.dto';
 import { UsersService } from '../users/users.service';
 import { UnsubscribeNewTrainingNotificationDto } from './dto/unsubscribe-new-training-notification.dto';
+import { ApiTags } from '@nestjs/swagger';
 
-
-// @UseGuards(JwtGuard)
-// @UseGuards(IsUserRoleGuard)
+@ApiTags('userAccount')
+@UseGuards(JwtGuard)
+@UseGuards(IsUserRoleGuard)
 @Controller('userAccount')
 export class UserAccountController {
 

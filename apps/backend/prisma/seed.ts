@@ -9,6 +9,7 @@ import { TrainingDurationEnum } from '../src/types/training-duration.enum';
 import { SexEnum } from '../src/types/sex.enum';
 import { getRandomDate } from '../src/utils/random';
 import { setPasswordHash } from '../src/utils/password.util';
+import { fillNotifications } from './fill-notifications';
 
 
 const prisma = new PrismaClient();
@@ -18,6 +19,7 @@ async function fillDb() {
   await fillTrainers();
   await fillTrainings();
   await fillPurchases();
+  await fillNotifications(prisma);
 
   console.info('🤘️ Database was filled');
 }

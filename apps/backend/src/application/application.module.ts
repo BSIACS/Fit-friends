@@ -10,6 +10,7 @@ import { UserAccountModule } from './user-account/user-account.module';
 import { mailOptions } from '../config/mail.config';
 import { TrainingsModule } from './trainings/training.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { NotitficationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { ReviewsModule } from './reviews/reviews.module';
     TrainerAccountModule,
     UserAccountModule,
     TrainingsModule,
-    ReviewsModule
+    ReviewsModule,
+    NotitficationsModule
   ],
   controllers: [],
   providers: [],
