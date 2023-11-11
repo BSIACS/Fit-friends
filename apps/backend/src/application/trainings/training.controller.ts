@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Query, UseGuards, UsePipes, ValidationPipe
 import { TrainingsService } from './trainings.service';
 import { GetTrainingsCatalogueQuery } from './query/get-trainings-catalogue.query';
 import { JwtGuard } from '../guards/jwtGuard.guard';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiTags } from '@nestjs/swagger';
 
 
 @ApiTags('trainings')
@@ -14,6 +14,9 @@ export class TrainingsController {
     private readonly trainingsService: TrainingsService
   ){}
 
+  @ApiHeader({
+    name: 'Authorization:'
+  })
   @UsePipes(new ValidationPipe({ transform: true }))
   @Get('/catalogue')
   public async trainingsCatalogue(@Body() data: any, @Query() query: GetTrainingsCatalogueQuery) {

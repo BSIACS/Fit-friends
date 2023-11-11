@@ -14,12 +14,13 @@ export class TrainingsRepository {
 
   constructor(private readonly prisma: PrismaService) { }
 
-  public async createTraining(dto: CreateTrainingDto): Promise<TrainingEntityInterface | null> {
+  public async createTraining(dto: CreateTrainingDto): Promise<TrainingEntityInterface> {
+    console.log(dto, '---------------');
 
-    const createdTraining: TrainingEntityInterface | null = await this.prisma.training.create({
+    const createdTraining: TrainingEntityInterface = await this.prisma.training.create({
       data: {
         name: dto.name,
-        backgroundImgSrc: dto.backgroundImgSrc,
+        backgroundImgFileName: dto.backgroundImgSrc,
         trainingLevel: dto.trainingLevel,
         trainingType: dto.trainingType,
         trainingDuration: dto.trainingDuration,
@@ -27,7 +28,7 @@ export class TrainingsRepository {
         calories: dto.calories,
         description: dto.description,
         sex: dto.sex,
-        videoDemoSrc: dto.videoDemoSrc,
+        videoDemoFileName: dto.videoDemoSrc,
         rating: 0,
         votesNumber: 0,
         trainingCreatorId: dto.trainingCreatorId,

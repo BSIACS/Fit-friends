@@ -1,11 +1,11 @@
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsEmail, IsEnum, IsInt, IsNotEmpty, IsOptional, Matches, Max, MaxLength, Min, MinLength } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsEmail, IsEnum, IsInt, IsNumberString, IsOptional, Matches, Max, MaxLength, Min, MinLength, Validate } from 'class-validator';
 import { LocationEnum } from '../../../types/location.enum';
 import { SexEnum } from '../../../types/sex.enum';
 import { TrainingDurationEnum } from '../../../types/training-duration.enum';
 import { TrainingLevelEnum } from '../../../types/training-level.enum';
 import { TrainingTypeEnum } from '../../../types/training-type.enum';
-import { UserRoleEnum } from '../../../types/user-role.enum';
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 
 export class CreateUserDto {
   @ApiProperty({
@@ -19,16 +19,14 @@ export class CreateUserDto {
 
   @ApiProperty({
     description: 'User unique address',
-    example: 'user@user.ru',
+    example: 'natalia@somemail.ru',
   })
   @IsEmail()
   email: string;
 
-  //avatar: string;
-
   @ApiProperty({
     description: 'User password',
-    example: '123456'
+    example: 'testpass'
   })
   @MinLength(6)
   @MaxLength(12)
@@ -47,13 +45,6 @@ export class CreateUserDto {
   })
   @IsOptional()
   birthDate: Date;
-
-  @ApiProperty({
-    description: 'User`s role. <user> or <trainer>',
-    example: 'user',
-  })
-  @IsEnum(UserRoleEnum)
-  role: UserRoleEnum;
 
   @ApiProperty({
     description: 'User information',
@@ -94,20 +85,26 @@ export class CreateUserDto {
   @IsEnum(TrainingDurationEnum)
   trainingDuration: TrainingDurationEnum;
 
-  @IsInt()
-  @Min(1000)
-  @Max(5000)
+  @ApiProperty({
+    description: 'Number of calories to lose',
+    example: '5000',
+  })
+  @IsNumberString()
+  @Validate((value) => +value >= 1000 && +value <= 5000)
   calories: number;
 
-  @IsInt()
-  @Min(1000)
-  @Max(5000)
+  @ApiProperty({
+    description: 'Number of calories to burn per day',
+    example: 1000,
+  })
+  @IsNumberString()
+  @Validate((value) => +value >= 1000 && +value <= 5000)
   caloriesPerDay: number;
 
   @ApiProperty({
     description: 'Ready for training',
     example: true,
   })
-  @IsBoolean()
-  isReadyForTraining: boolean;
+  @Validate((value) => value === 'false' || value === 'true')
+  isReadyForTraining: string;
 }

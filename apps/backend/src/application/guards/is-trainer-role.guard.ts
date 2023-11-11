@@ -8,11 +8,6 @@ import { WrongUserRoleException } from '../exceptions/wrong-user-role.exception'
 @Injectable()
 export class IsTrainerRoleGuard implements CanActivate {
 
-  constructor(){
-    console.log('IsUserRoleGuard');
-
-  }
-
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
 

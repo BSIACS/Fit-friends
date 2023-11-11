@@ -3,7 +3,7 @@ import { UUID } from '../../types/uuid.type'
 export interface TrainingEntityInterface {
   id: UUID;
   name: string;
-  backgroundImgSrc: string;
+  backgroundImgFileName: string;
   trainingLevel: string;
   trainingType: string;
   trainingDuration: string,
@@ -11,7 +11,7 @@ export interface TrainingEntityInterface {
   calories: number;
   description: string;
   sex: string;
-  videoDemoSrc: string;
+  videoDemoFileName: string;
   rating: number;
   trainingCreatorId: UUID;
   isSpecial: boolean;

@@ -12,13 +12,13 @@ import { IsTrainerRoleGuard } from '../guards/is-trainer-role.guard';
 import { MailService } from '../mail/mail.service';
 import { SendNewTrainingNotificationsDto } from './dto/send-new-training-notifications.dto';
 import { TrainingsService } from '../trainings/trainings.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiHeader, ApiTags } from '@nestjs/swagger';
 
 
 interface GetTrainingByIdParamsInterface {
   id: UUID;
 }
-
+//@UseGuards(JwtGuard)
 @ApiTags('trainerAccount')
 @Controller('trainerAccount')
 export class TrainerAccountController {
@@ -31,9 +31,10 @@ export class TrainerAccountController {
 
   ) { }
 
+  @Post('createTraining')
+  @ApiBody({type: CreateTrainingDto})
   @UseGuards(JwtGuard)
   @UseGuards(IsTrainerRoleGuard)
-  @Post('createTraining')
   public async createTraining(@Body() dto: CreateTrainingDto) {
     const createdTraining = await this.trainerAccountService.createTraining(dto);
 
@@ -61,6 +62,10 @@ export class TrainerAccountController {
     return;
   }
 
+  @ApiBody({type: UpdateTrainingDto})
+  @ApiHeader({
+    name: 'Authorization:'
+  })
   @UseGuards(JwtGuard)
   @UseGuards(IsTrainerRoleGuard)
   @Post('updateTraining')

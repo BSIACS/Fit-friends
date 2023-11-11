@@ -17,6 +17,8 @@ import { UnconsistentTokenException } from '../exceptions/unconsistent-token.exc
 import { GetUsersListQuery } from './query/get-users-list.query';
 import { AlreadyAddedToSubscribers } from '../exceptions/already-added-to-subscribers.exception';
 import { NotFoundInSubscribers } from '../exceptions/not-found-in-friends-list.exception copy';
+import { UserEntityInterface } from './user-entity.interface';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
@@ -24,9 +26,22 @@ export class UsersService {
     private readonly usersRepository: UsersRepository,
     private readonly jwtService: JwtService,
     private readonly refreshTokenRepository: RefreshTokenRepository,
+    private readonly configService: ConfigService,
   ) { }
 
-  public async createUser(dto: CreateUserDto | CreateTrainerDto) {
+  public async createUser(dto: CreateUserDto, avatarFileName: string, backgroundImgFileName: string): Promise<UserEntityInterface> {
+    const foundUser = await this.usersRepository.findUserByEmail(dto.email);
+
+    if (foundUser) {
+      throw new UserExistsException(foundUser.email);
+    }
+
+    const ctreatedUser = this.usersRepository.createUser(dto, avatarFileName, backgroundImgFileName);
+
+    return ctreatedUser;
+  }
+
+  public async createTrainer(dto: CreateTrainerDto) {
     const foundUser = await this.usersRepository.findTrainerByEmail(dto.email);
 
     if (foundUser) {
@@ -49,8 +64,8 @@ export class UsersService {
     const result = {
       accessToken: await this.jwtService.signAsync(payload),
       refreshToken: await this.jwtService.signAsync(payload, {
-        secret: 'r-secret',
-        expiresIn: '15d',
+        secret: this.configService.get<string>('jwt.refreshTokenSecret'),
+        expiresIn: this.configService.get<string>('jwt.refreshTokenExpiresIn'),
       }),
     };
 
@@ -102,6 +117,17 @@ export class UsersService {
   }
 
   public async updateUser(dto: UpdateTrainerDto) {
+    let updatedUser;
+    try {
+      updatedUser = await this.usersRepository.updateUser(dto);
+    } catch (error) {
+      throw new UserDoesNotExistsException(dto.id, 'id');
+    }
+
+    return updatedUser;
+  }
+
+  public async updateTrainer(dto: UpdateTrainerDto) {
     let updatedUser;
     try {
       updatedUser = await this.usersRepository.updateTrainer(dto);

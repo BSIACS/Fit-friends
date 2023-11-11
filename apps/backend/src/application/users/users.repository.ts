@@ -11,6 +11,7 @@ import { UserEntityInterface } from './user-entity.interface';
 import { GetUsersListQuery } from './query/get-users-list.query';
 import { GetUsersFilterParams } from './query/get-users-filter-params.interface';
 import { GetUsersSortParams } from './query/get-users-sort-params.interface';
+import { UserRoleEnum } from '../../types/user-role.enum';
 
 
 @Injectable()
@@ -18,7 +19,7 @@ export class UsersRepository {
 
   constructor(private readonly prisma: PrismaService) { }
 
-  public async findTrainerById(id: UUID): Promise<TrainerEntityInterface | null> {
+  public async findTrainerById(id: UUID): Promise<TrainerEntityInterface> {
     const foundUser: TrainerEntityInterface | null = await this.prisma.trainer.findFirst({
       where: {
         id: id,
@@ -28,7 +29,7 @@ export class UsersRepository {
     return foundUser;
   }
 
-  public async findUserById(id: UUID) {
+  public async findUserById(id: UUID): Promise<UserEntityInterface> {
     const foundUser = await this.prisma.user.findFirst({
       where: {
         id: id,
@@ -53,8 +54,8 @@ export class UsersRepository {
     return foundUsersEmails;
   }
 
-  public async findTrainerByEmail(email: string): Promise<TrainerEntityInterface | null> {
-    const foundUser: TrainerEntityInterface | null = await this.prisma.trainer.findFirst({
+  public async findTrainerByEmail(email: string): Promise<TrainerEntityInterface> {
+    const foundUser: TrainerEntityInterface = await this.prisma.trainer.findFirst({
       where: {
         email: email,
       }
@@ -80,18 +81,18 @@ export class UsersRepository {
       data: {
         name: dto.name,
         email: dto.email,
-        avatarSrc: '',
+        avatarFileName: '',
         passwordHash: passwordHash,
         sex: dto.sex,
         birthDate: new Date(dto.birthDate),
-        role: dto.role,
+        role: UserRoleEnum.TRAINER,
         description: dto.description,
         location: dto.location,
-        backgroundImageSrc: '',
+        backgroundImgFileName: '',
         createdAt: new Date(),
         trainingLevel: dto.trainingLevel,
         trainingType: dto.trainingType,
-        certificateSrc: '',
+        certificateFileName: '',
         merits: dto.merits,
         isReadyForTraining: dto.isReadyForTraining,
       }
@@ -100,28 +101,28 @@ export class UsersRepository {
     return createdTrainer;
   }
 
-  public async createUser(dto: CreateUserDto): Promise<UserEntityInterface | null> {
+  public async createUser(dto: CreateUserDto, avatarFileName: string, backgroundImgFileName: string): Promise<UserEntityInterface> {
     const passwordHash = await setPasswordHash(dto.password);
 
     const createdUser = await this.prisma.user.create({
       data: {
         name: dto.name,
         email: dto.email,
-        avatarSrc: '',
+        avatarFileName: avatarFileName,
         passwordHash: passwordHash,
         sex: dto.sex,
         birthDate: new Date(dto.birthDate),
-        role: dto.role,
+        role: UserRoleEnum.USER,
         description: dto.description,
         location: dto.location,
-        backgroundImageSrc: '',
+        backgroundImgFileName: backgroundImgFileName,
         createdAt: new Date(),
         trainingLevel: dto.trainingLevel,
         trainingType: dto.trainingType,
         trainingDuration: dto.trainingDuration,
-        calories: dto.calories,
-        caloriesPerDay: dto.caloriesPerDay,
-        isReadyForTraining: dto.isReadyForTraining
+        calories: +dto.calories,
+        caloriesPerDay: +dto.caloriesPerDay,
+        isReadyForTraining: dto.isReadyForTraining === 'false' ? false : true
       }
     });
 

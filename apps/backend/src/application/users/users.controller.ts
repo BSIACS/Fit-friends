@@ -1,4 +1,4 @@
-import { Body, Controller, Get, NotImplementedException, Param, Post, Query, Req, Request, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, FileTypeValidator, Get, MaxFileSizeValidator, NotImplementedException, Param, ParseFilePipe, Post, Query, Req, Request, UploadedFile, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserValidationPipe } from '../pipes/user-validation.pipe';
 import { CreateUserDto } from './dto/create-user.dto';
 import { CreateTrainerDto } from './dto/create-trainer.dto';
@@ -14,7 +14,10 @@ import { UpdateTrainerDto } from './dto/update-trainer.dto';
 import { JwtGuard } from '../guards/jwtGuard.guard';
 import { GetUsersListQuery } from './query/get-users-list.query';
 import { IsUserRoleGuard } from '../guards/is-user-role.guard';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiHeader, ApiTags } from '@nestjs/swagger';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
+import multer, { Multer } from 'multer';
+import { multerUploadUserFileOptions } from './multer.utils';
 
 interface UserDetailParamsInterface {
   id: UUID
@@ -26,6 +29,18 @@ export class UsersController {
 
   constructor(private readonly usersService: UsersService) { }
 
+  @Post('register/user')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'userAvatar' },
+    { name: 'userBackgroundImage' }
+  ], multerUploadUserFileOptions))
+  public async createUser(@UploadedFiles() files, @Body() dto: CreateUserDto) {
+    const createdUser = this.usersService.createUser(dto, files.userAvatar[0].filename, files.userBackgroundImage[0].filename);
+
+    return createdUser;
+  }
+
   @Get('usersList')
   @UseGuards(JwtGuard)
   @UseGuards(IsUserRoleGuard)
@@ -33,23 +48,48 @@ export class UsersController {
   public async usersList(@Query() query: GetUsersListQuery) {
     const foundUsers = await this.usersService.getUsersList(query);
 
+
     return foundUsers;
   }
 
-  @Post('register')
-  @UsePipes(new UserValidationPipe())
-  public async register(@Body() data: CreateUserDto | CreateTrainerDto) {
-    const createdUser = this.usersService.createUser(data);
+  // @ApiBody({ type: CreateUserDto })
+  // @Post('register/user')
+  // @UsePipes()
+  // public async createUser(@Body() dto: CreateUserDto) {
+  //   const createdUser = this.usersService.createUser(dto);
+
+  //   return createdUser;
+  // }
+
+  @ApiBody({ type: CreateTrainerDto })
+  @Post('register/trainer')
+  @UsePipes()
+  public async createTrainer(@Body() data: CreateTrainerDto) {
+    const createdUser = this.usersService.createTrainer(data);
 
     return createdUser;
   }
 
+  @ApiBody({ type: UpdateUserDto })
+  @Post('update/user')
+  @UsePipes()
   @Post('update')
-  public async updateUser(@Body() data: UpdateUserDto | UpdateTrainerDto) {
+  public async updateUser(@Body() data: UpdateUserDto) {
     const updatedUser = this.usersService.updateUser(data);
 
     return updatedUser;
   }
+
+  @ApiBody({ type: UpdateTrainerDto })
+  @Post('update/trainer')
+  @UsePipes()
+  @Post('update')
+  public async updateTrainer(@Body() data: UpdateTrainerDto) {
+    const updatedUser = this.usersService.updateTrainer(data);
+
+    return updatedUser;
+  }
+
 
   @Post('login')
   public async login(@Body() data: LoginUserDto): Promise<TokensPairRdo> {

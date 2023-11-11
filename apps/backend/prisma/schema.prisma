@@ -15,14 +15,14 @@ model User {
   id                      String                    @id @unique @default(uuid()) @db.Uuid
   name                    String                    @db.VarChar(64)
   email                   String                    @unique @db.VarChar(64)
-  avatarSrc               String                    @map("avatar_src") @db.VarChar(256)
+  avatarFileName          String                    @map("avatar_file_name") @db.VarChar(256)
   passwordHash            String                    @map("password_hash") @db.VarChar(64)
   sex                     String                    @db.VarChar(64)
   birthDate               DateTime                  @map("birth_date") @db.Timestamptz()
   role                    String                    @db.VarChar(64)
   description             String                    @db.VarChar(256)
   location                String                    @db.VarChar(64)
-  backgroundImageSrc      String                    @map("background_image_src") @db.VarChar(256)
+  backgroundImgFileName   String                    @map("background_image_file_name") @db.VarChar(256)
   createdAt               DateTime                  @map("created_at") @db.Timestamptz()
   trainingLevel           String                    @map("training_level") @db.VarChar(64)
   trainingType            String[]                  @map("training_type") @db.VarChar(64)
@@ -44,18 +44,18 @@ model Trainer {
   id                        String                               @id @unique @default(uuid()) @db.Uuid
   name                      String                               @db.VarChar(64)
   email                     String                               @unique @db.VarChar(64)
-  avatarSrc                 String                               @map("avatar_src") @db.VarChar(256)
+  avatarFileName            String                               @map("avatar_file_name") @db.VarChar(256)
   passwordHash              String                               @map("password_hash") @db.VarChar(64)
   sex                       String                               @db.VarChar(64)
   birthDate                 DateTime                             @map("birth_date") @db.Timestamptz()
   role                      String                               @db.VarChar(64)
   description               String                               @db.VarChar(256)
   location                  String                               @db.VarChar(64)
-  backgroundImageSrc        String                               @map("background_image_src") @db.VarChar(256)
+  backgroundImgFileName     String                               @map("background_image_file_name") @db.VarChar(256)
   createdAt                 DateTime                             @map("created_at") @db.Timestamptz()
   trainingLevel             String                               @map("training_level") @db.VarChar(64)
   trainingType              String[]                             @map("training_type") @db.VarChar(64)
-  certificateSrc            String                               @map("certificate_src") @db.VarChar(256)
+  certificateFileName       String                               @map("certificate_file_name") @db.VarChar(256)
   merits                    String                               @db.VarChar(256)
   isReadyForTraining        Boolean                              @default(false) @map("is_ready_for_training") @db.Boolean
   subscribers               String[]                             @db.Uuid
@@ -69,7 +69,7 @@ model Trainer {
 model Training {
   id                        String                               @id @unique @default(uuid()) @db.Uuid
   name                      String                               @db.VarChar(64)
-  backgroundImgSrc          String                               @map("background_img_src") @db.VarChar(256)
+  backgroundImgFileName     String                               @map("background_img_file_name") @db.VarChar(256)
   trainingLevel             String                               @map("training_level") @db.VarChar(64)
   trainingType              String                               @map("training_type") @db.VarChar(64)
   trainingDuration          String                               @map("training_duration") @db.VarChar(64)
@@ -77,7 +77,7 @@ model Training {
   calories                  Int
   description               String                               @db.VarChar(256)
   sex                       String                               @db.VarChar(64)
-  videoDemoSrc              String                               @map("video_demo_src") @db.VarChar(256)
+  videoDemoFileName         String                               @map("video_demo_file_name") @db.VarChar(256)
   rating                    Int
   votesNumber               Int                                  @map("votes_number")
   trainer                   Trainer                              @relation(fields: [trainingCreatorId], references: [id])
