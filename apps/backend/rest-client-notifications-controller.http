@@ -1,0 +1,18 @@
+###
+
+# GET NOTIFICATIONS
+GET   http://localhost:3042/api/notifications  HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYmQwZWE1Zi03ZTVlLTQ1MmYtOGM3YS1kODNjMDBjYTU0NTEiLCJlbWFpbCI6Im9sZ2FAc29tZW1haWwuY29tIiwibmFtZSI6ItCe0LvRjNCz0LAiLCJyb2xlIjoidXNlciIsImlhdCI6MTY5OTYxOTQ4NSwiZXhwIjoxNjk5NjU1NDg1fQ.MCM1XxOAQ7L1qdqcQK5QDnno_XXHHyAb3C3pI_WtjDI
+
+###
+
+# DELETE NOTIFICATION
+DELETE   http://localhost:3042/api/notifications  HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYmQwZWE1Zi03ZTVlLTQ1MmYtOGM3YS1kODNjMDBjYTU0NTEiLCJlbWFpbCI6Im9sZ2FAc29tZW1haWwuY29tIiwibmFtZSI6ItCe0LvRjNCz0LAiLCJyb2xlIjoidXNlciIsImlhdCI6MTY5OTYxOTQ4NSwiZXhwIjoxNjk5NjU1NDg1fQ.MCM1XxOAQ7L1qdqcQK5QDnno_XXHHyAb3C3pI_WtjDI
+Content-Type: application/json
+
+{
+  "id": "e9df3096-462d-436e-a351-58a983eb0ad6"
+}
+
+###

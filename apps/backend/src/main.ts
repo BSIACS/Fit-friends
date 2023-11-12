@@ -15,7 +15,6 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
   .setTitle('The «Fit-friends» service')
-  .setDescription('Fit-friends service API')
   .setVersion('1.0')
   .build();
 

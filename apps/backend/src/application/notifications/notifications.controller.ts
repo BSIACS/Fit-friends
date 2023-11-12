@@ -7,7 +7,7 @@ import { NotificationsService } from './notifications.service';
 import { DeleteNotificationDto } from './dto/delete-notification.dto';
 import { fromEntitiesToGetNotificationsRdos } from './mappers/notifications.mappers';
 import { GetNotificationsRdo } from './rdo/get-notifications.rdo';
-import { ApiBearerAuth, ApiHeader, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('notifications')
 @Controller('notifications')

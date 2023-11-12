@@ -1,8 +1,11 @@
-import { Body, Controller, Get, Param, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UUID } from '../../types/uuid.type';
 import { ApiTags } from '@nestjs/swagger';
+import { RequestWithTokenPayload } from '../../types/request-with-token-payload.interface';
+import { TokenPayload } from '../../types/token-payload.interface';
+import { JwtGuard } from '../guards/jwtGuard.guard';
 
 interface GetReviewsParamsInterface{
   id: UUID
@@ -10,6 +13,7 @@ interface GetReviewsParamsInterface{
 
 @ApiTags('reviews')
 @Controller('reviews')
+@UseGuards(JwtGuard)
 export class ReviewsController {
 
   constructor(
@@ -26,8 +30,9 @@ export class ReviewsController {
 
   @UsePipes(new ValidationPipe({ transform: true }))
   @Post('/')
-  public async createReview(@Body() dto: CreateReviewDto) {
-    const createdReview = await this.reviewsService.createReview(dto.userId, dto.trainingId, dto.rating, dto.text)
+  public async createReview(@Req() request: RequestWithTokenPayload, @Body() dto: CreateReviewDto) {
+    const payload: TokenPayload = request.user;
+    const createdReview = await this.reviewsService.createReview(payload.userId, dto.trainingId, dto.rating, dto.text)
 
     return createdReview;
   }
