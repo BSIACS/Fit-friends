@@ -19,7 +19,7 @@ import { multerUploadUserFileOptions } from './multer.utils';
 import { IsUserExistPipe } from '../pipes/is-user-exist.pipe';
 import { LogoutDto } from './dto/loginout.dto';
 import { UserRdo } from './rdo/user.rdo';
-import { fromEntitiesToUsersRdos, fromEntityToTrainerRdo, fromEntityToUserRdo } from './mappers/users.mappers';
+import { fromEntityToTrainerRdo, fromEntityToUserRdo } from './mappers/users.mappers';
 import { TrainerRdo } from './rdo/trainer.rdo';
 import { UserRoleEnum } from '../../types/user-role.enum';
 import { TrainerEntityInterface } from './trainer-entity.interface';

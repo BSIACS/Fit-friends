@@ -1,19 +1,18 @@
-import { UUID } from '../../types/uuid.type'
+import { UUID } from '../../../types/uuid.type';
 
-export interface TrainingEntityInterface {
+export class TrainingRdo {
   id: UUID;
   name: string;
   backgroundImgFileName: string;
   trainingLevel: string;
   trainingType: string;
-  trainingDuration: string,
+  trainingDuration: string;
   price: number;
   calories: number;
   description: string;
   sex: string;
   videoDemoFileName: string;
-  rating: number;
-  votesNumber: number;
-  trainingCreatorId: UUID;
+  rating: string;
+  trainingCreatorId: string;
   isSpecial: boolean;
 }

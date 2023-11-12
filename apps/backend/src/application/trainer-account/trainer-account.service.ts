@@ -25,11 +25,12 @@ export class TrainerAccountService {
     return foundTraining;
   }
 
-  public async createTraining(dto: CreateTrainingDto) {
+  public async createTraining(dto: CreateTrainingDto, videoDemoFileName: string) {
     let createdTraining;
+    console.log('asdsadsad');
 
     try {
-      createdTraining = await this.trainingsRepository.createTraining(dto);
+      createdTraining = await this.trainingsRepository.createTraining(dto, videoDemoFileName);
     } catch (error) {
       throw new HttpException('message', HttpStatus.BAD_REQUEST)
     }

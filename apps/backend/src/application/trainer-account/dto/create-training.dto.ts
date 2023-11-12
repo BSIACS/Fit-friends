@@ -1,15 +1,16 @@
-import { IsBoolean, IsEnum, IsInt, IsNumber, IsUUID, Max, MaxLength, Min, MinLength } from 'class-validator';
+import { IsBoolean, IsEnum, IsInt, IsUUID, MaxLength, MinLength, Validate } from 'class-validator';
 import { TrainingLevelEnum } from '../../../types/training-level.enum';
 import { TrainingTypeEnum } from '../../../types/training-type.enum';
 import { TrainingDurationEnum } from '../../../types/training-duration.enum';
 import { SexEnum } from '../../../types/sex.enum';
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 
 
 export class CreateTrainingDto {
   @ApiProperty({
     description: 'Training name',
-    example: 'Пархай как бабочка, жаль как пчела',
+    example: 'TECHNIQUE TRAINING',
   })
   @MinLength(1)
   @MaxLength(15)
@@ -17,9 +18,9 @@ export class CreateTrainingDto {
 
   @ApiProperty({
     description: 'Background image',
-    example: '',
+    example: 'cc8e3b0e8be3d74cf94c2375a4dff6ff',
   })
-  backgroundImgSrc: string;                    //jpg/png взять из макета
+  backgroundImgFileName: string;
 
   @ApiProperty({
     description: 'The user level for which the training is designed',
@@ -46,17 +47,18 @@ export class CreateTrainingDto {
     description: 'Cost of training in rubles',
     example: 3042,
   })
-  @Min(0)
-  @IsNumber()
+  @IsInt()
+  @Validate((value) => +value >= 0)
+  @Transform(({value}) => +value)
   price: number;
 
   @ApiProperty({
-    description: 'Number of calories',
-    example: 1000,
+    description: 'Number of calories to lose',
+    example: '5000',
   })
-  @Min(1000)
-  @Max(5000)
   @IsInt()
+  @Validate((value) => +value >= 1000 && +value <= 5000)
+  @Transform(({value}) => +value)
   calories: number;
 
   @ApiProperty({
@@ -75,19 +77,6 @@ export class CreateTrainingDto {
   sex: SexEnum;
 
   @ApiProperty({
-    description: 'Video file demonstrating training',
-    example: '',
-  })
-  videoDemoSrc: string;                        //mov/avi/mp4
-
-
-  @ApiProperty({
-    description: 'Training rating',
-    example: 0,
-  })
-  rating: number;
-
-  @ApiProperty({
     description: 'Trainer, training creator',
     example: '6c81306f-beb0-495d-a044-4fc6a2209724',
   })
@@ -98,6 +87,7 @@ export class CreateTrainingDto {
     description: 'The flag identifies the training participation as a special offer',
     example: false,
   })
+  @Transform(({value}) => value === 'true')
   @IsBoolean()
   isSpecial: boolean;
 }

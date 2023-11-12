@@ -1,10 +1,8 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, Req, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { TrainerAccountService } from './trainer-account.service';
 import { UUID } from '../../types/uuid.type';
 import { CreateTrainingDto } from './dto/create-training.dto';
 import { UpdateTrainingDto } from './dto/update-training.dto';
-import { GetTrainingListDto } from './dto/get-training-list.dto';
-import { GetPurchasesDto } from './dto/get-purchases.dto';
 import { GetTrainingsListQuery } from './query/get-trainings-list.query';
 import { UsersService } from '../users/users.service';
 import { JwtGuard } from '../guards/jwtGuard.guard';
@@ -12,15 +10,22 @@ import { IsTrainerRoleGuard } from '../guards/is-trainer-role.guard';
 import { MailService } from '../mail/mail.service';
 import { SendNewTrainingNotificationsDto } from './dto/send-new-training-notifications.dto';
 import { TrainingsService } from '../trainings/trainings.service';
-import { ApiBearerAuth, ApiBody, ApiHeader, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { multerUploadTrainingFileOptions } from '../../config/multer-upload-training-file.options';
+import { TrainingRdo } from './rdo/training.rdo';
+import { fromEntitiesToTrainingsRdos, fromEntityToTrainingRdo } from './mappers/training.mapper';
+import { RequestWithTokenPayload } from '../../types/request-with-token-payload.interface';
+import { TokenPayload } from '../../types/token-payload.interface';
 
 
 interface GetTrainingByIdParamsInterface {
   id: UUID;
 }
-//@UseGuards(JwtGuard)
+
 @ApiTags('trainerAccount')
 @Controller('trainerAccount')
+@UseGuards(JwtGuard)
 export class TrainerAccountController {
 
   constructor(
@@ -32,18 +37,23 @@ export class TrainerAccountController {
   ) { }
 
   @Post('createTraining')
-  @ApiBody({type: CreateTrainingDto})
-  @UseGuards(JwtGuard)
+  @ApiBody({ type: CreateTrainingDto })
   @UseGuards(IsTrainerRoleGuard)
-  public async createTraining(@Body() dto: CreateTrainingDto) {
-    const createdTraining = await this.trainerAccountService.createTraining(dto);
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'videoDemo' }
+  ], multerUploadTrainingFileOptions))
+  @UsePipes(new ValidationPipe({transform: true}))
+  public async createTraining(@UploadedFiles() files, @Body() dto: CreateTrainingDto): Promise<TrainingRdo> {
+    const createdTraining = await this.trainerAccountService.createTraining(
+      dto,
+      files.videoDemo[0].filename
+    );
 
     await this.trainerAccountService.createNewTrainingScheduledNotification(createdTraining.trainingCreatorId, createdTraining.id);
 
-    return createdTraining;
+    return fromEntityToTrainingRdo(createdTraining);
   }
 
-  @UseGuards(JwtGuard)
   @UseGuards(IsTrainerRoleGuard)
   @Post('sendNewTrainingNotifications')
   public async sendNewTrainingNotifications(@Body() dto: SendNewTrainingNotificationsDto) {
@@ -62,20 +72,17 @@ export class TrainerAccountController {
     return;
   }
 
-  @ApiBody({type: UpdateTrainingDto})
-  @ApiHeader({
-    name: 'Authorization:'
-  })
-  @UseGuards(JwtGuard)
+  @ApiBody({ type: UpdateTrainingDto })
   @UseGuards(IsTrainerRoleGuard)
-  @Post('updateTraining')
-  public async updateTraining(@Body() dto: UpdateTrainingDto) {
-    const updatedTraining = this.trainerAccountService.updateTraining(dto);
+  @Patch('updateTraining')
+  public async updateTraining(@Body() dto: UpdateTrainingDto): Promise<TrainingRdo> {
+    const updatedTraining = await this.trainerAccountService.updateTraining(dto);
 
-    return updatedTraining;
+    return fromEntityToTrainingRdo(updatedTraining);
   }
 
-  @UseGuards(JwtGuard)
+  @ApiParam({name: 'id', description: 'Training UUID'})
+  @UseGuards(IsTrainerRoleGuard)
   @Get('training/:id')
   public async getTrainingById(@Param() { id }: GetTrainingByIdParamsInterface) {
     const foundTraining = await this.trainerAccountService.findTrainingById(id);
@@ -83,20 +90,21 @@ export class TrainerAccountController {
     return { result: foundTraining };
   }
 
-  @UseGuards(JwtGuard)
   @UseGuards(IsTrainerRoleGuard)
-  @Post('getTrainingList')
+  @Get('getTrainingsList')
   @UsePipes(new ValidationPipe({ transform: true }))
-  public async getTrainingList(@Body() dto: GetTrainingListDto, @Query() query: GetTrainingsListQuery) {
-    const foundTrainings = await this.trainerAccountService.getTrainingList(dto.trainerId, query);
+  public async getTrainingsList(@Req() request: RequestWithTokenPayload, @Query() query: GetTrainingsListQuery) {
+    const payload: TokenPayload = request.user;
+    const foundTrainings = await this.trainerAccountService.getTrainingList(payload.userId, query);
 
-    return foundTrainings;
+    return fromEntitiesToTrainingsRdos(foundTrainings);
   }
-  @UseGuards(JwtGuard)
+
   @UseGuards(IsTrainerRoleGuard)
-  @Post('getPurchases')
-  public async getPurchases(@Body() dto: GetPurchasesDto) {
-    const foundTrainingIds = await this.trainerAccountService.getPurchasesByTrainerId(dto.trainerId);
+  @Get('getPurchases')
+  public async getPurchases(@Req() request: RequestWithTokenPayload) {
+    const payload: TokenPayload = request.user;
+    const foundTrainingIds = await this.trainerAccountService.getPurchasesByTrainerId(payload.userId);
 
     return foundTrainingIds;
   }

@@ -3,6 +3,7 @@ import { TrainingsService } from './trainings.service';
 import { GetTrainingsCatalogueQuery } from './query/get-trainings-catalogue.query';
 import { JwtGuard } from '../guards/jwtGuard.guard';
 import { ApiHeader, ApiTags } from '@nestjs/swagger';
+import { fromEntitiesToTrainingsRdos } from '../trainer-account/mappers/training.mapper';
 
 
 @ApiTags('trainings')
@@ -22,7 +23,7 @@ export class TrainingsController {
   public async trainingsCatalogue(@Body() data: any, @Query() query: GetTrainingsCatalogueQuery) {
     const foundTrainings = await this.trainingsService.findTrainings(query);
 
-    return foundTrainings;
+    return fromEntitiesToTrainingsRdos(foundTrainings);
   }
 
 }

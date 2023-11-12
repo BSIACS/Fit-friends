@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateTrainingDto } from './dto/create-training.dto';
 import { TrainingEntityInterface } from './training-entity.interface';
 import { UUID } from '../../types/uuid.type';
-import { UpdateTrainingDto } from './dto/update-training.dto';
 import { GetTrainingsListQuery } from '../trainer-account/query/get-trainings-list.query';
 import { GetTrainingsCatalogueQuery } from './query/get-trainings-catalogue.query';
+import { CreateTrainingDto } from '../trainer-account/dto/create-training.dto';
+import { UpdateTrainingDto } from '../trainer-account/dto/update-training.dto';
 
 
 
@@ -14,13 +14,16 @@ export class TrainingsRepository {
 
   constructor(private readonly prisma: PrismaService) { }
 
-  public async createTraining(dto: CreateTrainingDto): Promise<TrainingEntityInterface> {
-    console.log(dto, '---------------');
+  public async createTraining(dto: CreateTrainingDto, videoDemoFileName: string): Promise<TrainingEntityInterface> {
+    console.log(videoDemoFileName);
+
+    console.log(dto);
+
 
     const createdTraining: TrainingEntityInterface = await this.prisma.training.create({
       data: {
         name: dto.name,
-        backgroundImgFileName: dto.backgroundImgSrc,
+        backgroundImgFileName: dto.backgroundImgFileName,
         trainingLevel: dto.trainingLevel,
         trainingType: dto.trainingType,
         trainingDuration: dto.trainingDuration,
@@ -28,7 +31,7 @@ export class TrainingsRepository {
         calories: dto.calories,
         description: dto.description,
         sex: dto.sex,
-        videoDemoFileName: dto.videoDemoSrc,
+        videoDemoFileName: videoDemoFileName,
         rating: 0,
         votesNumber: 0,
         trainingCreatorId: dto.trainingCreatorId,
