@@ -1,0 +1,79 @@
+# GET USERS FRIENDS
+GET   http://localhost:3042/api/userAccount/friends/2bd0ea5f-7e5e-452f-8c7a-d83c00ca5451  HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYmQwZWE1Zi03ZTVlLTQ1MmYtOGM3YS1kODNjMDBjYTU0NTEiLCJlbWFpbCI6Im9sZ2FAc29tZW1haWwuY29tIiwibmFtZSI6ItCe0LvRjNCz0LAiLCJyb2xlIjoidXNlciIsImlhdCI6MTY5OTgyNDY0MywiZXhwIjoxNjk5ODYwNjQzfQ.5syFbMbN1ke89E-jfLhxl50CCucluVbl7ZnCaXbkXsk
+
+###
+
+# ADD NEW FRIEND
+POST   http://localhost:3042/api/userAccount/friends  HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYmQwZWE1Zi03ZTVlLTQ1MmYtOGM3YS1kODNjMDBjYTU0NTEiLCJlbWFpbCI6Im9sZ2FAc29tZW1haWwuY29tIiwibmFtZSI6ItCe0LvRjNCz0LAiLCJyb2xlIjoidXNlciIsImlhdCI6MTY5OTgyNDY0MywiZXhwIjoxNjk5ODYwNjQzfQ.5syFbMbN1ke89E-jfLhxl50CCucluVbl7ZnCaXbkXsk
+Content-Type: application/json
+
+{
+  "newFriendId": "2bd0ea5f-7e5e-452f-8c7a-d83c00ca5449"
+}
+
+###
+
+# REMOVE FROM FRIEND LIST
+POST    http://localhost:3042/api/userAccount/friends/remove  HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYmQwZWE1Zi03ZTVlLTQ1MmYtOGM3YS1kODNjMDBjYTU0NTEiLCJlbWFpbCI6Im9sZ2FAc29tZW1haWwuY29tIiwibmFtZSI6ItCe0LvRjNCz0LAiLCJyb2xlIjoidXNlciIsImlhdCI6MTY5OTgyNDY0MywiZXhwIjoxNjk5ODYwNjQzfQ.5syFbMbN1ke89E-jfLhxl50CCucluVbl7ZnCaXbkXsk
+Content-Type: application/json
+
+{
+  "friendId": "2bd0ea5f-7e5e-452f-8c7a-d83c00ca5449"
+}
+
+###
+
+# GET USERS BALANCE
+GET   http://localhost:3042/api/userAccount/balance  HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYmQwZWE1Zi03ZTVlLTQ1MmYtOGM3YS1kODNjMDBjYTU0NTEiLCJlbWFpbCI6Im9sZ2FAc29tZW1haWwuY29tIiwibmFtZSI6ItCe0LvRjNCz0LAiLCJyb2xlIjoidXNlciIsImlhdCI6MTY5OTgyNDY0MywiZXhwIjoxNjk5ODYwNjQzfQ.5syFbMbN1ke89E-jfLhxl50CCucluVbl7ZnCaXbkXsk
+
+###
+
+# ADD TO BALANCE
+POST   http://localhost:3042/api/userAccount/balance/add  HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYmQwZWE1Zi03ZTVlLTQ1MmYtOGM3YS1kODNjMDBjYTU0NTEiLCJlbWFpbCI6Im9sZ2FAc29tZW1haWwuY29tIiwibmFtZSI6ItCe0LvRjNCz0LAiLCJyb2xlIjoidXNlciIsImlhdCI6MTY5OTgyNDY0MywiZXhwIjoxNjk5ODYwNjQzfQ.5syFbMbN1ke89E-jfLhxl50CCucluVbl7ZnCaXbkXsk
+Content-Type: application/json
+
+{
+  "trainingId": "a7119df3-c77a-4994-9621-739a7356b122",
+  "quantity": 5
+}
+
+###
+
+# REMOVE FROM BALANCE
+POST   http://localhost:3042/api/userAccount/balance/remove  HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYmQwZWE1Zi03ZTVlLTQ1MmYtOGM3YS1kODNjMDBjYTU0NTEiLCJlbWFpbCI6Im9sZ2FAc29tZW1haWwuY29tIiwibmFtZSI6ItCe0LvRjNCz0LAiLCJyb2xlIjoidXNlciIsImlhdCI6MTY5OTgyNDY0MywiZXhwIjoxNjk5ODYwNjQzfQ.5syFbMbN1ke89E-jfLhxl50CCucluVbl7ZnCaXbkXsk
+Content-Type: application/json
+
+{
+  "trainingId": "a7119df3-c77a-4994-9621-739a7356b122",
+  "quantity": 5
+}
+
+###
+
+# SUBSCRIBE FOR TRAININGS BY TRAINER ID
+POST   http://localhost:3042/api/userAccount/subscribe  HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYmQwZWE1Zi03ZTVlLTQ1MmYtOGM3YS1kODNjMDBjYTU0NTEiLCJlbWFpbCI6Im9sZ2FAc29tZW1haWwuY29tIiwibmFtZSI6ItCe0LvRjNCz0LAiLCJyb2xlIjoidXNlciIsImlhdCI6MTY5OTgyNDY0MywiZXhwIjoxNjk5ODYwNjQzfQ.5syFbMbN1ke89E-jfLhxl50CCucluVbl7ZnCaXbkXsk
+Content-Type: application/json
+
+{
+  "trainerId": "9584ad02-ed85-438e-aead-797fd55978d8"
+}
+
+###
+
+# UNSUBSCRIBE
+POST   http://localhost:3042/api/userAccount/unsubscribe  HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYmQwZWE1Zi03ZTVlLTQ1MmYtOGM3YS1kODNjMDBjYTU0NTEiLCJlbWFpbCI6Im9sZ2FAc29tZW1haWwuY29tIiwibmFtZSI6ItCe0LvRjNCz0LAiLCJyb2xlIjoidXNlciIsImlhdCI6MTY5OTgyNDY0MywiZXhwIjoxNjk5ODYwNjQzfQ.5syFbMbN1ke89E-jfLhxl50CCucluVbl7ZnCaXbkXsk
+Content-Type: application/json
+
+{
+  "trainerId": "9584ad02-ed85-438e-aead-797fd55978d8"
+}
+
+###

@@ -84,6 +84,7 @@ export class UserAccountService {
 
   public async addToBalance(id: UUID, trainingId: UUID, quantity: number): Promise<void> {
     const foundUser = await this.usersRepository.findUserById(id);
+    console.log('=======', foundUser);
 
     if (!foundUser) {
       throw new UserDoesNotExistsException(id, 'id');
@@ -94,7 +95,7 @@ export class UserAccountService {
     if (!foundTraining) {
       throw new TrainingDoesNotExistsException(id, 'id');
     }
-
+    console.log('=======', foundTraining);
     const foundBalance = await this.userBalanceRepository.findInBalanceByTrainingId(id, trainingId);
 
     if(foundBalance){

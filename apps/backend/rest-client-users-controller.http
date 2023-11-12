@@ -176,7 +176,7 @@ POST   http://localhost:3042/api/users/login  HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "oleg@somemail.com",
+  "email": "olga@somemail.com",
   "password": "testpass"
 }
 
@@ -202,7 +202,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI0ZGI2N
 
 
 # UPDATE TRAINER
-POST   http://localhost:3042/api/users/update/trainer  HTTP/1.1
+PATCH   http://localhost:3042/api/users/update/trainer  HTTP/1.1
 Content-Type: application/json
 
 {
@@ -213,7 +213,7 @@ Content-Type: application/json
 
 
 # UPDATE USER
-POST   http://localhost:3042/api/users/update/user  HTTP/1.1
+PATCH   http://localhost:3042/api/users/update/user  HTTP/1.1
 Content-Type: application/json
 
 {

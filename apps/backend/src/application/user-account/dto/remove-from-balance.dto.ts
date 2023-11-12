@@ -3,7 +3,7 @@ import { UUID } from '../../../types/uuid.type';
 import { IsInt, IsUUID } from 'class-validator';
 
 
-export class AddToBalanceDto {
+export class RemoveFromBalanceDto {
   @ApiProperty({
     description: 'User UUID',
     example: '59bce336-fc4f-4a72-8840-ae903102caf9',

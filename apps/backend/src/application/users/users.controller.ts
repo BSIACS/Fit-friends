@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, Req, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, Req, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { CreateTrainerDto } from './dto/create-trainer.dto';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -85,7 +85,7 @@ export class UsersController {
   }
 
   @ApiBody({ type: UpdateUserDto })
-  @Post('update/user')
+  @Patch('update/user')
   @UseGuards(JwtGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   public async updateUser(@Body() data: UpdateUserDto): Promise<UserRdo> {
@@ -95,7 +95,7 @@ export class UsersController {
   }
 
   @ApiBody({ type: UpdateTrainerDto })
-  @Post('update/trainer')
+  @Patch('update/trainer')
   @UseGuards(JwtGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   public async updateTrainer(@Body() dto: UpdateTrainerDto): Promise<TrainerRdo> {
@@ -130,7 +130,7 @@ export class UsersController {
   }
 
   @ApiBody({ type: LogoutDto })
-  @Post('logout')
+  @Get('logout')
   public async logout(@Body() dto: LogoutDto): Promise<void> {
     await this.usersService.deleteRefreshToken(dto.id);
   }
