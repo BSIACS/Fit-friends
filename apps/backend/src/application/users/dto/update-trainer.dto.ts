@@ -1,11 +1,11 @@
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsEmail, IsEnum, IsOptional, IsUUID, Matches, MaxLength, MinLength } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsEmail, IsEnum, IsOptional, IsUUID, Matches, MaxLength, MinLength, Validate } from 'class-validator';
 import { LocationEnum } from '../../../types/location.enum';
 import { SexEnum } from '../../../types/sex.enum';
 import { TrainingLevelEnum } from '../../../types/training-level.enum';
 import { TrainingTypeEnum } from '../../../types/training-type.enum';
-import { UserRoleEnum } from '../../../types/user-role.enum';
 import { UUID } from '../../../types/uuid.type';
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 
 export class UpdateTrainerDto {
   @IsUUID()
@@ -21,8 +21,6 @@ export class UpdateTrainerDto {
   @MaxLength(15)
   @IsOptional()
   name?: string;
-
-  //avatar: string;
 
   @ApiProperty({
     description: 'User password',
@@ -97,7 +95,6 @@ export class UpdateTrainerDto {
   @IsOptional()
   trainingType?: TrainingTypeEnum[];
 
-  // certificates: string;                 //PDF. Только один файл
 
   @ApiProperty({
     description: 'Merits of the trainer',
@@ -110,10 +107,12 @@ export class UpdateTrainerDto {
 
   @ApiProperty({
     description: 'Ready for training',
-    example: true,
-    required: false,
+    example: 'true',
+    type: 'string',
+    required: false
   })
-  @IsBoolean()
+  @Validate((value) => value === 'false' || value === 'true')
+  @Transform(({value}) => value === 'true')
   @IsOptional()
   isReadyForTraining?: boolean;
 }

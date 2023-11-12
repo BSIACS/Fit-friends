@@ -14,7 +14,7 @@ export class IsTrainerRoleGuard implements CanActivate {
     const token = request.headers['authorization'].split(' ')[1];
 
     const payload = decode(token) as TokenPayload;
-    console.log(payload.role);
+
     if(payload?.role && payload.role === UserRoleEnum.TRAINER){
       return true;
     }

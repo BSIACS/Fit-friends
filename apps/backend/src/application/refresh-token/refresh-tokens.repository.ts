@@ -2,13 +2,14 @@ import { Injectable, NotImplementedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtPayload, verify } from 'jsonwebtoken';
 import { UUID } from '../../types/uuid.type';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RefreshTokenRepository {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService, private readonly configService: ConfigService) { }
 
   public async create(email: string, token: string) {
-    const payload: JwtPayload | string = verify(token, 'r-secret');
+    const payload: JwtPayload | string = verify(token, this.configService.get('jwt.refreshTokenSecret'));
 
     await this.prisma.refreshToken.create({
       data: {
@@ -18,6 +19,16 @@ export class RefreshTokenRepository {
         userId: (payload as JwtPayload).userId,
       }
     });
+  }
+
+  public async getActiveTokenByUserId(userId: UUID): Promise<string> {
+    const activeRefreshToken = (await this.prisma.refreshToken.findFirst({
+      where: {
+        userId: userId
+      }
+    })).refreshToken;
+
+    return activeRefreshToken;
   }
 
   public async removeByUserId(userId: UUID) {

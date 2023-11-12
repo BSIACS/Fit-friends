@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UUID } from '../../types/uuid.type';
-import { VerifyUserDto } from './dto/verify-user-dto';
+import { VerifyUserDto } from './dto/verify-user.dto';
 import { UsersRepository } from './users.repository';
 import { CreateTrainerDto } from './dto/create-trainer.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -19,6 +19,7 @@ import { AlreadyAddedToSubscribers } from '../exceptions/already-added-to-subscr
 import { NotFoundInSubscribers } from '../exceptions/not-found-in-friends-list.exception copy';
 import { UserEntityInterface } from './user-entity.interface';
 import { ConfigService } from '@nestjs/config';
+import { TrainerEntityInterface } from './trainer-entity.interface';
 
 @Injectable()
 export class UsersService {
@@ -41,16 +42,28 @@ export class UsersService {
     return ctreatedUser;
   }
 
-  public async createTrainer(dto: CreateTrainerDto) {
+  public async createTrainer(dto: CreateTrainerDto,  avatarFileName: string, backgroundImgFileName: string, certificateFileName: string): Promise<TrainerEntityInterface> {
     const foundUser = await this.usersRepository.findTrainerByEmail(dto.email);
 
     if (foundUser) {
       throw new UserExistsException(foundUser.email);
     }
 
-    const ctreatedUser = this.usersRepository.createTrainer(dto as CreateTrainerDto);
+    const ctreatedUser = this.usersRepository.createTrainer(dto, avatarFileName, backgroundImgFileName, certificateFileName);
 
     return ctreatedUser;
+  }
+
+  public async isUserExist(email: string): Promise<boolean>{
+    const foundTrainer = await this.usersRepository.findUserByEmail(email);
+
+    return foundTrainer ? true : false;
+  }
+
+  public async isTrainerExist(email: string): Promise<boolean>{
+    const foundTrainer = await this.usersRepository.findTrainerByEmail(email);
+
+    return foundTrainer ? true : false;
   }
 
   public async generateTokens(userId: UUID, email: string, name: string, role: string) {
@@ -75,6 +88,18 @@ export class UsersService {
     return result;
   }
 
+  public async isRefreshTokenValid(id: UUID, refreshToken: string): Promise<boolean>{
+    const activeRefreshToken = await this.refreshTokenRepository.getActiveTokenByUserId(id);
+
+    return refreshToken === activeRefreshToken;
+  }
+
+  public async deleteRefreshToken(id: UUID): Promise<void>{
+    await this.refreshTokenRepository.getActiveTokenByUserId(id);
+
+    return;
+  }
+
   public async getTokenPayload(token: string) {
     let payload;
     try {
@@ -87,7 +112,7 @@ export class UsersService {
   }
 
   public async verifyUser(dto: VerifyUserDto) {
-    let foundUser: any = await this.usersRepository.findTrainerByEmail(dto.email);
+    let foundUser: TrainerEntityInterface | UserEntityInterface = await this.usersRepository.findTrainerByEmail(dto.email);
 
     if (!foundUser) {
       foundUser = await this.usersRepository.findUserByEmail(dto.email);
@@ -106,11 +131,11 @@ export class UsersService {
     return foundUser;
   }
 
-  public async getUserDetail(id: UUID) {
-    let foundUser: any = await this.usersRepository.findUserDetail(id);
+  public async getUserDetail(id: UUID): Promise<UserEntityInterface> {
+    let foundUser = await this.usersRepository.findUserDetail(id);
 
     if(!foundUser){
-      foundUser = await this.usersRepository.findTrainerDetail(id);
+      foundUser = await this.usersRepository.findUserDetail(id);
     }
 
     return foundUser;
@@ -127,7 +152,7 @@ export class UsersService {
     return updatedUser;
   }
 
-  public async updateTrainer(dto: UpdateTrainerDto) {
+  public async updateTrainer(dto: UpdateTrainerDto): Promise<TrainerEntityInterface> {
     let updatedUser;
     try {
       updatedUser = await this.usersRepository.updateTrainer(dto);
@@ -155,7 +180,7 @@ export class UsersService {
     return foundTrainer.role === UserRoleEnum.TRAINER;
   }
 
-  public async getUsersList(query: GetUsersListQuery){
+  public async getUsersList(query: GetUsersListQuery): Promise<(UserEntityInterface | TrainerEntityInterface)[]>{
     let foundUsers;
     let foundTrainers;
 

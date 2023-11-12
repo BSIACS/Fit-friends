@@ -1,4 +1,4 @@
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsEmail, IsEnum, IsInt, IsNumberString, IsOptional, Matches, Max, MaxLength, Min, MinLength, Validate } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsEmail, IsEnum, IsNumberString, IsOptional, Matches, MaxLength, MinLength, Validate } from 'class-validator';
 import { LocationEnum } from '../../../types/location.enum';
 import { SexEnum } from '../../../types/sex.enum';
 import { TrainingDurationEnum } from '../../../types/training-duration.enum';
@@ -91,6 +91,7 @@ export class CreateUserDto {
   })
   @IsNumberString()
   @Validate((value) => +value >= 1000 && +value <= 5000)
+  @Transform(({value}) => +value)
   calories: number;
 
   @ApiProperty({
@@ -99,12 +100,15 @@ export class CreateUserDto {
   })
   @IsNumberString()
   @Validate((value) => +value >= 1000 && +value <= 5000)
+  @Transform(({value}) => +value)
   caloriesPerDay: number;
 
   @ApiProperty({
     description: 'Ready for training',
-    example: true,
+    example: 'true',
   })
   @Validate((value) => value === 'false' || value === 'true')
-  isReadyForTraining: string;
+  @Transform(({value}) => value === 'true')
+  @IsOptional()
+  isReadyForTraining: boolean;
 }

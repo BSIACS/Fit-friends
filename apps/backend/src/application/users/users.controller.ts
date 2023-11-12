@@ -1,8 +1,7 @@
-import { Body, Controller, FileTypeValidator, Get, MaxFileSizeValidator, NotImplementedException, Param, ParseFilePipe, Post, Query, Req, Request, UploadedFile, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
-import { UserValidationPipe } from '../pipes/user-validation.pipe';
+import { Body, Controller, Get, Param, Post, Query, Req, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { CreateTrainerDto } from './dto/create-trainer.dto';
-import { LoginUserDto } from './dto/login-user-dto';
+import { LoginUserDto } from './dto/login-user.dto';
 import { UsersService } from './users.service';
 import { TokenPayload } from '../../types/token-payload.interface';
 import { JwtRefreshGuard } from '../guards/jwtRefreshGuard.guard';
@@ -14,10 +13,17 @@ import { UpdateTrainerDto } from './dto/update-trainer.dto';
 import { JwtGuard } from '../guards/jwtGuard.guard';
 import { GetUsersListQuery } from './query/get-users-list.query';
 import { IsUserRoleGuard } from '../guards/is-user-role.guard';
-import { ApiBody, ApiHeader, ApiTags } from '@nestjs/swagger';
-import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
-import multer, { Multer } from 'multer';
+import { ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { multerUploadUserFileOptions } from './multer.utils';
+import { IsUserExistPipe } from '../pipes/is-user-exist.pipe';
+import { LogoutDto } from './dto/loginout.dto';
+import { UserRdo } from './rdo/user.rdo';
+import { fromEntitiesToUsersRdos, fromEntityToTrainerRdo, fromEntityToUserRdo } from './mappers/users.mappers';
+import { TrainerRdo } from './rdo/trainer.rdo';
+import { UserRoleEnum } from '../../types/user-role.enum';
+import { TrainerEntityInterface } from './trainer-entity.interface';
+import { UserEntityInterface } from './user-entity.interface';
 
 interface UserDetailParamsInterface {
   id: UUID
@@ -29,71 +35,81 @@ export class UsersController {
 
   constructor(private readonly usersService: UsersService) { }
 
+  @Get('usersList')
+  @ApiQuery({required: false})
+  @UseGuards(JwtGuard)
+  @UseGuards(IsUserRoleGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  public async usersList(@Query() query: GetUsersListQuery): Promise<(UserRdo | TrainerRdo)[]> {
+    const foundUsers = await this.usersService.getUsersList(query);
+
+    const mappedResult = foundUsers.map((entity) => entity.role === UserRoleEnum.TRAINER ? fromEntityToTrainerRdo(entity as TrainerEntityInterface) : fromEntityToUserRdo(entity as UserEntityInterface));
+
+    return mappedResult;
+  }
+
   @Post('register/user')
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseInterceptors(FileFieldsInterceptor([
     { name: 'userAvatar' },
     { name: 'userBackgroundImage' }
   ], multerUploadUserFileOptions))
-  public async createUser(@UploadedFiles() files, @Body() dto: CreateUserDto) {
-    const createdUser = this.usersService.createUser(dto, files.userAvatar[0].filename, files.userBackgroundImage[0].filename);
+  public async createUser(@UploadedFiles() files, @Body() dto: CreateUserDto): Promise<UserRdo> {
+    const createdUser = await this.usersService.createUser(
+      dto,
+      files.userAvatar[0].filename,
+      files.userBackgroundImage[0].filename
+    );
 
-    return createdUser;
+    return fromEntityToUserRdo(createdUser);
   }
 
-  @Get('usersList')
-  @UseGuards(JwtGuard)
-  @UseGuards(IsUserRoleGuard)
-  @UsePipes(new ValidationPipe({ transform: true }))
-  public async usersList(@Query() query: GetUsersListQuery) {
-    const foundUsers = await this.usersService.getUsersList(query);
-
-
-    return foundUsers;
-  }
-
-  // @ApiBody({ type: CreateUserDto })
-  // @Post('register/user')
-  // @UsePipes()
-  // public async createUser(@Body() dto: CreateUserDto) {
-  //   const createdUser = this.usersService.createUser(dto);
-
-  //   return createdUser;
-  // }
-
-  @ApiBody({ type: CreateTrainerDto })
   @Post('register/trainer')
-  @UsePipes()
-  public async createTrainer(@Body() data: CreateTrainerDto) {
-    const createdUser = this.usersService.createTrainer(data);
+  @ApiBody({ type: CreateTrainerDto })
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @UsePipes(IsUserExistPipe)
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'userAvatar' },
+    { name: 'userBackgroundImage' },
+    { name: 'certificate' }
+  ], multerUploadUserFileOptions))
+  public async createTrainer(@UploadedFiles() files, @Body() dto: CreateTrainerDto) {
+    const createdUser = await this.usersService.createTrainer(
+      dto,
+      files.userAvatar[0].filename,
+      files.userBackgroundImage[0].filename,
+      files.certificate[0].filename
+    );
 
-    return createdUser;
+    return fromEntityToTrainerRdo(createdUser);
   }
 
   @ApiBody({ type: UpdateUserDto })
   @Post('update/user')
-  @UsePipes()
-  @Post('update')
-  public async updateUser(@Body() data: UpdateUserDto) {
-    const updatedUser = this.usersService.updateUser(data);
+  @UseGuards(JwtGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  public async updateUser(@Body() data: UpdateUserDto): Promise<UserRdo> {
+    const updatedUser = await this.usersService.updateUser(data);
 
-    return updatedUser;
+    return fromEntityToUserRdo(updatedUser);
   }
 
   @ApiBody({ type: UpdateTrainerDto })
   @Post('update/trainer')
-  @UsePipes()
-  @Post('update')
-  public async updateTrainer(@Body() data: UpdateTrainerDto) {
-    const updatedUser = this.usersService.updateTrainer(data);
+  @UseGuards(JwtGuard)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  public async updateTrainer(@Body() dto: UpdateTrainerDto): Promise<TrainerRdo> {
+    console.log(dto);
 
-    return updatedUser;
+    const updatedUser = await this.usersService.updateTrainer(dto);
+
+    return fromEntityToTrainerRdo(updatedUser);;
   }
 
 
   @Post('login')
-  public async login(@Body() data: LoginUserDto): Promise<TokensPairRdo> {
-    const verifiedUser = await this.usersService.verifyUser({ ...data });
+  public async login(@Body() dto: LoginUserDto): Promise<TokensPairRdo> {
+    const verifiedUser = await this.usersService.verifyUser({ ...dto });
 
     let tokensPair;
 
@@ -113,15 +129,18 @@ export class UsersController {
     return tokensPair;
   }
 
+  @ApiBody({ type: LogoutDto })
   @Post('logout')
-  public async logout(): Promise<void> {
-    throw new NotImplementedException();
+  public async logout(@Body() dto: LogoutDto): Promise<void> {
+    await this.usersService.deleteRefreshToken(dto.id);
   }
 
+  @ApiParam({name: 'id', description: 'User UUID'})
   @Get('detail/:id')
-  public async userDetail(@Param() { id }: UserDetailParamsInterface) {
+  @UseGuards(JwtGuard)
+  public async userDetail(@Param() { id }: UserDetailParamsInterface): Promise<UserRdo> {
     const foundUser = await this.usersService.getUserDetail(id);
 
-    return foundUser;
+    return fromEntityToUserRdo(foundUser);
   }
 }

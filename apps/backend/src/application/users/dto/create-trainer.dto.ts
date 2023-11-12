@@ -1,9 +1,10 @@
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsEmail, IsEnum, IsOptional, Matches, MaxLength, MinLength } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsEmail, IsEnum, IsOptional, Matches, MaxLength, MinLength, Validate } from 'class-validator';
 import { LocationEnum } from '../../../types/location.enum';
 import { SexEnum } from '../../../types/sex.enum';
 import { TrainingLevelEnum } from '../../../types/training-level.enum';
 import { TrainingTypeEnum } from '../../../types/training-type.enum';
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 
 export class CreateTrainerDto {
   @ApiProperty({
@@ -22,8 +23,6 @@ export class CreateTrainerDto {
   @IsEmail()
   email: string;
 
-  //avatar: string;
-
   @ApiProperty({
     description: 'User password',
     example: 'testpass'
@@ -33,7 +32,7 @@ export class CreateTrainerDto {
   password: string;
 
   @ApiProperty({
-    description: 'User sex (male or female)',
+    description: 'User sex',
     example: 'male'
   })
   @IsEnum(SexEnum)
@@ -78,11 +77,9 @@ export class CreateTrainerDto {
   @IsEnum(TrainingTypeEnum, { each: true })
   trainingType: TrainingTypeEnum[];
 
-  // certificates: string;                 //PDF. Только один файл
-
   @ApiProperty({
     description: 'Merits of the trainer',
-    example: 'amateur',
+    example: 'Привет! Я профессиональный тренер по боксу. Не боюсь пробовать новое, также увлекаюсь кроссфитом и силовыми тренировками.',
   })
   @MinLength(10)
   @MaxLength(140)
@@ -90,8 +87,9 @@ export class CreateTrainerDto {
 
   @ApiProperty({
     description: 'Ready for training',
-    example: true,
+    example: 'true',
   })
-  @IsBoolean()
-  isReadyForTraining: boolean;
+  @Validate((value) => value === 'false' || value === 'true')
+  @Transform(({value}) => value === 'true')
+  isReadyForTraining: string;
 }

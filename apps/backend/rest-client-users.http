@@ -1,4 +1,10 @@
-##REGISTER USER
+# GET USERS LIST
+GET   http://localhost:3042/api/users/usersList?location=Petrogradskaya&trainingLevel=amateur&trainingType[0]=running&trainingType[1]=box  HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI0ZGI2NmRmYy02NmE1LTQzMmEtODEwNi1mNjRkMDQ1YTk2OWUiLCJlbWFpbCI6Im9sZWdAc29tZW1haWwuY29tIiwibmFtZSI6ItCe0LvQtdCzIiwicm9sZSI6InVzZXIiLCJpYXQiOjE2OTk3OTQ0NjcsImV4cCI6MTY5OTgzMDQ2N30.qXdi3xnCBI0uEx_WZhh8cZHmUNlLX2Hy_Aleppd8Odk
+
+###
+
+##REGISTER NEW USER
 
 POST http://localhost:3042/api/users/register/user HTTP/1.1
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
@@ -10,7 +16,7 @@ Content-Disposition: form-data; name="name"
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="email"
 
-johndoe@somemail.com
+oleg@somemail.com
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="password"
 
@@ -67,13 +73,13 @@ false
 Content-Disposition: form-data; name="userAvatar"; filename="user-photo-2.png"
 Content-Type: image/png
 
-< ./test-sourcec/user-photo-2.png
+< ./test-sources/user-photo-2.png
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="userBackgroundImage"; filename="user-card-photo2.jpg"
 Content-Type: image/jpg
 
-< ./test-sourcec/user-card-photo2.jpg
+< ./test-sources/user-card-photo2.jpg
 
 
 
@@ -81,3 +87,130 @@ Content-Type: image/jpg
 
 ###
 
+
+##REGISTER NEW TRAINER
+
+POST http://localhost:3042/api/users/register/trainer HTTP/1.1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="name"
+
+Михаил
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="email"
+
+johndoe@somemail.com
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="password"
+
+testpass
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="sex"
+
+male
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="birthDate"
+
+2000-09-27 18:00:00.000
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="description"
+
+Привет! Я профессиональный тренер по боксу. Не боюсь пробовать новое, также увлекаюсь кроссфитом и силовыми тренировками.
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="location"
+
+Petrogradskaya
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="trainingLevel"
+
+professional
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="trainingType[]"
+
+running
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="trainingType[]"
+
+box
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="trainingType[]"
+
+crossfit
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="merits"
+
+Персональный тренер и инструктор групповых программ с опытом  более 10 лет.
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="isReadyForTraining"
+
+false
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="userAvatar"; filename="user-photo-2.png"
+Content-Type: image/png
+
+< ./test-sources/user-photo-2.png
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="userBackgroundImage"; filename="user-card-photo2.jpg"
+Content-Type: image/jpg
+
+< ./test-sources/user-card-photo2.jpg
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="certificate"; filename="1.pdf"
+Content-Type:
+
+< ./test-sources/1.pdf
+
+
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+
+# LOGIN
+POST   http://localhost:3042/api/users/login  HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "oleg@somemail.com",
+  "password": "testpass"
+}
+
+###
+
+
+# REFRESH TOKENS PAIR
+POST   http://localhost:3042/api/users/refresh  HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI0ZGI2NmRmYy02NmE1LTQzMmEtODEwNi1mNjRkMDQ1YTk2OWUiLCJlbWFpbCI6Im9sZWdAc29tZW1haWwuY29tIiwibmFtZSI6ItCe0LvQtdCzIiwicm9sZSI6InVzZXIiLCJpYXQiOjE2OTk3OTgzNTcsImV4cCI6MTcwMTA5NDM1N30.mkgHvo1zhB8xTRoFczGdhjoX2RabYXZYFjzIzaGoOEQ
+
+###
+
+
+# UPDATE TRAINER
+POST   http://localhost:3042/api/users/update/trainer  HTTP/1.1
+Content-Type: application/json
+
+{
+  "id": "6c81306f-beb0-495d-a044-4fc6a2209724",
+  "isReadyForTraining": "true"
+}
+###
+
+# UPDATE USER
+POST   http://localhost:3042/api/users/update/user  HTTP/1.1
+Content-Type: application/json
+
+{
+  "id": "2bd0ea5f-7e5e-452f-8c7a-d83c00ca5442",
+  "isReadyForTraining": "true"
+}
+###
+
+# GET USERS LIST
+GET   http://localhost:3042/api/users/detail/2bd0ea5f-7e5e-452f-8c7a-d83c00ca5442
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI0ZGI2NmRmYy02NmE1LTQzMmEtODEwNi1mNjRkMDQ1YTk2OWUiLCJlbWFpbCI6Im9sZWdAc29tZW1haWwuY29tIiwibmFtZSI6ItCe0LvQtdCzIiwicm9sZSI6InVzZXIiLCJpYXQiOjE2OTk3OTQ0NjcsImV4cCI6MTY5OTgzMDQ2N30.qXdi3xnCBI0uEx_WZhh8cZHmUNlLX2Hy_Aleppd8Odk
+
+###

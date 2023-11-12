@@ -8,7 +8,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UUID } from '../../types/uuid.type';
 import { TrainerEntityInterface } from './trainer-entity.interface';
 import { UserEntityInterface } from './user-entity.interface';
-import { GetUsersListQuery } from './query/get-users-list.query';
 import { GetUsersFilterParams } from './query/get-users-filter-params.interface';
 import { GetUsersSortParams } from './query/get-users-sort-params.interface';
 import { UserRoleEnum } from '../../types/user-role.enum';
@@ -74,27 +73,27 @@ export class UsersRepository {
     return foundUser;
   }
 
-  public async createTrainer(dto: CreateTrainerDto): Promise<TrainerEntityInterface | null> {
+  public async createTrainer(dto: CreateTrainerDto, avatarFileName: string, backgroundImgFileName: string, certificateFileName: string): Promise<TrainerEntityInterface | null> {
     const passwordHash = await setPasswordHash(dto.password);
 
     const createdTrainer: TrainerEntityInterface | null = await this.prisma.trainer.create({
       data: {
         name: dto.name,
         email: dto.email,
-        avatarFileName: '',
+        avatarFileName: avatarFileName,
         passwordHash: passwordHash,
         sex: dto.sex,
         birthDate: new Date(dto.birthDate),
         role: UserRoleEnum.TRAINER,
         description: dto.description,
         location: dto.location,
-        backgroundImgFileName: '',
+        backgroundImgFileName: backgroundImgFileName,
         createdAt: new Date(),
         trainingLevel: dto.trainingLevel,
         trainingType: dto.trainingType,
-        certificateFileName: '',
+        certificateFileName: certificateFileName,
         merits: dto.merits,
-        isReadyForTraining: dto.isReadyForTraining,
+        isReadyForTraining: dto.isReadyForTraining === 'false' ? false : true,
       }
     });
 
@@ -120,16 +119,16 @@ export class UsersRepository {
         trainingLevel: dto.trainingLevel,
         trainingType: dto.trainingType,
         trainingDuration: dto.trainingDuration,
-        calories: +dto.calories,
-        caloriesPerDay: +dto.caloriesPerDay,
-        isReadyForTraining: dto.isReadyForTraining === 'false' ? false : true
+        calories: dto.calories,
+        caloriesPerDay: dto.caloriesPerDay,
+        isReadyForTraining: dto.isReadyForTraining
       }
     });
 
     return createdUser;
   }
 
-  public async updateTrainer(dto: UpdateTrainerDto): Promise<TrainerEntityInterface | null> {
+  public async updateTrainer(dto: UpdateTrainerDto): Promise<TrainerEntityInterface> {
     const updatedTrainer: TrainerEntityInterface | null = await this.prisma.trainer.update({
       where: {
         id: dto.id
@@ -140,7 +139,7 @@ export class UsersRepository {
     return updatedTrainer;
   }
 
-  public async updateUser(dto: UpdateUserDto): Promise<UserEntityInterface | null> {
+  public async updateUser(dto: UpdateUserDto): Promise<UserEntityInterface> {
     const updatedUser: UserEntityInterface | null = await this.prisma.user.update({
       where: {
         id: dto.id
@@ -151,7 +150,7 @@ export class UsersRepository {
     return updatedUser;
   }
 
-  public async findTrainerDetail(id: UUID): Promise<TrainerEntityInterface | null> {
+  public async findTrainerDetail(id: UUID): Promise<TrainerEntityInterface> {
     const foundUser: TrainerEntityInterface | null  = await this.prisma.trainer.findFirst({
       where: {
         id: id,
@@ -161,7 +160,7 @@ export class UsersRepository {
     return foundUser;
   }
 
-  public async findUserDetail(id: UUID): Promise<UserEntityInterface | null> {
+  public async findUserDetail(id: UUID): Promise<UserEntityInterface> {
     const foundUser = await this.prisma.user.findFirst({
       where: {
         id: id
@@ -171,7 +170,7 @@ export class UsersRepository {
     return foundUser;
   }
 
-  public async findUsers(filterParams: GetUsersFilterParams, sortParams: GetUsersSortParams) {
+  public async findUsers(filterParams: GetUsersFilterParams, sortParams: GetUsersSortParams): Promise<UserEntityInterface[]> {
     const foundUsers = await this.prisma.user.findMany({
       where: {
         location: filterParams.location ? filterParams.location : undefined,
@@ -183,7 +182,7 @@ export class UsersRepository {
     return foundUsers;
   }
 
-  public async findTrainers(filterParams: GetUsersFilterParams, sortParams: GetUsersSortParams) {
+  public async findTrainers(filterParams: GetUsersFilterParams, sortParams: GetUsersSortParams): Promise<TrainerEntityInterface[]> {
     const foundTrainers = await this.prisma.trainer.findMany({
       where: {
         location: filterParams.location ? filterParams.location : undefined,
@@ -221,7 +220,7 @@ export class UsersRepository {
     return foundSubscribersIds;
   }
 
-  public async findFriends(id: UUID): Promise<any> {
+  public async findFriends(id: UUID): Promise<UserEntityInterface[]> {
     const foundFriendsIds = (await this.prisma.user.findFirst({
       where: {
         id: id
