@@ -1,0 +1,24 @@
+###
+
+# CREATE NEW PERSONAL TRAINING REQUEST
+POST   http://localhost:3042/api/personalTrainingRequest  HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYmQwZWE1Zi03ZTVlLTQ1MmYtOGM3YS1kODNjMDBjYTU0NTEiLCJlbWFpbCI6Im9sZ2FAc29tZW1haWwuY29tIiwibmFtZSI6ItCe0LvRjNCz0LAiLCJyb2xlIjoidXNlciIsImlhdCI6MTY5OTg3MTgxMywiZXhwIjoxNjk5OTA3ODEzfQ.ygMAckt15wTitexMNiFyOLpYTxrMaSX3eAcp4tMw3T0
+Content-Type: application/json
+
+{
+  "responserId": "9584ad02-ed85-438e-aead-797fd55978d8"
+}
+###
+
+# UPDATE PERSONAL TRAINING REQUEST STATUS
+PATCH   http://localhost:3042/api/personalTrainingRequest  HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYmQwZWE1Zi03ZTVlLTQ1MmYtOGM3YS1kODNjMDBjYTU0NTEiLCJlbWFpbCI6Im9sZ2FAc29tZW1haWwuY29tIiwibmFtZSI6ItCe0LvRjNCz0LAiLCJyb2xlIjoidXNlciIsImlhdCI6MTY5OTg3MTgxMywiZXhwIjoxNjk5OTA3ODEzfQ.ygMAckt15wTitexMNiFyOLpYTxrMaSX3eAcp4tMw3T0
+Content-Type: application/json
+
+{
+  "id": "c51c6fd1-f8c2-4202-88d6-b88b7d5736f7",
+  "status": "принят"
+}
+###
+
+

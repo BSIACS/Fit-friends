@@ -11,6 +11,7 @@ import { mailOptions } from '../config/mail.config';
 import { TrainingsModule } from './trainings/training.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { NotitficationsModule } from './notifications/notifications.module';
+import { PersonalTrainingRequestModule } from './personal-training-request/personal-training-request.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { NotitficationsModule } from './notifications/notifications.module';
     UserAccountModule,
     TrainingsModule,
     ReviewsModule,
-    NotitficationsModule
+    NotitficationsModule,
+    PersonalTrainingRequestModule
   ],
   controllers: [],
   providers: [],
