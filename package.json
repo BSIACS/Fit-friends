@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "cli": "nx run cli:start  -- ",
     "backend": "nx run backend:serve"
   },
   "private": true,
