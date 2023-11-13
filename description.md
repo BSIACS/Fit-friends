@@ -30,3 +30,11 @@ nx run backend:db-fill
 ```bash
 nx run backend:serve 
 ```
+
+## 5. Спецификация
+
+Спейификация составлена посредством модуля Swagger и на ходится по адресу http://[HOST]:[PORT]/fit-friends/spec
+
+Файлы для тестирования посредством REST-Client находятся в корне каталога backend
+
+Пример инициализации переменных окружения в файле env.example
