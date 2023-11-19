@@ -4,14 +4,14 @@ import applicationConfig from '../config/application.config';
 import { ENV_FILE_PATH } from '../constants';
 import { validateEnvironments } from '../config/validation/env.validation';
 import { jwtOptions } from '../config/jwt.config';
-import { UsersModule } from './users/users.module';
-import { TrainerAccountModule } from './trainer-account/trainer-account.module';
-import { UserAccountModule } from './user-account/user-account.module';
+import { UsersModule } from './controllers/users/users.module';
+import { TrainerAccountModule } from './controllers/trainer-account/trainer-account.module';
+import { UserAccountModule } from './controllers/user-account/user-account.module';
 import { mailOptions } from '../config/mail.config';
-import { TrainingsModule } from './trainings/training.module';
-import { ReviewsModule } from './reviews/reviews.module';
-import { NotitficationsModule } from './notifications/notifications.module';
-import { PersonalTrainingRequestModule } from './personal-training-request/personal-training-request.module';
+import { TrainingsModule } from './controllers/trainings/training.module';
+import { ReviewsModule } from './controllers/reviews/reviews.module';
+import { NotitficationsModule } from './controllers/notifications/notifications.module';
+import { PersonalTrainingRequestModule } from './controllers/personal-training-request/personal-training-request.module';
 
 @Module({
   imports: [
