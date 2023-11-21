@@ -1,4 +1,4 @@
-import { NotificationEntityInterface } from '../notification-entity.interface';
+import { NotificationEntityInterface } from '../../../../entities/notification-entity.interface';
 import { GetNotificationsRdo } from '../rdo/get-notifications.rdo';
 
 export const fromEntityToGetNotificationsRdo = (entity: NotificationEntityInterface): GetNotificationsRdo => {

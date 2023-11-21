@@ -1,4 +1,4 @@
-import { UUID } from '../../../types/uuid.type'
+import { UUID } from '../types/uuid.type'
 
 export interface TrainerEntityInterface {
   id: UUID,

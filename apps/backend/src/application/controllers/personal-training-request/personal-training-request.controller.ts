@@ -7,7 +7,7 @@ import { CreatePersonalTrainingRequestDto } from './dto/create-personal-training
 import { PersonalTrainingRequestService } from './personal-training-request.service';
 import { TokenPayload } from '../../../types/token-payload.interface';
 import { ChangePersonalTrainingRequestStatusDto } from './dto/change-personal-training-request-status.dto';
-import { PersonalTrainingRequestEntityInterface } from './personal-training-request.entity';
+import { PersonalTrainingRequestEntityInterface } from '../../../entities/personal-training-request.entity';
 
 
 @ApiTags('personalTrainingRequest')

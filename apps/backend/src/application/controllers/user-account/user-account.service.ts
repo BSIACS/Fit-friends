@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { UsersRepository } from '../users/users.repository';
+import { UsersRepository } from '../../prisma/users.repository';
 import { UUID } from '../../../types/uuid.type';
-import { UserEntityInterface } from '../users/user-entity.interface';
+import { UserEntityInterface } from '../../../entities/user-entity.interface';
 import { UserDoesNotExistsException } from '../../../exceptions/user-does-not-exists.exception';
 import { AlreadyAddedToFriendsList } from '../../../exceptions/already-added-to-friends-list.exception';
 import { NotFoundInFriendsList } from '../../../exceptions/not-found-in-friends-list.exception';
-import { UserBalanceRepository } from '../../user-balance/user-balance.repository';
-import { UserBalanceEntityInterface } from '../../user-balance/entities/user-balance-entity.interface';
-import { TrainingsRepository } from '../trainings/trainings.repository';
+import { UserBalanceRepository } from '../../prisma/user-balance.repository';
+import { UserBalanceEntityInterface } from '../../../entities/user-balance-entity.interface';
+import { TrainingsRepository } from '../../prisma/trainings.repository';
 import { TrainingDoesNotExistsException } from '../../../exceptions/training-does-not-exists.exception';
 import { BalanceNotFoundException } from '../../../exceptions/balance-not-found.exception';
 

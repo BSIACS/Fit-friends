@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UUID } from '../../../types/uuid.type';
 import { VerifyUserDto } from './dto/verify-user.dto';
-import { UsersRepository } from './users.repository';
+import { UsersRepository } from '../../prisma/users.repository';
 import { CreateTrainerDto } from './dto/create-trainer.dto';
 import { JwtService } from '@nestjs/jwt';
 import { TokenPayload } from '../../../types/token-payload.interface';
@@ -17,9 +17,9 @@ import { UnconsistentTokenException } from '../../../exceptions/unconsistent-tok
 import { GetUsersListQuery } from './query/get-users-list.query';
 import { AlreadyAddedToSubscribers } from '../../../exceptions/already-added-to-subscribers.exception';
 import { NotFoundInSubscribers } from '../../../exceptions/not-found-in-friends-list.exception copy';
-import { UserEntityInterface } from './user-entity.interface';
+import { UserEntityInterface } from '../../../entities/user-entity.interface';
 import { ConfigService } from '@nestjs/config';
-import { TrainerEntityInterface } from './trainer-entity.interface';
+import { TrainerEntityInterface } from '../../../entities/trainer-entity.interface';
 
 @Injectable()
 export class UsersService {

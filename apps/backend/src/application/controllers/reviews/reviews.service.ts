@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { ReviewsRepository } from './reviews.repository';
+import { ReviewsRepository } from '../../prisma/reviews.repository';
 import { UUID } from '../../../types/uuid.type';
 import { TrainingDoesNotExistsException } from '../../../exceptions/training-does-not-exists.exception';
-import { TrainingsRepository } from '../trainings/trainings.repository';
+import { TrainingsRepository } from '../../prisma/trainings.repository';
 
 
 @Injectable()

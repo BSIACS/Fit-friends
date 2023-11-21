@@ -12,6 +12,7 @@ import { TrainingsModule } from './controllers/trainings/training.module';
 import { ReviewsModule } from './controllers/reviews/reviews.module';
 import { NotitficationsModule } from './controllers/notifications/notifications.module';
 import { PersonalTrainingRequestModule } from './controllers/personal-training-request/personal-training-request.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { PersonalTrainingRequestModule } from './controllers/personal-training-r
     TrainingsModule,
     ReviewsModule,
     NotitficationsModule,
-    PersonalTrainingRequestModule
+    PersonalTrainingRequestModule,
+    PrismaModule
   ],
   controllers: [],
   providers: [],

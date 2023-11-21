@@ -1,8 +1,8 @@
 
 import { TrainerRdo } from '../rdo/trainer.rdo';
 import { UserRdo } from '../rdo/user.rdo';
-import { TrainerEntityInterface } from '../trainer-entity.interface';
-import { UserEntityInterface } from '../user-entity.interface';
+import { TrainerEntityInterface } from '../../../../entities/trainer-entity.interface';
+import { UserEntityInterface } from '../../../../entities/user-entity.interface';
 
 export const fromEntityToUserRdo = (entity: UserEntityInterface): UserRdo => {
   return {

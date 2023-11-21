@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UUID } from '../../../types/uuid.type';
 import { PersonalTrainingRequestStatusEnum } from '../../../types/personal-training-request-status.enum';
-import { PersonalTrainingRequestEntityInterface } from './personal-training-request.entity';
+import { PersonalTrainingRequestEntityInterface } from '../../../entities/personal-training-request.entity';
 
 @Injectable()
 export class PersonalTrainingRequestRepository {

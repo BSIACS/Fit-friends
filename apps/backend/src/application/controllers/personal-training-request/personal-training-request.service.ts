@@ -1,9 +1,9 @@
 import { UUID } from '../../../types/uuid.type';
-import { TrainerEntityInterface } from '../users/trainer-entity.interface';
-import { UserEntityInterface } from '../users/user-entity.interface';
-import { UsersRepository } from '../users/users.repository';
+import { TrainerEntityInterface } from '../../../entities/trainer-entity.interface';
+import { UserEntityInterface } from '../../../entities/user-entity.interface';
+import { UsersRepository } from '../../prisma/users.repository';
 import { PersonalTrainingRequestRepository } from './personal-training-request.repository';
-import { PersonalTrainingRequestEntityInterface } from './personal-training-request.entity';
+import { PersonalTrainingRequestEntityInterface } from '../../../entities/personal-training-request.entity';
 import { UserDoesNotExistsException } from '../../../exceptions/user-does-not-exists.exception';
 import { Injectable } from '@nestjs/common';
 import { PersonalTrainingRequestStatusEnum } from '../../../types/personal-training-request-status.enum';

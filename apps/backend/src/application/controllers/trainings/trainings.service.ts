@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { TrainingEntityInterface } from './training-entity.interface';
 import { UUID } from '../../../types/uuid.type';
-import { TrainingsRepository } from './trainings.repository';
+import { TrainingsRepository } from '../../prisma/trainings.repository';
 import { TrainingDoesNotExistsException } from '../../../exceptions/training-does-not-exists.exception';
 import { GetTrainingsCatalogueQuery } from './query/get-trainings-catalogue.query';
 

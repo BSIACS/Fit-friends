@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { CreateTrainerDto } from './dto/create-trainer.dto';
-import { PrismaService } from '../../prisma/prisma.service';
-import { setPasswordHash } from '../../../utils/password.util';
-import { UpdateTrainerDto } from './dto/update-trainer.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UUID } from '../../../types/uuid.type';
-import { TrainerEntityInterface } from './trainer-entity.interface';
-import { UserEntityInterface } from './user-entity.interface';
-import { GetUsersFilterParams } from './query/get-users-filter-params.interface';
-import { GetUsersSortParams } from './query/get-users-sort-params.interface';
-import { UserRoleEnum } from '../../../types/user-role.enum';
+import { CreateUserDto } from '../controllers/users/dto/create-user.dto';
+import { CreateTrainerDto } from '../controllers/users/dto/create-trainer.dto';
+import { PrismaService } from './prisma.service';
+import { setPasswordHash } from '../../utils/password.util';
+import { UpdateTrainerDto } from '../controllers/users/dto/update-trainer.dto';
+import { UpdateUserDto } from '../controllers/users/dto/update-user.dto';
+import { UUID } from '../../types/uuid.type';
+import { TrainerEntityInterface } from '../../entities/trainer-entity.interface';
+import { UserEntityInterface } from '../../entities/user-entity.interface';
+import { GetUsersFilterParams } from '../controllers/users/query/get-users-filter-params.interface';
+import { GetUsersSortParams } from '../controllers/users/query/get-users-sort-params.interface';
+import { UserRoleEnum } from '../../types/user-role.enum';
 
 
 @Injectable()

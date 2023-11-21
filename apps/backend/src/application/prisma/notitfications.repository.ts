@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { UUID } from '../../../types/uuid.type';
-import { NotificationEntityInterface } from './notification-entity.interface';
+import { PrismaService } from './prisma.service';
+import { UUID } from '../../types/uuid.type';
+import { NotificationEntityInterface } from '../../entities/notification-entity.interface';
 
 
 

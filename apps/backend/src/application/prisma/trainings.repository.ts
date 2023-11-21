@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { TrainingEntityInterface } from './training-entity.interface';
-import { UUID } from '../../../types/uuid.type';
-import { GetTrainingsListQuery } from '../trainer-account/query/get-trainings-list.query';
-import { GetTrainingsCatalogueQuery } from './query/get-trainings-catalogue.query';
-import { CreateTrainingDto } from '../trainer-account/dto/create-training.dto';
-import { UpdateTrainingDto } from '../trainer-account/dto/update-training.dto';
+import { PrismaService } from './prisma.service';
+import { TrainingEntityInterface } from '../controllers/trainings/training-entity.interface';
+import { UUID } from '../../types/uuid.type';
+import { GetTrainingsListQuery } from '../controllers/trainer-account/query/get-trainings-list.query';
+import { GetTrainingsCatalogueQuery } from '../controllers/trainings/query/get-trainings-catalogue.query';
+import { CreateTrainingDto } from '../controllers/trainer-account/dto/create-training.dto';
+import { UpdateTrainingDto } from '../controllers/trainer-account/dto/update-training.dto';
 
 
 

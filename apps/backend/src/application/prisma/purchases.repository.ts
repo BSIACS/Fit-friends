@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreatePurchaseDto } from './dto/create-purchase.dto';
+import { PrismaService } from './prisma.service';
+import { CreatePurchaseDto } from './create-purchase.dto';
 import { UUID } from '../../types/uuid.type';
 
 
@@ -20,7 +20,7 @@ export class PurchasesRepository {
         price: dto.price,
         quantity: dto.quantity,
         paymentMethod: dto.paymentMethod,
-        totalPrice: dto.price * dto.quantity,   ////????
+        totalPrice: dto.price * dto.quantity,
         createdAt: new Date()
       }
     });

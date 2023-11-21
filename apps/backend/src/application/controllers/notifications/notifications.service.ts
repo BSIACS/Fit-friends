@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UUID } from '../../../types/uuid.type';
-import { NotificationsRepository } from './notitfications.repository';
-import { NotificationEntityInterface } from './notification-entity.interface';
+import { NotificationsRepository } from '../../prisma/notitfications.repository';
+import { NotificationEntityInterface } from '../../../entities/notification-entity.interface';
 import { NotificationDoesNotExistException } from '../../../exceptions/notification-does-not-exist.exception';
 
 

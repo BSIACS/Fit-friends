@@ -21,8 +21,8 @@ import { UserRdo } from './rdo/user.rdo';
 import { fromEntityToTrainerRdo, fromEntityToUserRdo } from './mappers/users.mappers';
 import { TrainerRdo } from './rdo/trainer.rdo';
 import { UserRoleEnum } from '../../../types/user-role.enum';
-import { TrainerEntityInterface } from './trainer-entity.interface';
-import { UserEntityInterface } from './user-entity.interface';
+import { TrainerEntityInterface } from '../../../entities/trainer-entity.interface';
+import { UserEntityInterface } from '../../../entities/user-entity.interface';
 import { IsUserExistPipe } from '../../../pipes/is-user-exist.pipe';
 
 interface UserDetailParamsInterface {

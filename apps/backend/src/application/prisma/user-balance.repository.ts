@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from './prisma.service';
 import { UUID } from '../../types/uuid.type';
-import { UserBalanceEntityInterface } from './entities/user-balance-entity.interface';
+import { UserBalanceEntityInterface } from '../../entities/user-balance-entity.interface';
 
 
 @Injectable()
