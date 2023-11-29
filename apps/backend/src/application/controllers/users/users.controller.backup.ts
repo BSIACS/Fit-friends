@@ -24,7 +24,6 @@ import { UserRoleEnum } from '../../../types/user-role.enum';
 import { TrainerEntityInterface } from '../../../entities/trainer-entity.interface';
 import { UserEntityInterface } from '../../../entities/user-entity.interface';
 import { IsUserExistPipe } from '../../../pipes/is-user-exist.pipe';
-import { CreateTrainerRdo } from './rdo/create-trainer.rdo';
 
 interface UserDetailParamsInterface {
   id: UUID
@@ -37,7 +36,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Get('usersList')
-  @ApiQuery({ required: false })
+  @ApiQuery({required: false})
   @UseGuards(JwtGuard)
   @UseGuards(IsUserRoleGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -55,7 +54,7 @@ export class UsersController {
     { name: 'userAvatar' },
     { name: 'userBackgroundImage' }
   ], multerUploadUserFileOptions))
-  public async createUser(@UploadedFiles() files, @Body() dto: CreateUserDto) {//: Promise<UserRdo> {
+  public async createUser(@UploadedFiles() files, @Body() dto: CreateUserDto){//: Promise<UserRdo> {
     // const createdUser = await this.usersService.createUser(
     //   dto,
     //   files.userAvatar[0].filename,
@@ -69,23 +68,25 @@ export class UsersController {
     return dto;
   }
 
-  @Post('register/trainer')
-  @ApiBody({ type: CreateTrainerDto })
-  @UsePipes(new ValidationPipe({ transform: true }))
-  @UsePipes(IsUserExistPipe)
-  @UseInterceptors(FileFieldsInterceptor([
-    { name: 'userAvatar' },
-  ], multerUploadUserFileOptions))
-  public async createTrainer(@UploadedFiles() files, @Body() dto: CreateTrainerDto): Promise<CreateTrainerRdo> {
-    const createdUser = await this.usersService.createTrainer(
-      dto,
-      files.userAvatar[0].filename,
-    );
+  // @Post('register/trainer')
+  // @ApiBody({ type: CreateTrainerDto })
+  // @UsePipes(new ValidationPipe({ transform: true }))
+  // @UsePipes(IsUserExistPipe)
+  // @UseInterceptors(FileFieldsInterceptor([
+  //   { name: 'userAvatar' },
+  //   { name: 'userBackgroundImage' },
+  //   { name: 'certificate' }
+  // ], multerUploadUserFileOptions))
+  // public async createTrainer(@UploadedFiles() files, @Body() dto: CreateTrainerDto) {
+  //   const createdUser = await this.usersService.createTrainer(
+  //     dto,
+  //     files.userAvatar[0].filename,
+  //     files.userBackgroundImage[0].filename,
+  //     files.certificate[0].filename
+  //   );
 
-    const tokensPair = await this.usersService.generateTokens(createdUser.id, createdUser.email, createdUser.name, createdUser.role);
-
-    return { trainer: fromEntityToTrainerRdo(createdUser), tokensPair: tokensPair };
-  }
+  //   return fromEntityToTrainerRdo(createdUser);
+  // }
 
   @ApiBody({ type: UpdateUserDto })
   @Patch('update/user')
@@ -101,10 +102,7 @@ export class UsersController {
   @Patch('update/trainer')
   @UseGuards(JwtGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @UseInterceptors(FileFieldsInterceptor([
-    { name: 'userAvatar' },
-  ], multerUploadUserFileOptions))
-  public async updateTrainer(@Body() dto: UpdateTrainerDto) {
+  public async updateTrainer(@Body() dto: UpdateTrainerDto): Promise<TrainerRdo> {
     console.log(dto);
 
     const updatedUser = await this.usersService.updateTrainer(dto);
@@ -141,21 +139,12 @@ export class UsersController {
     await this.usersService.deleteRefreshToken(dto.id);
   }
 
-  @ApiParam({ name: 'id', description: 'User UUID' })
+  @ApiParam({name: 'id', description: 'User UUID'})
   @Get('detail/:id')
   @UseGuards(JwtGuard)
   public async userDetail(@Param() { id }: UserDetailParamsInterface): Promise<UserRdo> {
     const foundUser = await this.usersService.getUserDetail(id);
 
     return fromEntityToUserRdo(foundUser);
-  }
-
-  @ApiParam({ name: 'id', description: 'User UUID' })
-  @Get('detail/trainer/:id')
-  @UseGuards(JwtGuard)
-  public async trainerDetail(@Param() { id }: UserDetailParamsInterface): Promise<TrainerRdo> {
-    const foundTrainer = await this.usersService.getTrainerDetail(id);
-
-    return fromEntityToTrainerRdo(foundTrainer);
   }
 }

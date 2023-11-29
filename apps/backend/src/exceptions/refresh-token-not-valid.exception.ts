@@ -1,6 +1,6 @@
-import { UnauthorizedException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 
-export class RefreshTokenNotValidException extends UnauthorizedException {
+export class RefreshTokenNotValidException extends BadRequestException {
   constructor() {
     super(`Refresh token not valid`);
   }

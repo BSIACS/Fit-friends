@@ -42,14 +42,14 @@ export class UsersService {
     return ctreatedUser;
   }
 
-  public async createTrainer(dto: CreateTrainerDto,  avatarFileName: string, backgroundImgFileName: string, certificateFileName: string): Promise<TrainerEntityInterface> {
+  public async createTrainer(dto: CreateTrainerDto,  avatarFileName: string): Promise<TrainerEntityInterface> {
     const foundUser = await this.usersRepository.findTrainerByEmail(dto.email);
 
     if (foundUser) {
       throw new UserExistsException(foundUser.email);
     }
 
-    const ctreatedUser = this.usersRepository.createTrainer(dto, avatarFileName, backgroundImgFileName, certificateFileName);
+    const ctreatedUser = this.usersRepository.createTrainer(dto, avatarFileName);
 
     return ctreatedUser;
   }
@@ -141,6 +141,16 @@ export class UsersService {
     return foundUser;
   }
 
+  public async getTrainerDetail(id: UUID): Promise<TrainerEntityInterface> {
+    const foundTrainer = await this.usersRepository.findTrainerDetail(id);
+
+    if(!foundTrainer){
+      throw new UserDoesNotExistsException(id, 'id');
+    }
+
+    return foundTrainer;
+  }
+
   public async updateUser(dto: UpdateTrainerDto) {
     let updatedUser;
     try {
@@ -157,6 +167,8 @@ export class UsersService {
     try {
       updatedUser = await this.usersRepository.updateTrainer(dto);
     } catch (error) {
+      console.log(error);
+
       throw new UserDoesNotExistsException(dto.id, 'id');
     }
 

@@ -115,14 +115,56 @@ Content-Disposition: form-data; name="birthDate"
 
 2000-09-27 18:00:00.000
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="description"
+
+Привет! Я профессиональный тренер по боксу. Не боюсь пробовать новое, также увлекаюсь кроссфитом и силовыми тренировками.
+------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="location"
 
 Petrogradskaya
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="trainingLevel"
+
+professional
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="trainingType[]"
+
+running
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="trainingType[]"
+
+box
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="trainingType[]"
+
+crossfit
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="merits"
+
+Персональный тренер и инструктор групповых программ с опытом  более 10 лет.
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="isReadyForTraining"
+
+false
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="userAvatar"; filename="user-photo-2.png"
 Content-Type: image/png
 
 < ./test-sources/user-photo-2.png
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="userBackgroundImage"; filename="user-card-photo2.jpg"
+Content-Type: image/jpg
+
+< ./test-sources/user-card-photo2.jpg
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="certificate"; filename="1.pdf"
+Content-Type:
+
+< ./test-sources/1.pdf
+
+
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
@@ -140,7 +182,7 @@ Content-Type: application/json
 
 ###
 
-# LOGIN
+# TRAINER
 POST   http://localhost:3042/api/users/login  HTTP/1.1
 Content-Type: application/json
 
@@ -158,24 +200,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI0ZGI2N
 
 ###
 
+
 # UPDATE TRAINER
-PATCH   http://localhost:3042/api/users/update/trainer  HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5NTg0YWQwMi1lZDg1LTQzOGUtYWVhZC03OTdmZDU1OTc4ZDgiLCJlbWFpbCI6InRyYWluaGFyZHdpdGh2YWxlcnlAc29tZW1haWwuY29tIiwibmFtZSI6ItCS0LDQu9C10YDQuNGPIiwicm9sZSI6InRyYWluZXIiLCJpYXQiOjE3MDEyMDg5MjIsImV4cCI6MTcwMTI0NDkyMn0.z_k6I6HsMhbpIwJNwyz0gR7tmfj_bMDiOY1H7t1Cmgo
-Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
-
-------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="id"
-
-9584ad02-ed85-438e-aead-797fd55978d8
-------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="name"
-
-Михаил
-------WebKitFormBoundary7MA4YWxkTrZu0gW--
-
-###
-
-# UPDATE TRAINER (OBSOLETE)
 PATCH   http://localhost:3042/api/users/update/trainer  HTTP/1.1
 Content-Type: application/json
 

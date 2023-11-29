@@ -12,7 +12,6 @@ export function StartPage(): JSX.Element {
               <img
                 src="assets/img/content/sitemap/background.jpg" srcSet="assets/img/content/sitemap/background@2x.jpg 2x" width="1440"
                 height="1024" alt="Фон с бегущей девушкой"></img>
-
             </picture>
           </div>
           <div className="intro__wrapper">
@@ -26,8 +25,8 @@ export function StartPage(): JSX.Element {
               </picture>
             </div>
             <div className="intro__buttons">
-              <button className="btn intro__button" type="button">Регистрация</button>
-              <p className="intro__text">Есть аккаунт? <Link className="intro__link" to={''}>Вход</Link>
+              <Link className="btn intro__button" to={'SignUp'}>Регистрация</Link>
+              <p className="intro__text">Есть аккаунт? <Link className="intro__link" to={'SignIn'}>Вход</Link>
               </p>
             </div>
           </div>
