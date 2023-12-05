@@ -1,3 +1,4 @@
+import styles from './sign-up.page.module.css';
 import { useRef, useState } from 'react';
 import { QuestionnaireCoachPage } from '../questionnaire-coach/questionnaire-coach.page';
 import { QuestionnaireUserPage } from '../questionnaire-user/questionnaire-user.page';
@@ -6,23 +7,25 @@ import { registerTrainerThunk } from '../../store/slices/authorization.thunk';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { setIsRegistrationComplete } from '../../store/slices/authorization.slice';
 import { Navigate } from 'react-router-dom';
+import { getLocation } from '../../utils/view-transform';
+import { LocationEnum } from '../../types/location.enum';
 
 interface SignUpPageState {
   name: string;
   email: string;
   birthDate: string;
-  location: string;
+  location: LocationEnum;
   password: string;
   sex: string;
   role: string;
   isAgree: boolean;
 }
 
-const signUpPageInitialState = {
+const signUpPageInitialState: SignUpPageState = {
   name: '',
   email: '',
   birthDate: '',
-  location: 'Petrogradskaya',
+  location: LocationEnum.PETROGRADSKAYA,
   password: '',
   sex: 'not_stated',
   role: 'user',
@@ -34,6 +37,7 @@ export function SignUpPage(): JSX.Element {
   const dispatch = useAppDispatch();
   const isRegistrationComplete = useAppSelector((state) => state.authorization.isRegistrationComplete);
   const avatarImgElement: React.MutableRefObject<any> = useRef(null);
+  const [isLocationListVissible, setIsLocationListVissible] = useState<boolean>(false);
 
   const loadAvatarInputChangeHandler = (evt: React.ChangeEvent<any>) => {
     if (evt.target.files[0]) {
@@ -45,8 +49,7 @@ export function SignUpPage(): JSX.Element {
   const formSubmitHandler = (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
     const formData = new FormData(evt.currentTarget);
-    formData.set('location', 'Petrogradskaya');
-    dispatch(registerTrainerThunk({formData: formData}));
+    dispatch(registerTrainerThunk({ formData: formData }));
   }
 
   const nameFieldChangeHandler = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,6 +78,16 @@ export function SignUpPage(): JSX.Element {
 
   const agreementCheckBoxChangeHandler = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setState({ ...state, isAgree: !state.isAgree });
+  }
+
+  const locationListItemClickHandler = (evt: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+    setState({ ...state, location: evt.currentTarget.dataset.value as LocationEnum });
+  }
+
+  const selectLocationButtonClick = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    evt.stopPropagation();
+    evt.preventDefault();
+    setIsLocationListVissible(!isLocationListVissible);
   }
 
   if (isRegistrationComplete) {
@@ -137,14 +150,20 @@ export function SignUpPage(): JSX.Element {
                       </div>
                       <div className="custom-select custom-select--not-selected"><span className="custom-select__label">Ваша
                         локация</span>
-                        <div className="custom-select__placeholder">ст. м. Петроградская</div>
-                        <button className="custom-select__button" type="button" aria-label="Выберите одну из опций">
+                        <div className="custom-select__placeholder">{getLocation(state.location)}</div>
+                        <button className={`${isLocationListVissible ? styles.appButtonNoBottomBorderRounds : ''} custom-select__button`} type="button"
+                          aria-label="Выберите одну из опций" onClick={selectLocationButtonClick}>
                           <span className="custom-select__text"></span>
                           <span className="custom-select__icon">
-                            <svg width="15" height="6" aria-hidden="true" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                            <svg width="15" height="6" aria-hidden="true" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" /></svg>
                           </span>
                         </button>
-                        <ul className="custom-select.open-up custom-select__list" role="listbox">
+                        <ul className={`${isLocationListVissible ? styles.appListVisible : styles.appListHidden} custom-select__list`} role="listbox">
+                          <li className={`custom-select__item`} data-value={LocationEnum.PETROGRADSKAYA} onClick={locationListItemClickHandler}>ст. м. Петроградская</li>
+                          <li className={`custom-select__item`} data-value={LocationEnum.PIONERSKAYA} onClick={locationListItemClickHandler}>ст. м. Пионерская</li>
+                          <li className={`custom-select__item`} data-value={LocationEnum.SPORTIVNAYA} onClick={locationListItemClickHandler}>ст. м. Спортивная</li>
+                          <li className={`custom-select__item`} data-value={LocationEnum.UDELNAYA} onClick={locationListItemClickHandler}>ст. м. Удельная</li>
+                          <li className={`custom-select__item`} data-value={LocationEnum.ZVYOZDNAYA} onClick={locationListItemClickHandler}>ст. м. Звездная</li>
                         </ul>
                       </div>
                       <div className="custom-input">

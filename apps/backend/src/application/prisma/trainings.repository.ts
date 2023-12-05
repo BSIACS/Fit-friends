@@ -117,18 +117,28 @@ export class TrainingsRepository {
   }
 
   public async findTrainings(query: GetTrainingsCatalogueQuery): Promise<TrainingEntityInterface[] | null> {
+    let trainingTypes = undefined;
+    if(query.trainingType !== undefined){
+      trainingTypes = query.trainingType.split(',')
+    }
+
     const foundTrainings = await this.prisma.training.findMany({
       where: {
-        calories: query.caloriesRange ? {
-          lte: +query.caloriesRange[1],
-          gte: +query.caloriesRange[0]
+        calories: query.minCalories && query.minCalories ? {
+          lte: +query.maxCalories,
+          gte: +query.minCalories
         } : {},
-        price: query.priceRange ? {
-          lte: +query.priceRange[1],
-          gte: +query.priceRange[0]
+        price: query.minPrice !== undefined && query.maxPrice !== undefined ? {
+          lte: +query.maxPrice,
+          gte: +query.minPrice
         } : {},
-        rating: query.rate ? +query.rate : undefined,
-        trainingType: query.trainingType ? query.trainingType : undefined
+        rating: query.minRate !== undefined && query.maxRate !== undefined ? {
+          lte: +query.maxRate,
+          gte: +query.minRate
+        } : {},
+        trainingType: {
+          in: trainingTypes ? trainingTypes : undefined
+        }
       },
       orderBy: {
         price: query.sortDirection

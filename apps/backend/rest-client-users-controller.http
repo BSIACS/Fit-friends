@@ -83,7 +83,6 @@ Content-Type: image/jpg
 < ./test-sources/user-card-photo2.jpg
 
 
-
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 ###
@@ -123,6 +122,46 @@ Content-Disposition: form-data; name="userAvatar"; filename="user-photo-2.png"
 Content-Type: image/png
 
 < ./test-sources/user-photo-2.png
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+
+##TRAINERS QUESTIONNAIRE
+
+POST http://localhost:3042/api/users/questionnaire/trainer HTTP/1.1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="id"
+
+ddde14d6-33a6-4bbe-a5bb-ed31aa4493fa
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="trainingLevel"
+
+professional
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="trainingType[]"
+
+running
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="trainingType[]"
+
+box
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="trainingType[]"
+
+crossfit
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="merits"
+
+Персональный тренер и инструктор групповых программ с опытом  более 10 лет.
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="certificate"; filename="1.pdf"
+Content-Type:
+
+< ./test-sources/1.pdf
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 

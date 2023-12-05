@@ -1,11 +1,15 @@
-import { useEffect, useState } from 'react';
+import styles from './personal-account-coach.module.css';
+import { useEffect, useRef, useState } from 'react';
 import { HeaderComponent } from '../../components/header/header.component'
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { getTrainerDetailThunk, updateTrainerDataThunk } from '../../store/slices/application.thunk';
-import { changeEditTrainerFormData, setIsBadRequest, setIsLoading } from '../../store/slices/application.slice';
+import { changeEditTrainerFormData, setIsLoading } from '../../store/slices/application.slice';
 import { Navigate } from 'react-router-dom';
-import { BadRequestPage } from '../bad-request/bad-request.page';
+import { getLocation, getSex, getTrainingLevel } from '../../utils/view-transform';
+import { TrainingLevelEnum } from '../../types/training-level.enum';
+import { SexEnum } from '../../types/sex.enum';
+import { LocationEnum } from '../../types/location.enum';
 
 
 export function PersonalAccountCoachPage(): JSX.Element {
@@ -14,23 +18,27 @@ export function PersonalAccountCoachPage(): JSX.Element {
   const isBadRequest = useAppSelector(state => state.application.isBadRequest);
   const isPersonalAccountCoachPageDataLoading = useAppSelector(state => state.application.isPersonalAccountCoachPageDataLoading);
   const [isUserInfoEditable, setIsUserInfoEditable] = useState<boolean>(false);
-
-
-  console.log(trainer);
-
+  const [isSexListVissible, setIsSexListVissible] = useState<boolean>(false);
+  const [isLocationListVissible, setIsLocationListVissible] = useState<boolean>(false);
+  const [isTrainingLevelListVissible, setIsTrainingLevelListVissible] = useState<boolean>(false);
+  const avatarImgElement: React.MutableRefObject<any> = useRef(null);
 
   useEffect(() => {
     dispatch(setIsLoading(true));
     dispatch(getTrainerDetailThunk());
+    window.addEventListener("keydown", downHandler);
   }, []);
 
+  // #region handlers
 
   const userInfoEditSubmitHandler = (evt: React.MouseEvent<HTMLFormElement, MouseEvent>) => {
     evt.preventDefault();
     const formData = new FormData(evt.currentTarget);
     formData.set('id', trainer.id as string);
     formData.set('isReadyForTraining', (trainer.isReadyForTraining as boolean) ? 'true' : 'false');
-    console.log(formData.getAll('trainingType'));
+    formData.set('trainingLevel', trainer.trainingLevel as string);
+    formData.set('location', trainer.location as string);
+    formData.set('sex', trainer.sex as string);
 
     dispatch(updateTrainerDataThunk({ formData: formData }));
     setIsUserInfoEditable(false);
@@ -50,31 +58,80 @@ export function PersonalAccountCoachPage(): JSX.Element {
   }
 
   const isReadyForTrainingChangeHandler = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(evt.currentTarget.checked);
     dispatch(changeEditTrainerFormData({ ...trainer, isReadyForTraining: !trainer.isReadyForTraining }));
+  }
+
+  const loadAvatarInputChangeHandler = (evt: React.ChangeEvent<any>) => {
+    if (evt.target.files[0]) {
+      avatarImgElement.current.src = URL.createObjectURL(evt.target.files[0]);
+      avatarImgElement.current.hidden = false;
+    }
   }
 
   const trainingTypeInputChangeHandler = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const value = evt.currentTarget.value;
     const trainingType = [...trainer.trainingType as string[]];
 
-    dispatch(changeEditTrainerFormData({...trainer, trainingType: []}));
+    dispatch(changeEditTrainerFormData({ ...trainer, trainingType: [] }));
 
     if (trainingType.includes(value)) {
       const index = trainingType.indexOf(value);
       trainingType.splice(index, 1);
-      dispatch(changeEditTrainerFormData({...trainer, trainingType: trainingType}));
+      dispatch(changeEditTrainerFormData({ ...trainer, trainingType: trainingType }));
     }
     else {
-      dispatch(changeEditTrainerFormData({...trainer, trainingType: [...trainingType, value]}));
+      dispatch(changeEditTrainerFormData({ ...trainer, trainingType: [...trainingType, value] }));
     }
   }
 
-  if(isBadRequest){
-    return <Navigate to={'/badRequest'}/>;
+  const selectSexButtonClick = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    evt.stopPropagation();
+    evt.preventDefault();
+    setIsSexListVissible(!isSexListVissible);
   }
 
-  if(isPersonalAccountCoachPageDataLoading){
+  const setTrainingLevelButtonClick = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    evt.stopPropagation();
+    evt.preventDefault();
+    setIsTrainingLevelListVissible(!isTrainingLevelListVissible);
+  }
+
+  const selectLocationButtonClick = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    evt.stopPropagation();
+    evt.preventDefault();
+    setIsLocationListVissible(!isLocationListVissible);
+  }
+
+  const trainingLevelListItemClickHandler = (evt: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+    dispatch(changeEditTrainerFormData({ ...trainer, trainingLevel: evt.currentTarget.dataset.value }));
+    setIsTrainingLevelListVissible(false);
+  }
+
+  const locationListItemClickHandler = (evt: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+    dispatch(changeEditTrainerFormData({ ...trainer, location: evt.currentTarget.dataset.value }));
+    setIsLocationListVissible(false);
+  }
+
+  const sexListItemClickHandler = (evt: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+    dispatch(changeEditTrainerFormData({ ...trainer, sex: evt.currentTarget.dataset.value }));
+    setIsSexListVissible(false);
+  }
+
+  const downHandler = ({ key }: KeyboardEvent) => {
+    if (key === 'Escape') {
+      setIsSexListVissible(false);
+      setIsTrainingLevelListVissible(false);
+      setIsLocationListVissible(false);
+    }
+  };
+
+  // #endregion
+
+  if (isBadRequest) {
+    return <Navigate to={'/badRequest'} />;
+  }
+
+  if (isPersonalAccountCoachPageDataLoading) {
     return <h1>Loading...</h1>;
   }
 
@@ -82,7 +139,7 @@ export function PersonalAccountCoachPage(): JSX.Element {
     <div className="wrapper">
       <HeaderComponent />
       <main>
-        <section className="inner-page">
+        <section className="inner-page" >
           <div className="container">
             <div className="inner-page__wrapper">
               <h1 className="visually-hidden">Личный кабинет</h1>
@@ -90,13 +147,13 @@ export function PersonalAccountCoachPage(): JSX.Element {
                 <div className="user-info-edit__header">
                   <div className="input-load-avatar">
                     <label>
-                      <input className="visually-hidden" type="file" name="user-photo-1" accept="image/png, image/jpeg" />
+                      <input onChange={loadAvatarInputChangeHandler} className="visually-hidden" type="file" name="user-photo-1" disabled={!isUserInfoEditable} accept="image/png, image/jpeg" />
                       <span className="input-load-avatar__avatar">
-                        <img src="assets/img/content/user-photo-1.png" srcSet="assets/img/content/user-photo-1@2x.png 2x" width="98" height="98" alt="user photo" />
+                        <img ref={avatarImgElement} src="assets/img/content/user-photo-1.png" srcSet="assets/img/content/user-photo-1@2x.png 2x" width="98" height="98" alt="user photo" />
                       </span>
                     </label>
                   </div>
-                  <div className="user-info-edit__controls">
+                  <div className="user-info-edit__controls" style={{visibility: !isUserInfoEditable ? 'hidden' : 'visible'}}>
                     <button className="user-info-edit__control-btn" aria-label="обновить">
                       <svg width="16" height="16" aria-hidden="true" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17 9C17 13.416 13.416 17 9 17C4.584 17 1.888 12.552 1.888 12.552M1.888 12.552H5.504M1.888 12.552V16.552M1 9C1 4.584 4.552 1 9 1C14.336 1 17 5.448 17 5.448M17 5.448V1.448M17 5.448H13.448" stroke="currentColor" /></svg>
                     </button>
@@ -141,7 +198,7 @@ export function PersonalAccountCoachPage(): JSX.Element {
                     <h2 className="user-info-edit__title user-info-edit__title--status">Статус</h2>
                     <div className="custom-toggle custom-toggle--switch user-info-edit__toggle">
                       <label>
-                        <input type="checkbox" name="isReadyForTraining" checked={trainer.isReadyForTraining} onChange={isReadyForTrainingChangeHandler} disabled={!isUserInfoEditable}/>
+                        <input type="checkbox" name="isReadyForTraining" checked={trainer.isReadyForTraining} onChange={isReadyForTrainingChangeHandler} disabled={!isUserInfoEditable} />
                         <span className="custom-toggle__icon">
                         </span>
                         <span className="custom-toggle__label">Готов тренировать</span>
@@ -159,20 +216,26 @@ export function PersonalAccountCoachPage(): JSX.Element {
                       </div>
                       <div className="btn-checkbox">
                         <label>
-                          <input className="visually-hidden" type="checkbox" name="trainingType" value="running" disabled={!isUserInfoEditable} onChange={trainingTypeInputChangeHandler} checked={(trainer.trainingType as string[]).includes('running')}/><span
+                          <input className="visually-hidden" type="checkbox" name="trainingType" value="aerobics" disabled={!isUserInfoEditable} onChange={trainingTypeInputChangeHandler} checked={(trainer.trainingType as string[]).includes('aerobics')} />
+                          <span className="btn-checkbox__btn">Аэробика</span>
+                        </label>
+                      </div>
+                      <div className="btn-checkbox">
+                        <label>
+                          <input className="visually-hidden" type="checkbox" name="trainingType" value="running" disabled={!isUserInfoEditable} onChange={trainingTypeInputChangeHandler} checked={(trainer.trainingType as string[]).includes('running')} /><span
                             className="btn-checkbox__btn">Бег</span>
                         </label>
                       </div>
                       <div className="btn-checkbox">
                         <label>
-                          <input className="visually-hidden" type="checkbox" name="trainingType" value="box" disabled={!isUserInfoEditable} onChange={trainingTypeInputChangeHandler} checked={(trainer.trainingType as string[]).includes('boxing')}/><span
+                          <input className="visually-hidden" type="checkbox" name="trainingType" value="box" disabled={!isUserInfoEditable} onChange={trainingTypeInputChangeHandler} checked={(trainer.trainingType as string[]).includes('boxing')} /><span
                             className="btn-checkbox__btn">Бокс</span>
                         </label>
                       </div>
                       <div className="btn-checkbox">
                         <label>
                           <input className="visually-hidden" type="checkbox" name="trainingType" value="pilates" disabled={!isUserInfoEditable} onChange={trainingTypeInputChangeHandler} checked={(trainer.trainingType as string[]).includes('pilates')}
-                            /><span className="btn-checkbox__btn">Пилатес</span>
+                          /><span className="btn-checkbox__btn">Пилатес</span>
                         </label>
                       </div>
                       <div className="btn-checkbox">
@@ -183,43 +246,59 @@ export function PersonalAccountCoachPage(): JSX.Element {
                       </div>
                       <div className="btn-checkbox">
                         <label>
-                          <input className="visually-hidden" type="checkbox" name="trainingType" value="crossfit" disabled={!isUserInfoEditable} onChange={trainingTypeInputChangeHandler} checked={(trainer.trainingType as string[]).includes('crossfit')}/><span
+                          <input className="visually-hidden" type="checkbox" name="trainingType" value="crossfit" disabled={!isUserInfoEditable} onChange={trainingTypeInputChangeHandler} checked={(trainer.trainingType as string[]).includes('crossfit')} /><span
                             className="btn-checkbox__btn">Кроссфит</span>
                         </label>
                       </div>
                     </div>
                   </div>
-                  <div className="custom-select user-info-edit__select"><span className="custom-select__label">Локация</span>
-                    <div className="custom-select__placeholder">ст. м. Адмиралтейская</div>
-                    <button className="custom-select__button" type="button" aria-label="Выберите одну из опций">
+                  <div className={`custom-select ${!isUserInfoEditable ? 'custom-select--readonly' : ''} user-info-edit__select`}><span className="custom-select__label">Локация</span>
+                    <div className="custom-select__placeholder">{getLocation(trainer.location as LocationEnum)}</div>
+                    <button className={`${isLocationListVissible ? styles.appButtonNoBottomBorderRounds : ''} custom-select__button`} type="button"
+                      aria-label="Выберите одну из опций" onClick={selectLocationButtonClick} disabled={!isUserInfoEditable}>
                       <span className="custom-select__text"></span>
                       <span className="custom-select__icon">
                         <svg width="15" height="6" aria-hidden="true" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" /></svg>
                       </span>
                     </button>
-                    <ul className="custom-select__list" role="listbox">
+                    <ul className={`${isLocationListVissible ? styles.appListVisible : styles.appListHidden} custom-select__list`} role="listbox">
+                      <li className={`custom-select__item`} data-value={'Petrogradskaya'} onClick={locationListItemClickHandler}>ст. м. Петроградская</li>
+                      <li className={`custom-select__item`} data-value={'Pionerskaya'} onClick={locationListItemClickHandler}>ст. м. Пионерская</li>
+                      <li className={`custom-select__item`} data-value={'Sportivnaya'} onClick={locationListItemClickHandler}>ст. м. Спортивная</li>
+                      <li className={`custom-select__item`} data-value={'Udelnaya'} onClick={locationListItemClickHandler}>ст. м. Удельная</li>
+                      <li className={`custom-select__item`} data-value={'Zvyozdnaya'} onClick={locationListItemClickHandler}>ст. м. Звездная</li>
                     </ul>
                   </div>
-                  <div className="custom-select user-info-edit__select"><span className="custom-select__label">Пол</span>
-                    <div className="custom-select__placeholder">Женский</div>
-                    <button className="custom-select__button" type="button" aria-label="Выберите одну из опций">
+                  <div className={`custom-select ${!isUserInfoEditable ? 'custom-select--readonly' : ''} user-info-edit__select`}>
+                    <span className="custom-select__label">Пол</span>
+                    <div className="custom-select__placeholder">{getSex(trainer.sex as SexEnum)}</div>
+                    <button className={`${isSexListVissible ? styles.appButtonNoBottomBorderRounds : ''} custom-select__button`} type="button"
+                      aria-label="Выберите одну из опций" onClick={selectSexButtonClick} disabled={!isUserInfoEditable}>
                       <span className="custom-select__text"></span>
                       <span className="custom-select__icon">
                         <svg width="15" height="6" aria-hidden="true" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" /></svg>
                       </span>
                     </button>
-                    <ul className="custom-select__list" role="listbox">
+                    <ul className={`${isSexListVissible ? styles.appListVisible : styles.appListHidden} custom-select__list`} role="listbox">
+                      <li className={`custom-select__item`} data-value={SexEnum.MALE} onClick={sexListItemClickHandler}>Мужской</li>
+                      <li className={`custom-select__item`} data-value={SexEnum.FEMALE} onClick={sexListItemClickHandler}>Женский</li>
+                      <li className={`custom-select__item`} data-value={SexEnum.NOT_STATED} onClick={sexListItemClickHandler}>Не указано</li>
                     </ul>
                   </div>
-                  <div className="custom-select user-info-edit__select"><span className="custom-select__label">Уровень</span>
-                    <div className="custom-select__placeholder">Профессионал</div>
-                    <button className="custom-select__button" type="button" aria-label="Выберите одну из опций">
+                  <div className={`custom-select ${!isUserInfoEditable ? 'custom-select--readonly' : ''} user-info-edit__select`}>
+                    <span className="custom-select__label">Уровень</span>
+                    <div className="custom-select__placeholder">{getTrainingLevel(trainer.trainingLevel as TrainingLevelEnum)}</div>
+                    <button className={`${isTrainingLevelListVissible ? styles.appButtonNoBottomBorderRounds : ''} custom-select__button`} type="button" aria-label="Выберите одну из опций"
+                      onClick={setTrainingLevelButtonClick} disabled={!isUserInfoEditable}>
                       <span className="custom-select__text"></span>
                       <span className="custom-select__icon">
                         <svg width="15" height="6" aria-hidden="true" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" /></svg>
                       </span>
                     </button>
-                    <ul className="custom-select__list" role="listbox">
+                    <ul className={`${isTrainingLevelListVissible ? styles.appListVisible : styles.appListHidden} custom-select__list`} role="listbox">
+                      <li className={`custom-select__item`} data-value={TrainingLevelEnum.BEGINNER} onClick={trainingLevelListItemClickHandler}>Новичок</li>
+                      <li className={`custom-select__item`} data-value={TrainingLevelEnum.AMATEUR} onClick={trainingLevelListItemClickHandler}>Любитель</li>
+                      <li className={`custom-select__item`} data-value={TrainingLevelEnum.PROFESSIONAL} onClick={trainingLevelListItemClickHandler}>Профессионал</li>
                     </ul>
                   </div>
                 </form>

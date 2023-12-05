@@ -76,5 +76,21 @@ export const updateTrainerDataThunk = createAsyncThunk(
   }
 );
 
+export const getTrainingsDataThunk = createAsyncThunk(
+  'application/getTrainingsDataThunk',
+  async (payload: string, thunkApi) => {
+    try {
+      console.log(`http://localhost:3042/api/trainings/catalogue/${payload}`);
+
+      const axiosInstance = axios.create();
+      axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
+      const response = await axiosInstance.get<any>(`http://localhost:3042/api/trainings/catalogue${payload}`);
+
+      return response.data;
+    } catch (error: any) {
+      return thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
 
 

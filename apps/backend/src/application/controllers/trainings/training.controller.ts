@@ -24,6 +24,7 @@ export class TrainingsController {
     const foundTrainings = await this.trainingsService.findTrainings(query);
 
     return fromEntitiesToTrainingsRdos(foundTrainings);
+
   }
 
 }

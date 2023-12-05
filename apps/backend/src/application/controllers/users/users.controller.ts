@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, Req, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, Req, UploadedFile, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { CreateTrainerDto } from './dto/create-trainer.dto';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -14,7 +14,7 @@ import { JwtGuard } from '../../../guards/jwtGuard.guard';
 import { GetUsersListQuery } from './query/get-users-list.query';
 import { IsUserRoleGuard } from '../../../guards/is-user-role.guard';
 import { ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { multerUploadUserFileOptions } from './multer.utils';
 import { LogoutDto } from './dto/loginout.dto';
 import { UserRdo } from './rdo/user.rdo';
@@ -25,6 +25,9 @@ import { TrainerEntityInterface } from '../../../entities/trainer-entity.interfa
 import { UserEntityInterface } from '../../../entities/user-entity.interface';
 import { IsUserExistPipe } from '../../../pipes/is-user-exist.pipe';
 import { CreateTrainerRdo } from './rdo/create-trainer.rdo';
+import { UploadFileManagerService } from '../../upload-file-manager/upload-file-manager.service';
+import { TrainerQuestionnaireDto } from './dto/trainer-questionnaire.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 interface UserDetailParamsInterface {
   id: UUID
@@ -34,7 +37,11 @@ interface UserDetailParamsInterface {
 @Controller('users')
 export class UsersController {
 
-  constructor(private readonly usersService: UsersService) { }
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly uploadFileManagerService: UploadFileManagerService
+
+  ) { }
 
   @Get('usersList')
   @ApiQuery({ required: false })
@@ -69,22 +76,48 @@ export class UsersController {
     return dto;
   }
 
+  public getImageType(mimetype: string) {
+    let slashIndex = mimetype.indexOf('/');
+
+    return mimetype.slice(++slashIndex);
+  }
+
   @Post('register/trainer')
   @ApiBody({ type: CreateTrainerDto })
   @UsePipes(new ValidationPipe({ transform: true }))
   @UsePipes(IsUserExistPipe)
-  @UseInterceptors(FileFieldsInterceptor([
-    { name: 'userAvatar' },
-  ], multerUploadUserFileOptions))
-  public async createTrainer(@UploadedFiles() files, @Body() dto: CreateTrainerDto): Promise<CreateTrainerRdo> {
-    const createdUser = await this.usersService.createTrainer(
-      dto,
-      files.userAvatar[0].filename,
-    );
+  @UseInterceptors(FileInterceptor('userAvatar'))
+  public async createTrainer(@UploadedFile() file, @Body() dto: CreateTrainerDto): Promise<CreateTrainerRdo> {
+    const createdUser = await this.usersService.createTrainer(dto, 'avatar');
+
+    this.uploadFileManagerService.saveAvatar(createdUser.id, file);
 
     const tokensPair = await this.usersService.generateTokens(createdUser.id, createdUser.email, createdUser.name, createdUser.role);
 
     return { trainer: fromEntityToTrainerRdo(createdUser), tokensPair: tokensPair };
+  }
+
+  @Post('questionnaire/trainer')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  //@UsePipes(IsUserExistPipe)
+  @UseInterceptors(FileInterceptor('certificate'))
+  public async questionnaireTrainer(@UploadedFile() file, @Body() dto: TrainerQuestionnaireDto) {
+    const certificateFileName: string = uuidv4();
+    file.originalname = certificateFileName;
+
+    const updatedUser = await this.usersService.updateTrainer({ ...dto }, certificateFileName);
+
+    this.uploadFileManagerService.saveCertificate(updatedUser.id, file);
+
+    return updatedUser;
+  }
+
+  @Get('test')
+  public async test() {
+
+    //this.uploadFileManagerService.saveAvatar('test');
+
+    return { test: 42 };
   }
 
   @ApiBody({ type: UpdateUserDto })

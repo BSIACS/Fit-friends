@@ -13,6 +13,8 @@ import { ReviewsModule } from './controllers/reviews/reviews.module';
 import { NotitficationsModule } from './controllers/notifications/notifications.module';
 import { PersonalTrainingRequestModule } from './controllers/personal-training-request/personal-training-request.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -22,6 +24,9 @@ import { PrismaModule } from './prisma/prisma.module';
       envFilePath: ENV_FILE_PATH,
       load: [applicationConfig, jwtOptions, mailOptions],
       validate: validateEnvironments,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'backend/assets'),
     }),
     UsersModule,
     TrainerAccountModule,

@@ -13,6 +13,8 @@ import { PersonalAccountCoachPage } from './pages/personal-account-coach/persona
 import { QuestionnaireCoachPage } from './pages/questionnaire-coach/questionnaire-coach.page';
 import { setIsLoading } from './store/slices/authorization.slice';
 import { BadRequestPage } from './pages/bad-request/bad-request.page';
+import { AppRoutes } from './constants/app-routes.constants';
+import { TrainingCatalogPage } from './pages/training-catalog/training-catalog.page';
 
 export function App() {
   const dispatch = useAppDispatch();
@@ -31,9 +33,10 @@ export function App() {
   return (
     <Routes>
       <Route path={'/'} element={<StartPage />} />
-      <Route path={'/signIn'} element={<SignInPage />} />
-      <Route path={'/signUp'} element={<SignUpPage />} />
+      <Route path={AppRoutes.SIGN_IN} element={<SignInPage />} />
+      <Route path={AppRoutes.SIGN_UP} element={<SignUpPage />} />
       <Route path={'/index'} element={<PrivateRouteComponent validRole='user'><IndexPage /></PrivateRouteComponent>} />
+      <Route path={AppRoutes.TRAINING_CATALOG} element={<PrivateRouteComponent validRole='user'><TrainingCatalogPage /></PrivateRouteComponent>} />
       <Route path={'/coachAccount'} element={<PrivateRouteComponent validRole='trainer'><PersonalAccountCoachPage /></PrivateRouteComponent>} />
       <Route path={'/questionnaireCoach'} element={<PrivateRouteComponent validRole='trainer'><QuestionnaireCoachPage /></PrivateRouteComponent>} />
       <Route path={'/notFound'} element={<NotFoundPage />} />

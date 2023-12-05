@@ -162,10 +162,10 @@ export class UsersService {
     return updatedUser;
   }
 
-  public async updateTrainer(dto: UpdateTrainerDto): Promise<TrainerEntityInterface> {
+  public async updateTrainer(dto: UpdateTrainerDto, certificateFileName?: string): Promise<TrainerEntityInterface> {
     let updatedUser;
     try {
-      updatedUser = await this.usersRepository.updateTrainer(dto);
+      updatedUser = await this.usersRepository.updateTrainer({...dto, certificateFileName: certificateFileName});
     } catch (error) {
       console.log(error);
 

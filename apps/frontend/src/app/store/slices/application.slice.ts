@@ -9,23 +9,27 @@ import { RefreshTokensPairDTO } from '../../dto/refresh-tokens-pair.dto';
 import { AuthorizationStatusEnum } from '../../types/authorization-status.enum';
 import { TrainerData } from '../../types/trainer-data';
 import { TrainerDTO } from '../../dto/trainer.dto';
-import { getTrainerDetailThunk, updateTrainerDataThunk } from './application.thunk';
+import { getTrainerDetailThunk, getTrainingsDataThunk, updateTrainerDataThunk } from './application.thunk';
 
 
 export interface ApplicationState {
   isLoading: boolean;
   isPersonalAccountCoachPageDataLoading: boolean;
+  isTrainingDataLoading: boolean;
   isBadRequest: boolean;
   actualTrainerData: TrainerData;
   editTrainerFormData: TrainerData;
+  actualTrainingsData: []
 }
 
 const initialState: ApplicationState = {
   isLoading: false,
   isPersonalAccountCoachPageDataLoading: true,
+  isTrainingDataLoading: false,
   isBadRequest: false,
   actualTrainerData: {},
-  editTrainerFormData: {}
+  editTrainerFormData: {},
+  actualTrainingsData: [],
 };
 
 export const applicationSlice = createSlice({
@@ -36,6 +40,7 @@ export const applicationSlice = createSlice({
     setIsBadRequest: (state, action) => { state.isBadRequest = action.payload; },
     setIsLoading: (state, action) => { state.isLoading = action.payload; },
     setisPersonalAccountCoachPageDataLoading: (state, action) => { state.isPersonalAccountCoachPageDataLoading = action.payload; },
+    setIsTrainingDataLoading: (state, action) => { state.isTrainingDataLoading = action.payload; },
   },
   extraReducers(builder) {
     builder
@@ -55,12 +60,18 @@ export const applicationSlice = createSlice({
           state.isLoading = false;
       })
       .addCase(updateTrainerDataThunk.rejected, (state, action) => {
-        console.log('asdasdasdasdasdasddddddddddddaaaaaaaa');
         state.isBadRequest = true;
         state.editTrainerFormData = state.actualTrainerData;
+      })
+      .addCase(getTrainingsDataThunk.pending, (state) => {
+        state.isTrainingDataLoading = true;
+      })
+      .addCase(getTrainingsDataThunk.fulfilled, (state, action: PayloadAction<any>,) => {
+        state.actualTrainingsData = action.payload;
+        state.isTrainingDataLoading = false;
       })
   }
 });
 
-export const { changeEditTrainerFormData, setIsBadRequest, setIsLoading } = applicationSlice.actions;
+export const { changeEditTrainerFormData, setIsBadRequest, setIsLoading, setIsTrainingDataLoading } = applicationSlice.actions;
 export const applicationReducer = applicationSlice.reducer;

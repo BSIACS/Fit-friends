@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { setIsRegistrationComplete } from '../../store/slices/authorization.slice';
 
@@ -11,28 +11,26 @@ interface QuestionnaireCoachPageState {
   level: string;
   certificate: File | undefined;
   merits: string;
-  isIndividualTrainingAvailable: boolean;
+  isReadyForTraining: boolean;
 }
 
-const questionnaireCoachPageInitialState = {
+const questionnaireCoachPageInitialState: QuestionnaireCoachPageState = {
   specialization: [],
   level: 'amature',
   certificate: undefined,
   merits: '',
-  isIndividualTrainingAvailable: false,
+  isReadyForTraining: false,
 }
 
 export function QuestionnaireCoachPage(): JSX.Element {
   const dispatch = useAppDispatch();
   const [state, setState] = useState<QuestionnaireCoachPageState>(questionnaireCoachPageInitialState);
+  const certificateSpanElement: React.MutableRefObject<any> = useRef(null);
 
-  console.log('***666***');
+  console.log(state);
+
 
   dispatch(setIsRegistrationComplete(false));
-
-  console.log('***777***');
-
-
 
   const specializationRadioButtonClickHandler = (evt: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
     const value = evt.currentTarget.value;
@@ -53,6 +51,10 @@ export function QuestionnaireCoachPage(): JSX.Element {
 
   const descriptionFieldChangeHandler = (evt: React.ChangeEvent<HTMLTextAreaElement>) => {
     setState({ ...state, merits: evt.currentTarget.value });
+  }
+
+  const isReadyForTrainingChangeHandler = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setState({ ...state, isReadyForTraining: !state.isReadyForTraining })
   }
 
   return (
@@ -85,13 +87,6 @@ export function QuestionnaireCoachPage(): JSX.Element {
                               <input className="visually-hidden" type="checkbox" name="specialization" value="running"
                                 checked={state.specialization.includes('running')} onClick={specializationRadioButtonClickHandler} />
                               <span className="btn-checkbox__btn">Бег</span>
-                            </label>
-                          </div>
-                          <div className="btn-checkbox">
-                            <label>
-                              <input className="visually-hidden" type="checkbox" name="specialization" value="power"
-                                checked={state.specialization.includes('power')} onClick={specializationRadioButtonClickHandler} />
-                              <span className="btn-checkbox__btn">Силовые</span>
                             </label>
                           </div>
                           <div className="btn-checkbox">
@@ -133,7 +128,7 @@ export function QuestionnaireCoachPage(): JSX.Element {
                       </div>
                       <div className="questionnaire-coach__block"><span className="questionnaire-coach__legend">Ваш уровень</span>
                         <div className="custom-toggle-radio custom-toggle-radio--big questionnaire-coach__radio">
-                        <div className="custom-toggle-radio__block">
+                          <div className="custom-toggle-radio__block">
                             <label>
                               <input type="radio" name="level" value={'beginner'} checked={state.level === 'beginner' ?? true} onClick={levelRadioButtonClickHandler} />
                               <span className="custom-toggle-radio__icon"></span>
@@ -156,20 +151,19 @@ export function QuestionnaireCoachPage(): JSX.Element {
                           </div>
                         </div>
                       </div>
-                      <div className="questionnaire-coach__block"><span className="questionnaire-coach__legend">Ваши дипломы и
-                        сертификаты</span>
+                      <div className="questionnaire-coach__block">
+                        <span className="questionnaire-coach__legend">Ваши дипломы и сертификаты</span>
                         <div className="drag-and-drop questionnaire-coach__drag-and-drop">
                           <label>
-                            <span className="drag-and-drop__label" tabIndex={0}>Загрузите сюда файлы формата PDF, JPG или
-                              PNG
+                            <span className="drag-and-drop__label" tabIndex={0}>Загрузите сюда файлы формата PDF, JPG или PNG
                               <svg width="20" height="20" aria-hidden="true" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 1H8C3 1 1 3 1 8V14C1 19 3 21 8 21H14C19 21 21 19 21 14V9M17 1V7M17 7L19 5M17 7L15 5M1.67 17.95L6.6 14.64C7.39 14.11 8.53 14.17 9.24 14.78L9.57 15.07C10.35 15.74 11.61 15.74 12.39 15.07L16.55 11.5C17.33 10.83 18.59 10.83 19.37 11.5L21 12.9M10 7C10 8.10457 9.10457 9 8 9C6.89543 9 6 8.10457 6 7C6 5.89543 6.89543 5 8 5C9.10457 5 10 5.89543 10 7Z" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" /></svg>
                             </span>
-                            <input type="file" name="import" tabIndex={-1} accept=".pdf, .jpg, .png" />
+                            <input type="file" name="import" tabIndex={-1} accept=".pdf" />
                           </label>
                         </div>
                       </div>
-                      <div className="questionnaire-coach__block" /><span className="questionnaire-coach__legend">Расскажите о своём
-                        опыте, который мы сможем проверить</span>
+                      <div className="questionnaire-coach__block" />
+                      <span className="questionnaire-coach__legend">Расскажите о своём опыте, который мы сможем проверить</span>
                       <div className="custom-textarea questionnaire-coach__textarea">
                         <label>
                           <textarea name="description" placeholder=" " value={state.merits} onChange={descriptionFieldChangeHandler}></textarea>
@@ -177,7 +171,8 @@ export function QuestionnaireCoachPage(): JSX.Element {
                       </div>
                       <div className="questionnaire-coach__checkbox">
                         <label>
-                          <input type="checkbox" value="individual-training" name="individual-training" />
+                          <input type="checkbox" value="individual-training" name="individual-training" checked={state.isReadyForTraining}
+                            onChange={isReadyForTrainingChangeHandler} />
                           <span className="questionnaire-coach__checkbox-icon">
                             <svg aria-hidden="true" width="9" height="6" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 4L3.99647 7L10 1" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" /></svg>
                           </span>

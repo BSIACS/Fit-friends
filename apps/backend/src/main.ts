@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { ApplicationModule } from './application/application.module';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApplicationModule, {cors: true});
@@ -28,6 +29,8 @@ async function bootstrap() {
   Logger.log(
     `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
   );
+
+  Logger.log(`Assets rootPath: ${join(__dirname, '..', 'backend/assets')}`)
 }
 
 bootstrap();

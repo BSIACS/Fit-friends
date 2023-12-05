@@ -9,11 +9,14 @@ import { UsersService } from './users.service';
 import { UsersRepository } from '../../prisma/users.repository';
 import { RefreshTokenRepository } from '../../refresh-token/refresh-tokens.repository';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh-strategy';
+import { UploadFileManagerModule } from '../../upload-file-manager/upload-file-manager';
+import { UploadFileManagerService } from '../../upload-file-manager/upload-file-manager.service';
 
 @Global()
 @Module({
   imports: [
     PassportModule,
+    UploadFileManagerModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -21,7 +24,7 @@ import { JwtRefreshStrategy } from './strategies/jwt-refresh-strategy';
     })
   ],
   controllers: [UsersController],
-  providers: [UsersService, UsersRepository, JwtStrategy, RefreshTokenRepository, JwtRefreshStrategy],
+  providers: [UsersService, UsersRepository, JwtStrategy, RefreshTokenRepository, JwtRefreshStrategy, UploadFileManagerService],
   exports: [UsersService]
 })
 export class UsersModule { }

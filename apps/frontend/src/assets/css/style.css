@@ -2039,7 +2039,7 @@ input:active + .custom-textarea__text {
   bottom: 10px;
   z-index: 1;
   width: 100%;
-  max-height: 100px;
+  max-height: 200px;
   margin: 0;
   padding: 0;
   overflow-y: auto;
@@ -2057,7 +2057,8 @@ input:active + .custom-textarea__text {
 }
 
 .custom-select__item {
-  padding: 5px;
+  padding: 9px;
+  padding-left: 18px;
   outline: none;
   cursor: pointer;
   -webkit-transition: background-color 0.3s ease;
@@ -10966,3 +10967,53 @@ input:active + .custom-textarea__text {
     background-color: #f7f7f7;
   }
 }
+
+
+
+
+/******************************************************/
+
+.horizontal-slider {
+  width: 100%;
+  max-width: 500px;
+  height: 40px;
+  margin: auto;
+}
+.example-thumb {
+  cursor: pointer;
+  position: absolute;
+  z-index: 100;
+  background: #333333;
+  border: 5px solid #333333;
+  border-radius: 100%;
+  display: block;
+  box-shadow: 0 0 2px 0 rgb(0 0 0 / 44%);
+}
+.example-thumb.active {
+  background-color: #333333;
+}
+.example-track {
+  position: relative;
+  background: #333333;
+}
+.example-track.example-track-0 {
+  background: lightgray;
+}
+
+.example-track.example-track-2 {
+  background: lightgray;
+}
+
+.horizontal-slider .example-track {
+  top: 20px;
+  height: 1px;
+}
+.horizontal-slider .example-thumb {
+  top: 12px;
+  width: 17px;
+  outline: none;
+  height: 17px;
+  line-height: 38px;
+}
+
+

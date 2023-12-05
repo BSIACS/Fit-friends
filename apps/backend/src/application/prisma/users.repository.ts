@@ -128,12 +128,12 @@ export class UsersRepository {
     return createdUser;
   }
 
-  public async updateTrainer(dto: UpdateTrainerDto): Promise<TrainerEntityInterface> {
+  public async updateTrainer(entity: TrainerEntityInterface): Promise<TrainerEntityInterface> {
     const updatedTrainer: TrainerEntityInterface | null = await this.prisma.trainer.update({
       where: {
-        id: dto.id
+        id: entity.id
       },
-      data: dto
+      data: entity
     });
 
     return updatedTrainer;
