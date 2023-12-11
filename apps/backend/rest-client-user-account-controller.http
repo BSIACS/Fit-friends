@@ -28,17 +28,17 @@ Content-Type: application/json
 
 # GET USERS BALANCE
 GET   http://localhost:3042/api/userAccount/balance  HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYmQwZWE1Zi03ZTVlLTQ1MmYtOGM3YS1kODNjMDBjYTU0NTEiLCJlbWFpbCI6Im9sZ2FAc29tZW1haWwuY29tIiwibmFtZSI6ItCe0LvRjNCz0LAiLCJyb2xlIjoidXNlciIsImlhdCI6MTY5OTgyNDY0MywiZXhwIjoxNjk5ODYwNjQzfQ.5syFbMbN1ke89E-jfLhxl50CCucluVbl7ZnCaXbkXsk
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYmQwZWE1Zi03ZTVlLTQ1MmYtOGM3YS1kODNjMDBjYTU0NTEiLCJlbWFpbCI6Im9sZ2FAc29tZW1haWwuY29tIiwibmFtZSI6ItCe0LvRjNCz0LAiLCJyb2xlIjoidXNlciIsImlhdCI6MTcwMjIwNDkwOSwiZXhwIjoxNzAyMjQwOTA5fQ.KEHwBXiJHB8JLUq5Om4NJkhHQiQLmC3UmW3F7HZ9kBg
 
 ###
 
 # ADD TO BALANCE
 POST   http://localhost:3042/api/userAccount/balance/add  HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYmQwZWE1Zi03ZTVlLTQ1MmYtOGM3YS1kODNjMDBjYTU0NTEiLCJlbWFpbCI6Im9sZ2FAc29tZW1haWwuY29tIiwibmFtZSI6ItCe0LvRjNCz0LAiLCJyb2xlIjoidXNlciIsImlhdCI6MTY5OTgyNDY0MywiZXhwIjoxNjk5ODYwNjQzfQ.5syFbMbN1ke89E-jfLhxl50CCucluVbl7ZnCaXbkXsk
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYmQwZWE1Zi03ZTVlLTQ1MmYtOGM3YS1kODNjMDBjYTU0NTEiLCJlbWFpbCI6Im9sZ2FAc29tZW1haWwuY29tIiwibmFtZSI6ItCe0LvRjNCz0LAiLCJyb2xlIjoidXNlciIsImlhdCI6MTcwMjIwNDkwOSwiZXhwIjoxNzAyMjQwOTA5fQ.KEHwBXiJHB8JLUq5Om4NJkhHQiQLmC3UmW3F7HZ9kBg
 Content-Type: application/json
 
 {
-  "trainingId": "a7119df3-c77a-4994-9621-739a7356b122",
+  "trainingId": "af430d39-5608-4815-9de9-ff43be0c6936",
   "quantity": 5
 }
 
@@ -46,12 +46,12 @@ Content-Type: application/json
 
 # REMOVE FROM BALANCE
 POST   http://localhost:3042/api/userAccount/balance/remove  HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYmQwZWE1Zi03ZTVlLTQ1MmYtOGM3YS1kODNjMDBjYTU0NTEiLCJlbWFpbCI6Im9sZ2FAc29tZW1haWwuY29tIiwibmFtZSI6ItCe0LvRjNCz0LAiLCJyb2xlIjoidXNlciIsImlhdCI6MTY5OTgyNDY0MywiZXhwIjoxNjk5ODYwNjQzfQ.5syFbMbN1ke89E-jfLhxl50CCucluVbl7ZnCaXbkXsk
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyYmQwZWE1Zi03ZTVlLTQ1MmYtOGM3YS1kODNjMDBjYTU0NTEiLCJlbWFpbCI6Im9sZ2FAc29tZW1haWwuY29tIiwibmFtZSI6ItCe0LvRjNCz0LAiLCJyb2xlIjoidXNlciIsImlhdCI6MTcwMjIwNDkwOSwiZXhwIjoxNzAyMjQwOTA5fQ.KEHwBXiJHB8JLUq5Om4NJkhHQiQLmC3UmW3F7HZ9kBg
 Content-Type: application/json
 
 {
-  "trainingId": "a7119df3-c77a-4994-9621-739a7356b122",
-  "quantity": 5
+  "trainingId": "af430d39-5608-4815-9de9-ff43be0c6936",
+  "quantity": 1
 }
 
 ###

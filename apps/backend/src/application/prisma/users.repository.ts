@@ -100,7 +100,7 @@ export class UsersRepository {
     return createdTrainer;
   }
 
-  public async createUser(dto: CreateUserDto, avatarFileName: string, backgroundImgFileName: string): Promise<UserEntityInterface> {
+  public async createUser(dto: CreateUserDto, avatarFileName: string): Promise<UserEntityInterface> {
     const passwordHash = await setPasswordHash(dto.password);
 
     const createdUser = await this.prisma.user.create({
@@ -112,16 +112,16 @@ export class UsersRepository {
         sex: dto.sex,
         birthDate: new Date(dto.birthDate),
         role: UserRoleEnum.USER,
-        description: dto.description,
+        description: '',
         location: dto.location,
-        backgroundImgFileName: backgroundImgFileName,
+        backgroundImgFileName: '',
         createdAt: new Date(),
-        trainingLevel: dto.trainingLevel,
-        trainingType: dto.trainingType,
-        trainingDuration: dto.trainingDuration,
-        calories: dto.calories,
-        caloriesPerDay: dto.caloriesPerDay,
-        isReadyForTraining: dto.isReadyForTraining
+        trainingLevel: '',
+        trainingType: [],
+        trainingDuration: '',
+        calories: 0,
+        caloriesPerDay: 0,
+        isReadyForTraining: false
       }
     });
 
@@ -140,11 +140,15 @@ export class UsersRepository {
   }
 
   public async updateUser(dto: UpdateUserDto): Promise<UserEntityInterface> {
+    console.log(dto);
+
     const updatedUser: UserEntityInterface | null = await this.prisma.user.update({
       where: {
         id: dto.id
       },
-      data: dto
+      data: {
+        calories: dto.caloriesPerDay
+      }
     });
 
     return updatedUser;

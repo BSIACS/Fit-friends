@@ -13,18 +13,16 @@ export class TrainerQuestionnaireDto {
     description: 'Users`s training level',
     example: 'amateur',
   })
-  @IsEnum(TrainingLevelEnum)
-  trainingLevel: TrainingLevelEnum;
+  trainingLevel: string;
 
   @ApiProperty({
     description: 'Training types',
     example: ['box', 'yoga'],
   })
   @IsArray({ message: 'Field trainingType must be an array' })
-  @ArrayMinSize(0)
+  @ArrayMinSize(1)
   @ArrayMaxSize(3)
-  @IsEnum(TrainingTypeEnum, { each: true })
-  trainingType: TrainingTypeEnum[];
+  trainingType: string[];
 
   @ApiProperty({
     description: 'Merits of the trainer',
@@ -39,6 +37,6 @@ export class TrainerQuestionnaireDto {
     example: 'true',
   })
   @Validate((value) => value === 'false' || value === 'true')
-  @Transform(({value}) => value === 'true')
+  @Transform(({ value }) => value === 'true')
   isReadyForTraining: boolean;
 }

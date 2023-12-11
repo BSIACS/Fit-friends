@@ -67,9 +67,8 @@ export class UpdateTrainerDto {
     required: false,
     enum: LocationEnum
   })
-  @IsEnum(LocationEnum)
   @IsOptional()
-  location?: LocationEnum;
+  location?: string;
 
   @ApiProperty({
     description: 'Users`s training level',
@@ -77,9 +76,8 @@ export class UpdateTrainerDto {
     required: false,
     enum: TrainingLevelEnum
   })
-  @IsEnum(TrainingLevelEnum)
   @IsOptional()
-  trainingLevel?: TrainingLevelEnum;
+  trainingLevel?: string;
 
   @ApiProperty({
     description: 'Training types',
@@ -91,9 +89,8 @@ export class UpdateTrainerDto {
   @IsArray({ message: 'Field trainingType must be an array' })
   @ArrayMinSize(0)
   @ArrayMaxSize(3)
-  @IsEnum(TrainingTypeEnum, { each: true })
   @IsOptional()
-  trainingType?: TrainingTypeEnum[];
+  trainingType?: string[];
 
 
   @ApiProperty({

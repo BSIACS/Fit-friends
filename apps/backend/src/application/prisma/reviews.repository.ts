@@ -13,6 +13,15 @@ export class ReviewsRepository {
     const createdTraining = await this.prisma.review.findMany({
       where: {
         trainingId: id
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            avatarFileName: true,
+          }
+        }
       }
     });
 
@@ -27,6 +36,15 @@ export class ReviewsRepository {
         rating: rating,
         text: text,
         createdAt: new Date()
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            avatarFileName: true,
+          }
+        }
       }
     });
 

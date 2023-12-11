@@ -112,6 +112,10 @@ export function PersonalAccountCoachPage(): JSX.Element {
     setIsLocationListVissible(false);
   }
 
+  const selectLocationBlurHandler = (evt: React.FocusEvent<HTMLButtonElement, Element>) => {
+    setIsLocationListVissible(!isLocationListVissible);
+  }
+
   const sexListItemClickHandler = (evt: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     dispatch(changeEditTrainerFormData({ ...trainer, sex: evt.currentTarget.dataset.value }));
     setIsSexListVissible(false);
@@ -255,7 +259,7 @@ export function PersonalAccountCoachPage(): JSX.Element {
                   <div className={`custom-select ${!isUserInfoEditable ? 'custom-select--readonly' : ''} user-info-edit__select`}><span className="custom-select__label">Локация</span>
                     <div className="custom-select__placeholder">{getLocation(trainer.location as LocationEnum)}</div>
                     <button className={`${isLocationListVissible ? styles.appButtonNoBottomBorderRounds : ''} custom-select__button`} type="button"
-                      aria-label="Выберите одну из опций" onClick={selectLocationButtonClick} disabled={!isUserInfoEditable}>
+                      aria-label="Выберите одну из опций" onBlur={selectLocationBlurHandler} onClick={selectLocationButtonClick} disabled={!isUserInfoEditable}>
                       <span className="custom-select__text"></span>
                       <span className="custom-select__icon">
                         <svg width="15" height="6" aria-hidden="true" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" /></svg>

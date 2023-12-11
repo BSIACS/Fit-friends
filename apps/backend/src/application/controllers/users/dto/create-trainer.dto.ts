@@ -1,10 +1,7 @@
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsEmail, IsEnum, IsOptional, Matches, MaxLength, MinLength, Validate } from 'class-validator';
+import { IsEmail, IsEnum, IsOptional, Matches, MaxLength, MinLength } from 'class-validator';
 import { LocationEnum } from '../../../../types/location.enum';
 import { SexEnum } from '../../../../types/sex.enum';
-import { TrainingLevelEnum } from '../../../../types/training-level.enum';
-import { TrainingTypeEnum } from '../../../../types/training-type.enum';
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
 
 export class CreateTrainerDto {
   @ApiProperty({

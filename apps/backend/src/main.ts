@@ -5,11 +5,14 @@ import { ApplicationModule } from './application/application.module';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { join } from 'path';
+import * as express from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(ApplicationModule, {cors: true});
 
   const configService = app.get(ConfigService);
+
+  app.use('/assets', express.static(join(__dirname, '..', 'backend/assets'))); ///http://localhost:3042/static/img/content/photo-1.png
 
   const globalPrefix = configService.get('application.globalPrefix');
   app.setGlobalPrefix(globalPrefix);

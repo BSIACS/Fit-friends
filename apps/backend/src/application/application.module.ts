@@ -25,9 +25,9 @@ import { join } from 'path';
       load: [applicationConfig, jwtOptions, mailOptions],
       validate: validateEnvironments,
     }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'backend/assets'),
-    }),
+    // ServeStaticModule.forRoot({
+    //   rootPath: join(__dirname, '..', 'backend/assets'),
+    // }),
     UsersModule,
     TrainerAccountModule,
     UserAccountModule,

@@ -4,6 +4,7 @@ import { UUID } from '../../../types/uuid.type';
 import { TrainingsRepository } from '../../prisma/trainings.repository';
 import { TrainingDoesNotExistsException } from '../../../exceptions/training-does-not-exists.exception';
 import { GetTrainingsCatalogueQuery } from './query/get-trainings-catalogue.query';
+import { TrainingWithUserDataEntityInterface } from './entities/training-with-user-data-entity.interface';
 
 
 
@@ -12,7 +13,7 @@ export class TrainingsService {
 
   constructor(private readonly trainingsRepository: TrainingsRepository) { }
 
-  public async findTrainingById(id: UUID): Promise<TrainingEntityInterface | null> {
+  public async findTrainingById(id: UUID): Promise<TrainingWithUserDataEntityInterface> {
     const foundTraining = await this.trainingsRepository.findTrainingById(id);
 
     if (!foundTraining) {

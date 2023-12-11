@@ -4,6 +4,7 @@ import { fillUsers } from './fill-users';
 import { fillTrainers } from './fill-trainers';
 import { fillTrainings } from './fill-trainnings';
 import { fillPurchases } from './fill-purchases';
+import { fillReviews } from './fill-reviews';
 
 
 const prisma = new PrismaClient();
@@ -14,6 +15,7 @@ async function fillDb() {
   await fillTrainings(prisma);
   await fillPurchases(prisma);
   await fillNotifications(prisma);
+  await fillReviews(prisma);
 
   console.info('🤘️ Database was filled');
 }

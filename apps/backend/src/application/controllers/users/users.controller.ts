@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, Req, UploadedFile, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { CreateTrainerDto } from './dto/create-trainer.dto';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -28,6 +28,8 @@ import { CreateTrainerRdo } from './rdo/create-trainer.rdo';
 import { UploadFileManagerService } from '../../upload-file-manager/upload-file-manager.service';
 import { TrainerQuestionnaireDto } from './dto/trainer-questionnaire.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { CreateUserRdo } from './rdo/create-user.rdo';
+import { UserQuestionnaireDto } from './dto/user-questionnaire.dto';
 
 interface UserDetailParamsInterface {
   id: UUID
@@ -40,7 +42,6 @@ export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly uploadFileManagerService: UploadFileManagerService
-
   ) { }
 
   @Get('usersList')
@@ -57,29 +58,18 @@ export class UsersController {
   }
 
   @Post('register/user')
-  //@UsePipes(new ValidationPipe({ transform: true }))
-  @UseInterceptors(FileFieldsInterceptor([
-    { name: 'userAvatar' },
-    { name: 'userBackgroundImage' }
-  ], multerUploadUserFileOptions))
-  public async createUser(@UploadedFiles() files, @Body() dto: CreateUserDto) {//: Promise<UserRdo> {
-    // const createdUser = await this.usersService.createUser(
-    //   dto,
-    //   files.userAvatar[0].filename,
-    //   files.userBackgroundImage[0].filename
-    // );
+  @ApiBody({ type: CreateUserDto })
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @UsePipes(IsUserExistPipe)
+  @UseInterceptors(FileInterceptor('userAvatar'))
+  public async createUser(@UploadedFile() file, @Body() dto: CreateUserDto): Promise<CreateUserRdo> {
+    const createdUser = await this.usersService.createUser(dto, 'avatar');
 
-    // return fromEntityToUserRdo(createdUser);
-    console.log(dto);
+    this.uploadFileManagerService.saveAvatar(createdUser.id, file);
 
+    const tokensPair = await this.usersService.generateTokens(createdUser.id, createdUser.email, createdUser.name, createdUser.role);
 
-    return dto;
-  }
-
-  public getImageType(mimetype: string) {
-    let slashIndex = mimetype.indexOf('/');
-
-    return mimetype.slice(++slashIndex);
+    return {user: fromEntityToUserRdo(createdUser), tokensPair: tokensPair };
   }
 
   @Post('register/trainer')
@@ -97,9 +87,9 @@ export class UsersController {
     return { trainer: fromEntityToTrainerRdo(createdUser), tokensPair: tokensPair };
   }
 
-  @Post('questionnaire/trainer')
+  @Patch('questionnaire/trainer')
   @UsePipes(new ValidationPipe({ transform: true }))
-  //@UsePipes(IsUserExistPipe)
+  //@UsePipes(IsUserExistPipe)  //Проверить на наличие в БД
   @UseInterceptors(FileInterceptor('certificate'))
   public async questionnaireTrainer(@UploadedFile() file, @Body() dto: TrainerQuestionnaireDto) {
     const certificateFileName: string = uuidv4();
@@ -109,15 +99,19 @@ export class UsersController {
 
     this.uploadFileManagerService.saveCertificate(updatedUser.id, file);
 
-    return updatedUser;
+    return fromEntityToTrainerRdo(updatedUser);
   }
 
-  @Get('test')
-  public async test() {
+  @Patch('questionnaire/user')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  //@UsePipes(IsUserExistPipe)  //Проверить на наличие в БД
+  @UseInterceptors(FileInterceptor(''))
+  public async questionnaireUser(@Body() dto: UserQuestionnaireDto) {
+    console.log(dto);
 
-    //this.uploadFileManagerService.saveAvatar('test');
+    const updatedUser = await this.usersService.updateUser({ ...dto });
 
-    return { test: 42 };
+    return fromEntityToUserRdo(updatedUser);
   }
 
   @ApiBody({ type: UpdateUserDto })
@@ -138,8 +132,6 @@ export class UsersController {
     { name: 'userAvatar' },
   ], multerUploadUserFileOptions))
   public async updateTrainer(@Body() dto: UpdateTrainerDto) {
-    console.log(dto);
-
     const updatedUser = await this.usersService.updateTrainer(dto);
 
     return fromEntityToTrainerRdo(updatedUser);;
@@ -147,6 +139,7 @@ export class UsersController {
 
 
   @Post('login')
+  @UsePipes(new ValidationPipe({ transform: true }))
   public async login(@Body() dto: LoginUserDto): Promise<TokensPairRdo> {
     const verifiedUser = await this.usersService.verifyUser({ ...dto });
 

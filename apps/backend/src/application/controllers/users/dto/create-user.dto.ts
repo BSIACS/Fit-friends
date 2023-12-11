@@ -1,16 +1,12 @@
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsEmail, IsEnum, IsNumberString, IsOptional, Matches, MaxLength, MinLength, Validate } from 'class-validator';
+import { IsEmail, IsEnum, IsOptional, Matches, MaxLength, MinLength } from 'class-validator';
 import { LocationEnum } from '../../../../types/location.enum';
 import { SexEnum } from '../../../../types/sex.enum';
-import { TrainingDurationEnum } from '../../../../types/training-duration.enum';
-import { TrainingLevelEnum } from '../../../../types/training-level.enum';
-import { TrainingTypeEnum } from '../../../../types/training-type.enum';
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
 
 export class CreateUserDto {
   @ApiProperty({
     description: 'User name',
-    example: 'Наталья',
+    example: 'Михаил',
   })
   @Matches(/^[a-zа-яА-Я]+$/i)
   @MinLength(1)
@@ -19,7 +15,7 @@ export class CreateUserDto {
 
   @ApiProperty({
     description: 'User unique address',
-    example: 'natalia@somemail.ru',
+    example: 'michael@somemail.ru',
   })
   @IsEmail()
   email: string;
@@ -33,8 +29,8 @@ export class CreateUserDto {
   password: string;
 
   @ApiProperty({
-    description: 'User`s sex',
-    example: 'female'
+    description: 'User sex',
+    example: 'male'
   })
   @IsEnum(SexEnum)
   sex: SexEnum;
@@ -47,68 +43,9 @@ export class CreateUserDto {
   birthDate: Date;
 
   @ApiProperty({
-    description: 'User information',
-    example: 'Привет! Обожаю спорт и все, что с ним связанно. Регулярно хожу на тренировки по кроссфиту, также занимаюсь йогой.',
-  })
-  @MinLength(10)
-  @MaxLength(140)
-  description: string;
-
-  @ApiProperty({
-    description: 'Metro station',
+    description: 'Metro station (Pionerskaya, Petrogradskaya, Udelnaya, Zvyozdnaya, Sportivnaya)',
     example: 'Petrogradskaya',
   })
   @IsEnum(LocationEnum)
   location: LocationEnum;
-
-  @ApiProperty({
-    description: 'Users`s training level',
-    example: 'amateur',
-  })
-  @IsEnum(TrainingLevelEnum)
-  trainingLevel: TrainingLevelEnum;
-
-  @ApiProperty({
-    description: 'Training types',
-    example: ['box', 'yoga'],
-  })
-  @IsArray({ message: 'Field trainingType must be an array' })
-  @ArrayMinSize(0)
-  @ArrayMaxSize(3)
-  @IsEnum(TrainingTypeEnum, { each: true })
-  trainingType: TrainingTypeEnum[];
-
-  @ApiProperty({
-    description: 'Training duration',
-    example: '50-80',
-  })
-  @IsEnum(TrainingDurationEnum)
-  trainingDuration: TrainingDurationEnum;
-
-  @ApiProperty({
-    description: 'Number of calories to lose',
-    example: '5000',
-  })
-  @IsNumberString()
-  @Validate((value) => +value >= 1000 && +value <= 5000)
-  @Transform(({value}) => +value)
-  calories: number;
-
-  @ApiProperty({
-    description: 'Number of calories to burn per day',
-    example: 1000,
-  })
-  @IsNumberString()
-  @Validate((value) => +value >= 1000 && +value <= 5000)
-  @Transform(({value}) => +value)
-  caloriesPerDay: number;
-
-  @ApiProperty({
-    description: 'Ready for training',
-    example: 'true',
-  })
-  @Validate((value) => value === 'false' || value === 'true')
-  @Transform(({value}) => value === 'true')
-  @IsOptional()
-  isReadyForTraining: boolean;
 }

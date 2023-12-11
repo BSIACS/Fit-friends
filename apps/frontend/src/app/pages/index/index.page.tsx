@@ -1,5 +1,7 @@
+import { Link } from 'react-router-dom';
 import { HeaderComponent } from '../../components/header/header.component'
 import { SpecialForYouComponent } from './components/special-for-you/special-for-you.component';
+import { AppRoutes } from '../../constants/app-routes.constants';
 
 export function IndexPage(): JSX.Element {
 
@@ -124,11 +126,11 @@ export function IndexPage(): JSX.Element {
             <div className="popular-trainings__wrapper">
               <div className="popular-trainings__title-wrapper">
                 <h2 className="popular-trainings__title">Популярные тренировки</h2>
-                <button className="btn-flat popular-trainings__button" type="button"><span>Смотреть все</span>
+                <Link to={AppRoutes.TRAINING_CATALOG} className="btn-flat popular-trainings__button" type="button"><span>Смотреть все</span>
                   <svg width="14" height="10" aria-hidden="true">
                     <use xlinkHref="#arrow-right"></use>
                   </svg>
-                </button>
+                </Link>
                 <div className="popular-trainings__controls">
                   <button className="btn-icon popular-trainings__control" type="button" aria-label="previous">
                     <svg width="16" height="14" aria-hidden="true">

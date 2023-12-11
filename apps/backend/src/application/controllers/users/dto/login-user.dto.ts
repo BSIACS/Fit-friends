@@ -6,7 +6,7 @@ export class LoginUserDto{
     description: 'User unique address',
     example: 'yaroslavthetrainer@somemail.com',
   })
-  @IsEmail({})
+  @IsEmail({}, {message: '[email] Некорректный email'})
   public email: string;
 
   @ApiProperty({

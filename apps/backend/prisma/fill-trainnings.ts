@@ -11,7 +11,7 @@ export async function fillTrainings(prisma: PrismaClient) {
     create: {
       id: '89847a26-07a0-458f-af2e-d173cc7e10c5',
       name: 'CROSSFIT',
-      backgroundImgFileName: 'cc8e3b0e8be3d74cf94c2375a4dff6ff',
+      backgroundImgFileName: 'training-02.jpg',
       trainingLevel: TrainingLevelEnum.BEGINNER,
       trainingType: TrainingTypeEnum.CROSSFIT,
       trainingDuration: TrainingDurationEnum.THIRTY_FIFTY,
@@ -33,7 +33,7 @@ export async function fillTrainings(prisma: PrismaClient) {
     create: {
       id: 'af430d39-5608-4815-9de9-ff43be0c6936',
       name: 'ENERGY',
-      backgroundImgFileName: 'cc8e3b0e8be3d74cf94c2375a4dff6ff',
+      backgroundImgFileName: 'training-01.jpg',
       trainingLevel: TrainingLevelEnum.BEGINNER,
       trainingType: TrainingTypeEnum.PILATES,
       trainingDuration: TrainingDurationEnum.FIFTY_EIGHTY,
@@ -42,8 +42,8 @@ export async function fillTrainings(prisma: PrismaClient) {
       description: 'Упражнения укрепляют мышечный корсет, делают суставы более гибкими, улучшают осанку и координацию.',
       sex: SexEnum.NOT_STATED,
       videoDemoFileName: 'cde12023aef07be50c95e9f5f6be1244',
-      rating: 0,
-      votesNumber: 0,
+      rating: 40,
+      votesNumber: 8,
       trainingCreatorId: '9584ad02-ed85-438e-aead-797fd55978d8',
       isSpecial: false,
     }
@@ -55,7 +55,7 @@ export async function fillTrainings(prisma: PrismaClient) {
     create: {
       id: 'f9915399-1040-40ac-b84a-5e529f564cff',
       name: 'BOXING',
-      backgroundImgFileName: 'cc8e3b0e8be3d74cf94c2375a4dff6ff',
+      backgroundImgFileName: 'training-03.jpg',
       trainingLevel: TrainingLevelEnum.AMATEUR,
       trainingType: TrainingTypeEnum.BOX,
       trainingDuration: TrainingDurationEnum.FIFTY_EIGHTY,
@@ -64,8 +64,8 @@ export async function fillTrainings(prisma: PrismaClient) {
       description: 'Тренировка на отработку правильных ударов, координации и оптимальной механики защитных движений.',
       sex: SexEnum.NOT_STATED,
       videoDemoFileName: 'cde12023aef07be50c95e9f5f6be1244',
-      rating: 0,
-      votesNumber: 0,
+      rating: 40,
+      votesNumber: 7,
       trainingCreatorId: '6c81306f-beb0-495d-a044-4fc6a2209724',
       isSpecial: false,
     }
@@ -77,7 +77,7 @@ export async function fillTrainings(prisma: PrismaClient) {
     create: {
       id: '18237a96-aac0-49af-9309-6b4e3f881109',
       name: 'ANTISTRESS',
-      backgroundImgFileName: 'cc8e3b0e8be3d74cf94c2375a4dff6ff',
+      backgroundImgFileName: 'training-05.jpg',
       trainingLevel: TrainingLevelEnum.BEGINNER,
       trainingType: TrainingTypeEnum.YOGA,
       trainingDuration: TrainingDurationEnum.FIFTY_EIGHTY,
@@ -93,13 +93,13 @@ export async function fillTrainings(prisma: PrismaClient) {
     }
   });
 
-  await prisma.training.upsert({                                //5
+  await prisma.training.upsert({
     where: { id: 'a7119df3-c77a-4994-9621-739a7356b122' },
     update: {},
     create: {
       id: 'a7119df3-c77a-4994-9621-739a7356b122',
       name: 'RUN, FORREST, RUN',
-      backgroundImgFileName: 'cc8e3b0e8be3d74cf94c2375a4dff6ff',
+      backgroundImgFileName: 'training-06.jpg',
       trainingLevel: TrainingLevelEnum.AMATEUR,
       trainingType: TrainingTypeEnum.RUNNING,
       trainingDuration: TrainingDurationEnum.EIGHTY_HUNDRED,
@@ -115,13 +115,13 @@ export async function fillTrainings(prisma: PrismaClient) {
     }
   });
 
-  await prisma.training.upsert({                                //5
+  await prisma.training.upsert({
     where: { id: '91f53ff0-3500-493b-9971-46000f93b3b0' },
     update: {},
     create: {
       id: '91f53ff0-3500-493b-9971-46000f93b3b0',
       name: 'FITBALL',
-      backgroundImgFileName: 'cc8e3b0e8be3d74cf94c2375a4dff6ff',
+      backgroundImgFileName: 'training-07.jpg',
       trainingLevel: TrainingLevelEnum.AMATEUR,
       trainingType: TrainingTypeEnum.RUNNING,
       trainingDuration: TrainingDurationEnum.EIGHTY_HUNDRED,
@@ -138,13 +138,13 @@ export async function fillTrainings(prisma: PrismaClient) {
   });
 
 
-  await prisma.training.upsert({                                //3
-    where: { id: '18237a96-aac0-49af-9309-6b4e3f881109' },
+  await prisma.training.upsert({
+    where: { id: '625240c7-05e0-4f13-9d0b-1363dad1c76d' },
     update: {},
     create: {
-      id: '18237a96-aac0-49af-9309-6b4e3f881109',
+      id: '625240c7-05e0-4f13-9d0b-1363dad1c76d',
       name: 'HATHA',
-      backgroundImgFileName: 'cc8e3b0e8be3d74cf94c2375a4dff6ff',
+      backgroundImgFileName: 'training-08.jpg',
       trainingLevel: TrainingLevelEnum.BEGINNER,
       trainingType: TrainingTypeEnum.YOGA,
       trainingDuration: TrainingDurationEnum.FIFTY_EIGHTY,
@@ -160,13 +160,13 @@ export async function fillTrainings(prisma: PrismaClient) {
     }
   });
 
-  await prisma.training.upsert({                                //4
+  await prisma.training.upsert({
     where: { id: '1fb236e2-019e-4c87-aa5c-5f7d230cb1bd' },
     update: {},
     create: {
       id: '1fb236e2-019e-4c87-aa5c-5f7d230cb1bd',
       name: 'FULL BODY STRETCH',
-      backgroundImgFileName: 'cc8e3b0e8be3d74cf94c2375a4dff6ff',
+      backgroundImgFileName: 'training-09.jpg',
       trainingLevel: TrainingLevelEnum.BEGINNER,
       trainingType: TrainingTypeEnum.STRETCHING,
       trainingDuration: TrainingDurationEnum.EIGHTY_HUNDRED,
@@ -182,15 +182,15 @@ export async function fillTrainings(prisma: PrismaClient) {
     }
   });
 
-  await prisma.training.upsert({                                //4
-    where: { id: '1fb236e2-019e-4c87-aa5c-5f7d230cb1bd' },
+  await prisma.training.upsert({
+    where: { id: '8181f7fe-ae02-495e-8bbf-22accd9cefb5' },
     update: {},
     create: {
-      id: '1fb236e2-019e-4c87-aa5c-5f7d230cb1bd',
+      id: '8181f7fe-ae02-495e-8bbf-22accd9cefb5',
       name: `DEVIL'S CINDY`,
-      backgroundImgFileName: 'cc8e3b0e8be3d74cf94c2375a4dff6ff',
+      backgroundImgFileName: 'training-11.jpg',
       trainingLevel: TrainingLevelEnum.AMATEUR,
-      trainingType: TrainingTypeEnum.STRETCHING,
+      trainingType: TrainingTypeEnum.CROSSFIT,
       trainingDuration: TrainingDurationEnum.EIGHTY_HUNDRED,
       price: 2200,
       calories: 950,
@@ -210,7 +210,7 @@ export async function fillTrainings(prisma: PrismaClient) {
     create: {
       id: '97221f8d-6eae-46e6-8994-11e9cbcd54ec',
       name: 'FLEKSBEND',
-      backgroundImgFileName: 'cc8e3b0e8be3d74cf94c2375a4dff6ff',
+      backgroundImgFileName: 'training-12.jpg',
       trainingLevel: TrainingLevelEnum.AMATEUR,
       trainingType: TrainingTypeEnum.AEROBICS,
       trainingDuration: TrainingDurationEnum.EIGHTY_HUNDRED,

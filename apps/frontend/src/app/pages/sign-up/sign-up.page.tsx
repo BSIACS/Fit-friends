@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import { QuestionnaireCoachPage } from '../questionnaire-coach/questionnaire-coach.page';
 import { QuestionnaireUserPage } from '../questionnaire-user/questionnaire-user.page';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { registerTrainerThunk } from '../../store/slices/authorization.thunk';
+import { registerTrainerThunk, registerUserThunk } from '../../store/slices/authorization.thunk';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { setIsRegistrationComplete } from '../../store/slices/authorization.slice';
 import { Navigate } from 'react-router-dom';
@@ -34,22 +34,50 @@ const signUpPageInitialState: SignUpPageState = {
 
 export function SignUpPage(): JSX.Element {
   const [state, setState] = useState<SignUpPageState>(signUpPageInitialState);
-  const dispatch = useAppDispatch();
-  const isRegistrationComplete = useAppSelector((state) => state.authorization.isRegistrationComplete);
-  const avatarImgElement: React.MutableRefObject<any> = useRef(null);
   const [isLocationListVissible, setIsLocationListVissible] = useState<boolean>(false);
+  const [isAvataImageVissible, setIsAvataImageVissible] = useState<boolean>(false);
+  const [nameError, setNameError] = useState({ isError: false, message: '' });
+  const [emailError, setEmailError] = useState({ isError: false, message: '' });
+  const [passwordError, setPasswordError] = useState({ isError: false, message: '' });
+  const [birthDateError, setBirthDateError] = useState({ isError: false, message: '' });
+
+  const dispatch = useAppDispatch();
+
+  const isRegistrationComplete = useAppSelector((state) => state.authorization.isRegistrationComplete);
+  const authoriztionData = useAppSelector((state) => state.authorization.authoriztionData);
+
+  const avatarImgElement: React.MutableRefObject<any> = useRef(null);
 
   const loadAvatarInputChangeHandler = (evt: React.ChangeEvent<any>) => {
     if (evt.target.files[0]) {
       avatarImgElement.current.src = URL.createObjectURL(evt.target.files[0]);
       avatarImgElement.current.hidden = false;
+      setIsAvataImageVissible(true);
     }
   }
 
   const formSubmitHandler = (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
     const formData = new FormData(evt.currentTarget);
-    dispatch(registerTrainerThunk({ formData: formData }));
+    formData.set('location', state.location);
+
+    !formData.get('name') ? setNameError({ isError: true, message: 'Поле обязательно для заполнения' }) : setNameError({ isError: false, message: '' });
+    !formData.get('email') ? setEmailError({ isError: true, message: 'Поле обязательно для заполнения' }) : setEmailError({ isError: false, message: '' });
+    !formData.get('password') ? setPasswordError({ isError: true, message: 'Поле обязательно для заполнения' }) : setPasswordError({ isError: false, message: '' });
+    !formData.get('birthDate') ? setBirthDateError({ isError: true, message: 'Поле обязательно для заполнения' }) : setBirthDateError({ isError: false, message: '' });
+
+    if (!formData.get('name') || !formData.get('email') || !formData.get('password') || !formData.get('birthDate')) {
+      console.log('return');
+
+      return;
+    }
+
+    if(formData.get('role') === 'user'){
+      dispatch(registerUserThunk({ formData: formData }));
+    }
+    else{
+      dispatch(registerTrainerThunk({ formData: formData }));
+    }
   }
 
   const nameFieldChangeHandler = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,6 +110,7 @@ export function SignUpPage(): JSX.Element {
 
   const locationListItemClickHandler = (evt: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     setState({ ...state, location: evt.currentTarget.dataset.value as LocationEnum });
+    setIsLocationListVissible(false);
   }
 
   const selectLocationButtonClick = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -90,8 +119,16 @@ export function SignUpPage(): JSX.Element {
     setIsLocationListVissible(!isLocationListVissible);
   }
 
-  if (isRegistrationComplete) {
+  const selectLocationBlurHandler = (evt: React.FocusEvent<HTMLButtonElement, Element>) => {
+    setIsLocationListVissible(!isLocationListVissible);
+  }
+
+  if (isRegistrationComplete && authoriztionData.role === 'trainer') {
     return <Navigate to={'/questionnaireCoach'} />;
+  }
+
+  if (isRegistrationComplete && authoriztionData.role === 'user') {
+    return <Navigate to={'/questionnaireUser'} />;
   }
 
   return (
@@ -117,7 +154,7 @@ export function SignUpPage(): JSX.Element {
                             onChange={loadAvatarInputChangeHandler} />
                           <span className="input-load-avatar__btn">
                             <img ref={avatarImgElement} hidden={true} width={98} height={98} alt='avatar' />
-                            {/* <svg width="20" height="20" aria-hidden="true" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 1H8C3 1 1 3 1 8V14C1 19 3 21 8 21H14C19 21 21 19 21 14V9M17 1V7M17 7L19 5M17 7L15 5M1.67 17.95L6.6 14.64C7.39 14.11 8.53 14.17 9.24 14.78L9.57 15.07C10.35 15.74 11.61 15.74 12.39 15.07L16.55 11.5C17.33 10.83 18.59 10.83 19.37 11.5L21 12.9M10 7C10 8.10457 9.10457 9 8 9C6.89543 9 6 8.10457 6 7C6 5.89543 6.89543 5 8 5C9.10457 5 10 5.89543 10 7Z" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" /></svg> */}
+                            {!isAvataImageVissible && <svg width="20" height="20" aria-hidden="true" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 1H8C3 1 1 3 1 8V14C1 19 3 21 8 21H14C19 21 21 19 21 14V9M17 1V7M17 7L19 5M17 7L15 5M1.67 17.95L6.6 14.64C7.39 14.11 8.53 14.17 9.24 14.78L9.57 15.07C10.35 15.74 11.61 15.74 12.39 15.07L16.55 11.5C17.33 10.83 18.59 10.83 19.37 11.5L21 12.9M10 7C10 8.10457 9.10457 9 8 9C6.89543 9 6 8.10457 6 7C6 5.89543 6.89543 5 8 5C9.10457 5 10 5.89543 10 7Z" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" /></svg>}
                           </span>
                         </label>
                       </div>
@@ -126,39 +163,44 @@ export function SignUpPage(): JSX.Element {
                           оптимальный размер 100&times;100&nbsp;px</span>
                       </div>
                     </div>
-                    <div className="sign-up__data">
+                    <div className="sign-up__data" style={{rowGap: '8px'}}>
                       <div className="custom-input">
                         <label>
                           <span className="custom-input__label">Имя</span>
                           <span className="custom-input__wrapper">
                             <input type="text" name="name" onChange={nameFieldChangeHandler} value={state.name} />
                           </span>
+                          <span className="custom-input__error" style={nameError.isError ? { opacity: '10' } : { opacity: '0' }}>{nameError.message}&nbsp;</span>
                         </label>
                       </div>
                       <div className="custom-input">
                         <label>
-                          <span className="custom-input__label">E-mail</span><span className="custom-input__wrapper">
+                          <span className="custom-input__label">E-mail</span>
+                          <span className="custom-input__wrapper">
                             <input type="email" name="email" onChange={emailFieldChangeHandler} value={state.email} />
                           </span>
+                          <span className="custom-input__error" style={emailError.isError ? { opacity: '10' } : { opacity: '0' }}>{emailError.message}&nbsp;</span>
                         </label>
                       </div>
                       <div className="custom-input">
-                        <label><span className="custom-input__label">Дата рождения</span><span className="custom-input__wrapper">
+                        <label><span className="custom-input__label">Дата рождения</span>
+                        <span className="custom-input__wrapper">
                           <input type="date" name="birthDate" max="2099-12-31" onChange={birthDateFieldChangeHandler} value={state.birthDate} />
                         </span>
+                          <span className="custom-input__error" style={birthDateError.isError ? { opacity: '10' } : { opacity: '0' }}>{birthDateError.message}&nbsp;</span>
                         </label>
                       </div>
-                      <div className="custom-select custom-select--not-selected"><span className="custom-select__label">Ваша
-                        локация</span>
-                        <div className="custom-select__placeholder">{getLocation(state.location)}</div>
+                      <div className="custom-select custom-select--not-selected">
+                        <span className="custom-select__label">Ваша локация</span>
+                        <div className="custom-select__placeholder" style={{bottom: '42px'}}>{getLocation(state.location)}</div>
                         <button className={`${isLocationListVissible ? styles.appButtonNoBottomBorderRounds : ''} custom-select__button`} type="button"
-                          aria-label="Выберите одну из опций" onClick={selectLocationButtonClick}>
+                          aria-label="Выберите одну из опций" onBlur={selectLocationBlurHandler} onClick={selectLocationButtonClick}>
                           <span className="custom-select__text"></span>
                           <span className="custom-select__icon">
-                            <svg width="15" height="6" aria-hidden="true" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                            <svg width="15" height="6" aria-hidden="true" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>
                           </span>
                         </button>
-                        <ul className={`${isLocationListVissible ? styles.appListVisible : styles.appListHidden} custom-select__list`} role="listbox">
+                        <ul className={`${isLocationListVissible ? styles.appListVisible : styles.appListHidden} custom-select__list`} role="listbox"  style={{bottom: '24px'}}>
                           <li className={`custom-select__item`} data-value={LocationEnum.PETROGRADSKAYA} onClick={locationListItemClickHandler}>ст. м. Петроградская</li>
                           <li className={`custom-select__item`} data-value={LocationEnum.PIONERSKAYA} onClick={locationListItemClickHandler}>ст. м. Пионерская</li>
                           <li className={`custom-select__item`} data-value={LocationEnum.SPORTIVNAYA} onClick={locationListItemClickHandler}>ст. м. Спортивная</li>
@@ -167,9 +209,12 @@ export function SignUpPage(): JSX.Element {
                         </ul>
                       </div>
                       <div className="custom-input">
-                        <label><span className="custom-input__label">Пароль</span><span className="custom-input__wrapper">
-                          <input type="password" name="password" autoComplete="off" onChange={passwordFieldChangeHandler} />
-                        </span>
+                        <label>
+                          <span className="custom-input__label">Пароль</span>
+                          <span className="custom-input__wrapper">
+                            <input type="password" name="password" autoComplete="off" onChange={passwordFieldChangeHandler} />
+                          </span>
+                          <span className="custom-input__error" style={passwordError.isError ? { opacity: '10' } : { opacity: '0' }}>{passwordError.message}&nbsp;</span>
                         </label>
                       </div>
                       <div className="sign-up__radio"><span className="sign-up__label">Пол</span>

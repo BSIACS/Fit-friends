@@ -1,10 +1,9 @@
-import { useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
-import { setIsRegistrationComplete } from '../../store/slices/authorization.slice';
-
-type QuestionnaireCoachPageProps = {
-  formData: FormData
-}
+import { useAppSelector } from '../../hooks/useAppSelector';
+import { Navigate } from 'react-router-dom';
+import { AppRoutes } from '../../constants/app-routes.constants';
+import { getTrainerDetailThunk, updateTrainerWithQuestionnaireDataThunk } from '../../store/slices/application.thunk';
 
 interface QuestionnaireCoachPageState {
   specialization: string[];
@@ -25,12 +24,15 @@ const questionnaireCoachPageInitialState: QuestionnaireCoachPageState = {
 export function QuestionnaireCoachPage(): JSX.Element {
   const dispatch = useAppDispatch();
   const [state, setState] = useState<QuestionnaireCoachPageState>(questionnaireCoachPageInitialState);
-  const certificateSpanElement: React.MutableRefObject<any> = useRef(null);
+  const authoriztionData = useAppSelector((state) => state.authorization.authoriztionData);
+  const actualTrainerData = useAppSelector((state) => state.application.actualTrainerData);
+  const [meritsInputError, setMeritsInputError] = useState({ isError: false, message: 'Поле должно содержать не меньше 10 и не более 140 символов' });
+  const [fileInputError, setFileInputError] = useState({ isError: false, message: 'Выберите файл сертификата' });
+  const [trainingTypeInputError, setTrainingTypeInputError] = useState({ isError: false, message: 'Выберите не менее 1 и не более 3 специализаций' });
 
-  console.log(state);
-
-
-  dispatch(setIsRegistrationComplete(false));
+  useEffect(() => {
+    dispatch(getTrainerDetailThunk())
+  }, []);
 
   const specializationRadioButtonClickHandler = (evt: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
     const value = evt.currentTarget.value;
@@ -54,7 +56,54 @@ export function QuestionnaireCoachPage(): JSX.Element {
   }
 
   const isReadyForTrainingChangeHandler = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    setState({ ...state, isReadyForTraining: !state.isReadyForTraining })
+    console.log(evt.currentTarget.checked);
+    setState({...state, isReadyForTraining: evt.currentTarget.checked})
+  }
+
+  const resumeButtonClickHandler = (evt: React.FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+    const questionnaireFormData = new FormData(evt.currentTarget);
+    questionnaireFormData.set('id', authoriztionData.userId as string);
+    questionnaireFormData.delete(`specialization`);
+    questionnaireFormData.set('isReadyForTraining', (state.isReadyForTraining as boolean) ? 'true' : 'false');
+
+
+    state.specialization.forEach((item) => {
+      questionnaireFormData.append(`trainingType[]`, item)
+    });
+
+    const meritsLength = ((questionnaireFormData.get('merits')) as string).length;
+
+    (meritsLength < 10 || meritsLength > 140) ?
+      setMeritsInputError({ ...meritsInputError, isError: true }) :
+      setMeritsInputError({ ...meritsInputError, isError: false });
+
+    const fileSize = ((questionnaireFormData.get('certificate')) as File).size;
+
+    (fileSize === 0) ?
+      setFileInputError({ ...fileInputError, isError: true }) :
+      setFileInputError({ ...fileInputError, isError: false });
+
+    const trainingTypeLength = ((questionnaireFormData.getAll('trainingType[]'))).length;
+
+    console.log('LENGTH', trainingTypeLength);
+
+    (trainingTypeLength > 3 || trainingTypeLength < 1) ?
+      setTrainingTypeInputError({ ...trainingTypeInputError, isError: true }) :
+      setTrainingTypeInputError({ ...trainingTypeInputError, isError: false });
+
+    if ((meritsLength < 10 || meritsLength > 140) ||
+      fileSize === 0 ||
+      (trainingTypeLength > 3 || trainingTypeLength < 1)) {
+
+      return;
+    }
+
+    dispatch(updateTrainerWithQuestionnaireDataThunk({ formData: questionnaireFormData }));
+  }
+
+  if (actualTrainerData.trainingLevel) {
+    return <Navigate to={AppRoutes.COACH_ACCOUNT} />
   }
 
   return (
@@ -68,13 +117,13 @@ export function QuestionnaireCoachPage(): JSX.Element {
           <div className="popup-form__wrapper">
             <div className="popup-form__content">
               <div className="popup-form__form">
-                <form method="get">
+                <form method="get" onSubmit={resumeButtonClickHandler}>
                   <div className="questionnaire-coach">
                     <h1 className="visually-hidden">Опросник</h1>
                     <div className="questionnaire-coach__wrapper">
-                      <div className="questionnaire-coach__block"><span className="questionnaire-coach__legend">Ваша специализация
-                        (тип) тренировок</span>
-                        <div className="specialization-checkbox questionnaire-coach__specializations">
+                      <div className="questionnaire-coach__block" style={{ paddingBottom: '10px' }}>
+                        <span className="questionnaire-coach__legend">Ваша специализация (тип) тренировок</span>
+                        <div className="specialization-checkbox questionnaire-coach__specializations" style={{ marginBottom: '5px' }}>
                           <div className="btn-checkbox">
                             <label>
                               <input className="visually-hidden" type="checkbox" name="specialization" value="yoga"
@@ -125,54 +174,61 @@ export function QuestionnaireCoachPage(): JSX.Element {
                             </label>
                           </div>
                         </div>
+                        <span className="custom-input__error" style={trainingTypeInputError.isError ? { opacity: '10', marginTop: '10px' } : { opacity: '0', marginTop: '10px' }}>
+                          {trainingTypeInputError.message}&nbsp;
+                        </span>
                       </div>
                       <div className="questionnaire-coach__block"><span className="questionnaire-coach__legend">Ваш уровень</span>
                         <div className="custom-toggle-radio custom-toggle-radio--big questionnaire-coach__radio">
                           <div className="custom-toggle-radio__block">
                             <label>
-                              <input type="radio" name="level" value={'beginner'} checked={state.level === 'beginner' ?? true} onClick={levelRadioButtonClickHandler} />
+                              <input type="radio" name="trainingLevel" value={'beginner'} checked={state.level === 'beginner' ?? true} onClick={levelRadioButtonClickHandler} />
                               <span className="custom-toggle-radio__icon"></span>
                               <span className="custom-toggle-radio__label">Новичок</span>
                             </label>
                           </div>
                           <div className="custom-toggle-radio__block">
                             <label>
-                              <input type="radio" name="level" value={'amature'} checked={state.level === 'amature' ?? true} onClick={levelRadioButtonClickHandler} /><span
+                              <input type="radio" name="trainingLevel" value={'amature'} checked={state.level === 'amature' ?? true} onClick={levelRadioButtonClickHandler} /><span
                                 className="custom-toggle-radio__icon"></span><span
                                   className="custom-toggle-radio__label">Любитель</span>
                             </label>
                           </div>
                           <div className="custom-toggle-radio__block">
                             <label>
-                              <input type="radio" name="level" value={'professional'} checked={state.level === 'professional' ?? true} onClick={levelRadioButtonClickHandler} />
+                              <input type="radio" name="trainingLevel" value={'professional'} checked={state.level === 'professional' ?? true} onClick={levelRadioButtonClickHandler} />
                               <span className="custom-toggle-radio__icon"></span>
                               <span className="custom-toggle-radio__label">Профессионал</span>
                             </label>
                           </div>
                         </div>
                       </div>
-                      <div className="questionnaire-coach__block">
+                      <div className="questionnaire-coach__block" style={{ paddingBottom: '15px' }}>
                         <span className="questionnaire-coach__legend">Ваши дипломы и сертификаты</span>
-                        <div className="drag-and-drop questionnaire-coach__drag-and-drop">
+                        <div className="drag-and-drop questionnaire-coach__drag-and-drop" style={{ marginBottom: '5px' }}>
                           <label>
                             <span className="drag-and-drop__label" tabIndex={0}>Загрузите сюда файлы формата PDF, JPG или PNG
                               <svg width="20" height="20" aria-hidden="true" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 1H8C3 1 1 3 1 8V14C1 19 3 21 8 21H14C19 21 21 19 21 14V9M17 1V7M17 7L19 5M17 7L15 5M1.67 17.95L6.6 14.64C7.39 14.11 8.53 14.17 9.24 14.78L9.57 15.07C10.35 15.74 11.61 15.74 12.39 15.07L16.55 11.5C17.33 10.83 18.59 10.83 19.37 11.5L21 12.9M10 7C10 8.10457 9.10457 9 8 9C6.89543 9 6 8.10457 6 7C6 5.89543 6.89543 5 8 5C9.10457 5 10 5.89543 10 7Z" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" /></svg>
                             </span>
-                            <input type="file" name="import" tabIndex={-1} accept=".pdf" />
+                            <input type="file" name="certificate" tabIndex={-1} accept=".pdf" />
                           </label>
                         </div>
+                        <span className="custom-input__error" style={fileInputError.isError ? { opacity: '10', marginBottom: '20px' } : { opacity: '0', marginBottom: '20px' }}>
+                          {fileInputError.message}&nbsp;
+                        </span>
                       </div>
-                      <div className="questionnaire-coach__block" />
                       <span className="questionnaire-coach__legend">Расскажите о своём опыте, который мы сможем проверить</span>
-                      <div className="custom-textarea questionnaire-coach__textarea">
+                      <div className="custom-textarea questionnaire-coach__textarea" style={{ marginBottom: '0px' }}>
                         <label>
-                          <textarea name="description" placeholder=" " value={state.merits} onChange={descriptionFieldChangeHandler}></textarea>
+                          <textarea name="merits" placeholder=" " value={state.merits} onChange={descriptionFieldChangeHandler}></textarea>
                         </label>
                       </div>
+                      <span className="custom-input__error" style={meritsInputError.isError ? { opacity: '10', marginBottom: '20px' } : { opacity: '0', marginBottom: '20px' }}>
+                        {meritsInputError.message}&nbsp;
+                      </span>
                       <div className="questionnaire-coach__checkbox">
                         <label>
-                          <input type="checkbox" value="individual-training" name="individual-training" checked={state.isReadyForTraining}
-                            onChange={isReadyForTrainingChangeHandler} />
+                          <input type="checkbox" value={'isReadyForTraining'} name="isReadyForTraining"  onChange={isReadyForTrainingChangeHandler}/>
                           <span className="questionnaire-coach__checkbox-icon">
                             <svg aria-hidden="true" width="9" height="6" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 4L3.99647 7L10 1" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" /></svg>
                           </span>

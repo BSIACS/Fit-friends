@@ -1,23 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { refreshTokensPairThunk, signInThunk } from './authorization.thunk';
-import { SignInDTO } from '../../dto/sign-in.dto';
-import { decodeToken } from "react-jwt";
-import { AuthoriztionData } from '../../types/authoriztion-data.interface';
-import { setAccessToken, setRefreshToken } from '../../services/token';
-import { RefreshTokensPairDTO } from '../../dto/refresh-tokens-pair.dto';
-import { AuthorizationStatusEnum } from '../../types/authorization-status.enum';
 import { TrainerData } from '../../types/trainer-data';
 import { TrainerDTO } from '../../dto/trainer.dto';
-import { getTrainerDetailThunk, getTrainingsDataThunk, updateTrainerDataThunk } from './application.thunk';
+import { getTrainerDetailThunk, getTrainingsDataThunk, updateTrainerDataThunk, updateTrainerWithQuestionnaireDataThunk, updateUserDataThunk, updateUserWithQuestionnaireDataThunk } from './application.thunk';
 
 
 export interface ApplicationState {
   isLoading: boolean;
   isPersonalAccountCoachPageDataLoading: boolean;
+  isTrainingCardUserPageDataLoaded: boolean;
   isTrainingDataLoading: boolean;
   isBadRequest: boolean;
   actualTrainerData: TrainerData;
+  actualUserData: any;
   editTrainerFormData: TrainerData;
   actualTrainingsData: []
 }
@@ -25,10 +20,12 @@ export interface ApplicationState {
 const initialState: ApplicationState = {
   isLoading: false,
   isPersonalAccountCoachPageDataLoading: true,
+  isTrainingCardUserPageDataLoaded: false,
   isTrainingDataLoading: false,
   isBadRequest: false,
   actualTrainerData: {},
   editTrainerFormData: {},
+  actualUserData: {},
   actualTrainingsData: [],
 };
 
@@ -41,6 +38,7 @@ export const applicationSlice = createSlice({
     setIsLoading: (state, action) => { state.isLoading = action.payload; },
     setisPersonalAccountCoachPageDataLoading: (state, action) => { state.isPersonalAccountCoachPageDataLoading = action.payload; },
     setIsTrainingDataLoading: (state, action) => { state.isTrainingDataLoading = action.payload; },
+    setIsTrainingCardUserPageDataLoaded: (state, action) => { state.isTrainingDataLoading = action.payload; },
   },
   extraReducers(builder) {
     builder
@@ -63,6 +61,33 @@ export const applicationSlice = createSlice({
         state.isBadRequest = true;
         state.editTrainerFormData = state.actualTrainerData;
       })
+
+      .addCase(updateUserDataThunk.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateUserDataThunk.fulfilled, (state, action: PayloadAction<any>,) => {
+          state.actualUserData = action.payload;
+          state.isLoading = false;
+      })
+      .addCase(updateUserDataThunk.rejected, (state, action) => {
+        // state.isBadRequest = true;
+        // state.editTrainerFormData = state.actualTrainerData;
+      })
+
+      .addCase(updateUserWithQuestionnaireDataThunk.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateUserWithQuestionnaireDataThunk.fulfilled, (state, action: PayloadAction<any>,) => {
+          state.actualUserData = action.payload;
+          state.isLoading = false;
+      })
+      .addCase(updateTrainerWithQuestionnaireDataThunk.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateTrainerWithQuestionnaireDataThunk.fulfilled, (state, action: PayloadAction<any>,) => {
+          state.actualTrainerData = action.payload;
+          state.isLoading = false;
+      })
       .addCase(getTrainingsDataThunk.pending, (state) => {
         state.isTrainingDataLoading = true;
       })
@@ -70,8 +95,19 @@ export const applicationSlice = createSlice({
         state.actualTrainingsData = action.payload;
         state.isTrainingDataLoading = false;
       })
+      // .addCase(getTrainingReviewsThunk.pending, (state) => {
+      //   console.log();
+      // })
+      // .addCase(getTrainingReviewsThunk.fulfilled, (state, action: PayloadAction<getTrainingReviewsPayload>,) => {
+      //   console.log('addCase');
+      //   action.payload.testFunc();
+      //   //action.payload.setIsLoaded(true);
+      // })
+      // .addCase(getTrainingReviewsThunk.rejected, (state) => {
+      //   console.log();
+      // })
   }
 });
 
-export const { changeEditTrainerFormData, setIsBadRequest, setIsLoading, setIsTrainingDataLoading } = applicationSlice.actions;
+export const { changeEditTrainerFormData, setIsBadRequest, setIsLoading, setIsTrainingDataLoading, setIsTrainingCardUserPageDataLoaded } = applicationSlice.actions;
 export const applicationReducer = applicationSlice.reducer;

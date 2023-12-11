@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { signOutThunk, refreshTokensPairThunk, registerTrainerThunk, signInThunk } from './authorization.thunk';
+import { signOutThunk, refreshTokensPairThunk, registerTrainerThunk, signInThunk, registerUserThunk } from './authorization.thunk';
 import { SignInDTO } from '../../dto/sign-in.dto';
 import { decodeToken } from "react-jwt";
 import { AuthoriztionData } from '../../types/authoriztion-data.interface';
@@ -7,6 +7,7 @@ import { removeAccessToken, removeRefreshToken, setAccessToken, setRefreshToken 
 import { RefreshTokensPairDTO } from '../../dto/refresh-tokens-pair.dto';
 import { AuthorizationStatusEnum } from '../../types/authorization-status.enum';
 import { RegisterTrainerDTO } from '../../dto/register-trainer.dto';
+import { RegisterUserDTO } from '../../dto/register-user.dto';
 
 
 export interface AuthorizationState {
@@ -74,6 +75,20 @@ export const authorizationSlice = createSlice({
       .addCase(registerTrainerThunk.fulfilled, (state, action: PayloadAction<RegisterTrainerDTO>) => {
         const { trainer, tokensPair } = action.payload;
         state.authoriztionData = { email: trainer?.email, name: trainer?.name, role: trainer?.role, userId: trainer?.id }
+        state.isRegistrationComplete = true;
+        if (tokensPair) {
+          setAccessToken(tokensPair.accessToken);
+          setRefreshToken(tokensPair.refreshToken);
+        }
+        state.authoriztionStatus = AuthorizationStatusEnum.AUTHORIZED;
+        state.isLoading = false;
+      })
+      .addCase(registerUserThunk.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(registerUserThunk.fulfilled, (state, action: PayloadAction<RegisterUserDTO>) => {
+        const { user, tokensPair } = action.payload;
+        state.authoriztionData = { email: user?.email, name: user?.name, role: user?.role, userId: user?.id }
         state.isRegistrationComplete = true;
         if (tokensPair) {
           setAccessToken(tokensPair.accessToken);

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, Req, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, Req, UploadedFile, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { TrainerAccountService } from './trainer-account.service';
 import { UUID } from '../../../types/uuid.type';
 import { CreateTrainingDto } from './dto/create-training.dto';
@@ -11,7 +11,7 @@ import { MailService } from '../../mail/mail.service';
 import { SendNewTrainingNotificationsDto } from './dto/send-new-training-notifications.dto';
 import { TrainingsService } from '../trainings/trainings.service';
 import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { multerUploadTrainingFileOptions } from '../../../config/multer-upload-training-file.options';
 import { TrainingRdo } from './rdo/training.rdo';
 import { fromEntitiesToTrainingsRdos, fromEntityToTrainingRdo } from './mappers/training.mapper';
@@ -75,10 +75,17 @@ export class TrainerAccountController {
   @ApiBody({ type: UpdateTrainingDto })
   @UseGuards(IsTrainerRoleGuard)
   @Patch('updateTraining')
-  public async updateTraining(@Body() dto: UpdateTrainingDto): Promise<TrainingRdo> {
+  public async updateTraining(@Body() dto: UpdateTrainingDto) {
     const updatedTraining = await this.trainerAccountService.updateTraining(dto);
 
-    return fromEntityToTrainingRdo(updatedTraining);
+    return updatedTraining;
+  }
+
+  @UseGuards(IsTrainerRoleGuard)
+  @Patch('updateTrainingVideo')
+  @UseInterceptors(FileInterceptor('trainingVideo'))
+  public async updateTrainingVideo(@UploadedFile() file) {
+    console.log(file);
   }
 
   @ApiParam({name: 'id', description: 'Training UUID'})

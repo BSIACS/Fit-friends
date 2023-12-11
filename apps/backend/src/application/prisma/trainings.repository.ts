@@ -6,6 +6,7 @@ import { GetTrainingsListQuery } from '../controllers/trainer-account/query/get-
 import { GetTrainingsCatalogueQuery } from '../controllers/trainings/query/get-trainings-catalogue.query';
 import { CreateTrainingDto } from '../controllers/trainer-account/dto/create-training.dto';
 import { UpdateTrainingDto } from '../controllers/trainer-account/dto/update-training.dto';
+import { TrainingWithUserDataEntityInterface } from '../controllers/trainings/entities/training-with-user-data-entity.interface';
 
 
 
@@ -15,11 +16,6 @@ export class TrainingsRepository {
   constructor(private readonly prisma: PrismaService) { }
 
   public async createTraining(dto: CreateTrainingDto, videoDemoFileName: string): Promise<TrainingEntityInterface> {
-    console.log(videoDemoFileName);
-
-    console.log(dto);
-
-
     const createdTraining: TrainingEntityInterface = await this.prisma.training.create({
       data: {
         name: dto.name,
@@ -47,7 +43,16 @@ export class TrainingsRepository {
       where: {
         id: dto.id
       },
-      data: dto
+      data: dto,
+      include: {
+        trainer: {
+          select: {
+            id: true,
+            name: true,
+            avatarFileName: true,
+          }
+        }
+      }
     });
 
     return updatedTraining;
@@ -73,10 +78,19 @@ export class TrainingsRepository {
     return;
   }
 
-  public async findTrainingById(id: UUID): Promise<TrainingEntityInterface | null> {
+  public async findTrainingById(id: UUID): Promise<TrainingWithUserDataEntityInterface> {
     const foundTraining = await this.prisma.training.findFirst({
       where: {
         id: id
+      },
+      include: {
+        trainer: {
+          select: {
+            id: true,
+            name: true,
+            avatarFileName: true,
+          }
+        }
       }
     });
 

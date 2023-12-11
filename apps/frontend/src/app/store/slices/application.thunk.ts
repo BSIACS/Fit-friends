@@ -5,6 +5,9 @@ import { getAccessToken } from '../../services/token';
 import { InternalAxiosRequestConfig } from 'axios';
 import { RootState } from '../store';
 import { UpdateTrainerRequest } from '../../types/update-trainer-request.interface';
+import { UpdateUserRequest } from '../../types/update-user-request.interface';
+import { UUID } from '../../types/uuid.type';
+import { setIsLoading } from './application.slice';
 
 
 const requestWithAccessTokenInterceptor = (config: InternalAxiosRequestConfig) => {
@@ -17,13 +20,9 @@ export const getUserDetailThunk = createAsyncThunk(
   'application/getUserDetailThunk',
   async (payload: GetUserDetailRequest, thunkApi) => {
     try {
-      console.log('getUserDetailThunk ******************');
-
       const axiosInstance = axios.create();
       axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
-
       const response = await axiosInstance.get<any>(`http://localhost:3042/api/users/detail/${payload.id}`);
-      console.log(response.data);
 
       return response.data;
     } catch (error: any) {
@@ -76,6 +75,63 @@ export const updateTrainerDataThunk = createAsyncThunk(
   }
 );
 
+export const updateUserDataThunk = createAsyncThunk(
+  'application/updateUserDataThunk',
+  async (payload: UpdateUserRequest, thunkApi) => {
+    try {
+      const axiosInstance = axios.create({
+        method: "post",
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
+
+      const response = await axiosInstance.patch<any>(`http://localhost:3042/api/users/update/user`, payload.formData);
+      console.log(response.data);
+
+      return response.data;
+    } catch (error: any) {
+      return thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const updateUserWithQuestionnaireDataThunk = createAsyncThunk(
+  'application/updateUserWithQuestionnaireDataThunk',
+  async (payload: UpdateUserRequest, thunkApi) => {
+    try {
+      const axiosInstance = axios.create({
+        method: "post",
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
+      const response = await axiosInstance.patch<any>(`http://localhost:3042/api/users/questionnaire/user`, payload.formData);
+
+      return response.data;
+    } catch (error: any) {
+      return thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const updateTrainerWithQuestionnaireDataThunk = createAsyncThunk(
+  'application/updateTrainerWithQuestionnaireDataThunk',
+  async (payload: UpdateTrainerRequest, thunkApi) => {
+    try {
+      const axiosInstance = axios.create({
+        method: "post",
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      payload.formData.get('level')
+      axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
+      const response = await axiosInstance.patch<any>(`http://localhost:3042/api/users/questionnaire/trainer`, payload.formData);
+
+      return response.data;
+    } catch (error: any) {
+      return thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+
 export const getTrainingsDataThunk = createAsyncThunk(
   'application/getTrainingsDataThunk',
   async (payload: string, thunkApi) => {
@@ -92,5 +148,31 @@ export const getTrainingsDataThunk = createAsyncThunk(
     }
   }
 );
+
+export interface getTrainingReviewsPayload {
+  id: UUID;
+  setIsLoaded: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsRequestError: React.Dispatch<React.SetStateAction<boolean>>;
+  testFunc: any;
+}
+
+// export const getTrainingReviewsThunk = createAsyncThunk(
+//   'application/getTrainingReviewsThunk',
+//   async (payload: getTrainingReviewsPayload, thunkApi) => {
+//     try {
+//       const axiosInstance = axios.create();
+//       //payload.setIsLoaded(true);
+//       axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
+//       const response = await axiosInstance.get<any>(`http://localhost:3042/api/reviews/${payload.id}`);
+//       console.log(response.data);
+
+//       return response.data;
+//     } catch (error: any) {
+//       //payload.setIsRequestError(true);
+
+//       return thunkApi.rejectWithValue(error.message);
+//     }
+//   }
+// );
 
 

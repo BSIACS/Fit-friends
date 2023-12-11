@@ -67,7 +67,7 @@ export class UpdateUserDto {
   })
   @IsEnum(TrainingLevelEnum)
   @IsOptional()
-  trainingLevel?: TrainingLevelEnum;
+  trainingLevel?: string;
 
   @ApiProperty({
     description: 'Training types',
@@ -77,9 +77,8 @@ export class UpdateUserDto {
   @IsArray({ message: 'Field trainingType must be an array' })
   @ArrayMinSize(0)
   @ArrayMaxSize(3)
-  @IsEnum(TrainingTypeEnum, { each: true })
   @IsOptional()
-  trainingType?: TrainingTypeEnum[];
+  trainingType?: string[];
 
   @ApiProperty({
     description: 'Training duration',

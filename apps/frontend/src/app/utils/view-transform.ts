@@ -1,6 +1,8 @@
 import { LocationEnum } from '../types/location.enum';
 import { SexEnum } from '../types/sex.enum';
+import { TrainingDurationEnum } from '../types/training-duration.enum';
 import { TrainingLevelEnum } from '../types/training-level.enum'
+import { TrainingTypeEnum } from '../types/training-type.enum';
 
 export const getTrainingLevel = (trainingLevel: TrainingLevelEnum) => {
   switch (trainingLevel) {
@@ -36,5 +38,48 @@ export const getLocation = (location: LocationEnum) => {
       return 'ст. м. Удельная';
     case LocationEnum.ZVYOZDNAYA:
       return 'ст. м. Звездная';
+  };
+}
+
+export const getTypeTrainingTag = (trainingType: TrainingTypeEnum) => {
+  switch (trainingType) {
+    case TrainingTypeEnum.AEROBICS:
+      return '#аэробика';
+    case TrainingTypeEnum.BOX:
+      return '#бокс';
+    case TrainingTypeEnum.CROSSFIT:
+      return '#кроссфит';
+    case TrainingTypeEnum.PILATES:
+      return '#пилатес';
+    case TrainingTypeEnum.RUNNING:
+      return '#бег';
+    case TrainingTypeEnum.STRETCHING:
+      return '#стрэтчинг';
+    case TrainingTypeEnum.YOGA:
+      return '#йога';
+  };
+}
+
+export const getDurationTrainingTag = (trainingDuration: TrainingDurationEnum) => {
+  switch (trainingDuration) {
+    case TrainingDurationEnum.TEN_THIRTY:
+      return '#10_30минут';
+    case TrainingDurationEnum.THIRTY_FIFTY:
+      return '#30_50минут';
+    case TrainingDurationEnum.FIFTY_EIGHTY:
+      return '#50_80минут';
+    case TrainingDurationEnum.EIGHTY_HUNDRED:
+      return '#80_100минут';
+  };
+}
+
+export const getSexTrainingTag = (trainingDuration: SexEnum) => {
+  switch (trainingDuration) {
+    case SexEnum.MALE:
+      return '#для_мужчин';
+    case SexEnum.FEMALE:
+      return '#для_женщин';
+    case SexEnum.NOT_STATED:
+      return '#для_всех';
   };
 }

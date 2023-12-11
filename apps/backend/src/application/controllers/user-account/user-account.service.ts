@@ -128,9 +128,9 @@ export class UserAccountService {
       throw new BalanceNotFoundException();
     }
 
-    if(foundBalance.remained <= quantity){
-      await this.userBalanceRepository.removeFromUserBalance(id, trainingId);
-    }
+    // if(foundBalance.remained <= quantity){
+    //   await this.userBalanceRepository.removeFromUserBalance(id, trainingId);
+    // }
 
     await this.userBalanceRepository.updateInUserBalance(id, trainingId, foundBalance.remained - quantity)
   }

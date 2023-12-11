@@ -20,6 +20,7 @@ import { NotFoundInSubscribers } from '../../../exceptions/not-found-in-friends-
 import { UserEntityInterface } from '../../../entities/user-entity.interface';
 import { ConfigService } from '@nestjs/config';
 import { TrainerEntityInterface } from '../../../entities/trainer-entity.interface';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -30,14 +31,14 @@ export class UsersService {
     private readonly configService: ConfigService,
   ) { }
 
-  public async createUser(dto: CreateUserDto, avatarFileName: string, backgroundImgFileName: string): Promise<UserEntityInterface> {
+  public async createUser(dto: CreateUserDto, avatarFileName: string): Promise<UserEntityInterface> {
     const foundUser = await this.usersRepository.findUserByEmail(dto.email);
 
     if (foundUser) {
       throw new UserExistsException(foundUser.email);
     }
 
-    const ctreatedUser = this.usersRepository.createUser(dto, avatarFileName, backgroundImgFileName);
+    const ctreatedUser = this.usersRepository.createUser(dto, avatarFileName);
 
     return ctreatedUser;
   }
@@ -89,7 +90,14 @@ export class UsersService {
   }
 
   public async isRefreshTokenValid(id: UUID, refreshToken: string): Promise<boolean>{
-    const activeRefreshToken = await this.refreshTokenRepository.getActiveTokenByUserId(id);
+    let activeRefreshToken = '';
+    try{
+      activeRefreshToken = await this.refreshTokenRepository.getActiveTokenByUserId(id);
+    }
+    catch{
+      throw new BadRequestException();
+    }
+
 
     return refreshToken === activeRefreshToken;
   }
@@ -151,7 +159,7 @@ export class UsersService {
     return foundTrainer;
   }
 
-  public async updateUser(dto: UpdateTrainerDto) {
+  public async updateUser(dto: UpdateUserDto) {
     let updatedUser;
     try {
       updatedUser = await this.usersRepository.updateUser(dto);
