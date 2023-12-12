@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+import { AppRoutes } from '../../constants/app-routes.constants';
 import { LocationEnum } from '../../types/location.enum';
 import { TrainingTypeEnum } from '../../types/training-type.enum';
 import { UUID } from '../../types/uuid.type';
@@ -13,8 +15,6 @@ type UsersListItemComponentProps = {
 }
 
 export function UsersListItemComponent({ id, name, role, avatarFileName, location, trainingType }: UsersListItemComponentProps): JSX.Element {
-  console.log(trainingType);
-
 
   return (
     <li className="users-catalog__item">
@@ -42,7 +42,7 @@ export function UsersListItemComponent({ id, name, role, avatarFileName, locatio
           </li>
           )}
         </ul>
-        <a className="btn btn--medium thumbnail-user__button" href="#">Подробнее</a>
+        <Link className="btn btn--medium thumbnail-user__button" to={`${AppRoutes.USER_CARD}/${id}`}>Подробнее</Link>
       </div>
     </li>
   );

@@ -19,6 +19,7 @@ import { QuestionnaireUserPage } from './pages/questionnaire-user/questionnaire-
 import { TrainingCardTrainerPage } from './pages/training-card-trainer/training-card-trainer.page';
 import { TrainingCardUserPage } from './pages/training-card-user/training-card-user.page';
 import { UsersCatalogPage } from './pages/users-catalog/users-catalog.page';
+import { UserCardPage } from './pages/user-card/user-card.page';
 
 export function App() {
   const dispatch = useAppDispatch();
@@ -46,6 +47,7 @@ export function App() {
       <Route path={AppRoutes.TRAINING_CARD_USER} element={<TrainingCardUserPage />} />
       <Route path={AppRoutes.TRAINING_CARD_TRAINER} element={<TrainingCardTrainerPage />} />
       <Route path={AppRoutes.USERS_CATALOG} element={<UsersCatalogPage/>} />
+      <Route path={`${AppRoutes.USER_CARD}/:id`} element={<UserCardPage/>} />
       <Route path={'/notFound'} element={<NotFoundPage />} />
       <Route path={'/badRequest'} element={<BadRequestPage />} />
       <Route path='*' element={<NotFoundPage />} />
