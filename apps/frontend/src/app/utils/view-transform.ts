@@ -41,6 +41,21 @@ export const getLocation = (location: LocationEnum) => {
   };
 }
 
+export const getLocationTag = (location: LocationEnum) => {
+  switch (location) {
+    case LocationEnum.PETROGRADSKAYA:
+      return 'Петроградская';
+    case LocationEnum.PIONERSKAYA:
+      return 'Пионерская';
+    case LocationEnum.SPORTIVNAYA:
+      return 'Спортивная';
+    case LocationEnum.UDELNAYA:
+      return 'Удельная';
+    case LocationEnum.ZVYOZDNAYA:
+      return 'Звездная';
+  };
+}
+
 export const getTypeTrainingTag = (trainingType: TrainingTypeEnum) => {
   switch (trainingType) {
     case TrainingTypeEnum.AEROBICS:

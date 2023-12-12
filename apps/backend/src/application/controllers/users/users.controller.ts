@@ -50,6 +50,9 @@ export class UsersController {
   @UseGuards(IsUserRoleGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   public async usersList(@Query() query: GetUsersListQuery): Promise<(UserRdo | TrainerRdo)[]> {
+
+    console.log(query);
+
     const foundUsers = await this.usersService.getUsersList(query);
 
     const mappedResult = foundUsers.map((entity) => entity.role === UserRoleEnum.TRAINER ? fromEntityToTrainerRdo(entity as TrainerEntityInterface) : fromEntityToUserRdo(entity as UserEntityInterface));

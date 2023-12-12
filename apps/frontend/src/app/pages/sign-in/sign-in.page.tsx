@@ -4,6 +4,7 @@ import { signInThunk } from '../../store/slices/authorization.thunk';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { AuthorizationStatusEnum } from '../../types/authorization-status.enum';
 import { Navigate } from 'react-router-dom';
+import { AppRoutes } from '../../constants/app-routes.constants';
 
 
 export function SignInPage(): JSX.Element {
@@ -38,7 +39,7 @@ export function SignInPage(): JSX.Element {
   }
 
   if (authoriztionStatus === AuthorizationStatusEnum.AUTHORIZED) {
-    return userData.role === 'user' ? <Navigate to={'/index'} /> : <Navigate to={'/coachAccount'} />
+    return userData.role === 'user' ? <Navigate to={AppRoutes.INDEX} /> : <Navigate to={'/coachAccount'} />
   }
 
   return (

@@ -206,11 +206,11 @@ export class UsersService {
 
     try {
       foundUsers = await this.usersRepository.findUsers({
-        location: query.location, trainingLevel: query.trainingLevel, trainingType: query.trainingType
+        locations: query.locations, trainingLevel: query.trainingLevel, trainingType: query.trainingType
       }, {sortPriority: query.sortPriority});
 
       foundTrainers = await this.usersRepository.findTrainers({
-        location: query.location, trainingLevel: query.trainingLevel, trainingType: query.trainingType
+        locations: query.locations, trainingLevel: query.trainingLevel, trainingType: query.trainingType
       }, {sortPriority: query.sortPriority});
     } catch (error) {
       throw new BadRequestException();

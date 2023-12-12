@@ -1,7 +1,7 @@
 export enum AppRoutes {
   SIGN_IN = '/signIn',
   SIGN_UP = '/signUp',
-  INDEX = '/index',
+  INDEX = '/userAccount/index',
   COACH_ACCOUNT = '/coachAccount',
   QUESTIONNAIRE_COACH = '/questionnaireCoach',
   QUESTIONNAIRE_USER = '/questionnaireUser',
@@ -10,4 +10,5 @@ export enum AppRoutes {
   TRAINING_CARD_USER = 'userAccount/trainingCard/:id',
   TRAINING_CARD_TRAINER = 'trainerAccount/trainingCard/:id',
   TRAINING_CATALOG = '/trainingCatalog',
+  USERS_CATALOG = 'userAccount/usersCatalog',
 }

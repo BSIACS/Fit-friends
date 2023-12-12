@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { HeaderComponent } from '../../components/header/header.component';
 import { UUID } from '../../types/uuid.type';
 import { ReviewDTO } from '../../dto/review.dto';
 import { ReviewSideBarItemComponent } from '../../components/review-side-bar-item/review-side-bar-item';
@@ -9,6 +8,8 @@ import { getAccessToken } from '../../services/token';
 import { useParams } from 'react-router-dom';
 import { TrainingDTO } from '../../dto/training.dto';
 import { BadRequestPage } from '../bad-request/bad-request.page';
+import { LoaderComponent } from '../../components/loader/loader.component';
+import { HeaderComponent } from '../../components/header/header.component';
 
 const requestWithAccessTokenInterceptor = (config: InternalAxiosRequestConfig) => {
   config.headers.Authorization = `Bearer ${getAccessToken()}`;
@@ -132,8 +133,9 @@ export function TrainingCardTrainerPage(): JSX.Element {
 
   return (
     <>
-      <div style={{ width: '100%', height: '100%', position: 'fixed', backgroundColor: 'black', zIndex: '100', opacity: .5 }}
-        hidden={isReviewsLoaded && isTrainingDataLoaded}></div>
+      {/* <div style={{ width: '100%', height: '100%', position: 'fixed', backgroundColor: 'black', zIndex: '100', opacity: .5 }}
+        hidden={isReviewsLoaded && isTrainingDataLoaded}></div> */}
+      <LoaderComponent isHidden={isReviewsLoaded && isTrainingDataLoaded}/>
       <div className="wrapper">
         <HeaderComponent />
         <main>

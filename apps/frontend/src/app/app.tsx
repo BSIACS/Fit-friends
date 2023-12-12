@@ -18,6 +18,7 @@ import { TrainingCatalogPage } from './pages/training-catalog/training-catalog.p
 import { QuestionnaireUserPage } from './pages/questionnaire-user/questionnaire-user.page';
 import { TrainingCardTrainerPage } from './pages/training-card-trainer/training-card-trainer.page';
 import { TrainingCardUserPage } from './pages/training-card-user/training-card-user.page';
+import { UsersCatalogPage } from './pages/users-catalog/users-catalog.page';
 
 export function App() {
   const dispatch = useAppDispatch();
@@ -37,13 +38,14 @@ export function App() {
       <Route path={'/'} element={<StartPage />} />
       <Route path={AppRoutes.SIGN_IN} element={<SignInPage />} />
       <Route path={AppRoutes.SIGN_UP} element={<SignUpPage />} />
-      <Route path={'/index'} element={<PrivateRouteComponent validRole='user'><IndexPage /></PrivateRouteComponent>} />
+      <Route path={AppRoutes.INDEX} element={<PrivateRouteComponent validRole='user'><IndexPage /></PrivateRouteComponent>} />
       <Route path={AppRoutes.TRAINING_CATALOG} element={<PrivateRouteComponent validRole='user'><TrainingCatalogPage /></PrivateRouteComponent>} />
       <Route path={'/coachAccount'} element={<PrivateRouteComponent validRole='trainer'><PersonalAccountCoachPage /></PrivateRouteComponent>} />
       <Route path={AppRoutes.QUESTIONNAIRE_COACH} element={<PrivateRouteComponent validRole='trainer'><QuestionnaireCoachPage /></PrivateRouteComponent>} />
       <Route path={AppRoutes.QUESTIONNAIRE_USER} element={<PrivateRouteComponent validRole='user'><QuestionnaireUserPage /></PrivateRouteComponent>} />
       <Route path={AppRoutes.TRAINING_CARD_USER} element={<TrainingCardUserPage />} />
       <Route path={AppRoutes.TRAINING_CARD_TRAINER} element={<TrainingCardTrainerPage />} />
+      <Route path={AppRoutes.USERS_CATALOG} element={<UsersCatalogPage/>} />
       <Route path={'/notFound'} element={<NotFoundPage />} />
       <Route path={'/badRequest'} element={<BadRequestPage />} />
       <Route path='*' element={<NotFoundPage />} />

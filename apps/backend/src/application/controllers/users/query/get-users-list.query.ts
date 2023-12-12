@@ -12,9 +12,8 @@ export class GetUsersListQuery{
     enum: LocationEnum,
     required: false
   })
-  @IsEnum(LocationEnum)
   @IsOptional()
-  public location: string;
+  public locations: string[];
 
   @ApiProperty({
     description: 'Training level',

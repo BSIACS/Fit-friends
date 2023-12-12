@@ -3,7 +3,7 @@ import { TrainingTypeEnum } from '../../../../types/training-type.enum';
 
 
 export interface GetUsersFilterParams{
-  location: string;
+  locations: string[];
   trainingLevel: TrainingLevelEnum;
-  trainingType: TrainingTypeEnum[];
+  trainingType: string[];
 }

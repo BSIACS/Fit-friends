@@ -175,11 +175,16 @@ export class UsersRepository {
   }
 
   public async findUsers(filterParams: GetUsersFilterParams, sortParams: GetUsersSortParams): Promise<UserEntityInterface[]> {
+    console.log('filterParams.trainingLevel -- ', filterParams.trainingLevel);
+
+
     const foundUsers = await this.prisma.user.findMany({
       where: {
-        location: filterParams.location ? filterParams.location : undefined,
-        trainingLevel: filterParams.trainingLevel ? filterParams.trainingLevel : undefined,
-        trainingType: filterParams.trainingType ? { hasSome: filterParams.trainingType} : undefined,
+        location: {
+          in: filterParams.locations ? filterParams.locations : undefined
+        },
+        trainingType: filterParams.trainingType ?  {hasSome: filterParams.trainingType} : undefined,
+        trainingLevel: filterParams.trainingLevel,
       }
     });
 
@@ -189,9 +194,11 @@ export class UsersRepository {
   public async findTrainers(filterParams: GetUsersFilterParams, sortParams: GetUsersSortParams): Promise<TrainerEntityInterface[]> {
     const foundTrainers = await this.prisma.trainer.findMany({
       where: {
-        location: filterParams.location ? filterParams.location : undefined,
-        trainingLevel: filterParams.trainingLevel ? filterParams.trainingLevel : undefined,
-        trainingType: filterParams.trainingType ? { hasSome: filterParams.trainingType} : undefined,
+        location: {
+          in: filterParams.locations ? filterParams.locations : undefined
+        },
+        trainingType: filterParams.trainingType ?  {hasSome: filterParams.trainingType} : undefined,
+        trainingLevel: filterParams.trainingLevel,
       }
     });
 
