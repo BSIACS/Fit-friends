@@ -37,13 +37,16 @@ export class UserAccountController {
   @ApiBody({ type: AddFriendDto })
   @Post('friends')
   public async addFriend(@Req() request: RequestWithTokenPayload, @Body() dto: AddFriendDto): Promise<void> {
+    console.log('addFriend invoke');
     const payload: TokenPayload = request.user;
+
     await this.userAccountService.addToFriendsList(payload.userId, dto.newFriendId);
   }
 
   @ApiBody({ type: RemoveFrindDto })
   @Post('friends/remove')
   public async removeFromFriends(@Req() request: RequestWithTokenPayload, @Body() dto: RemoveFrindDto): Promise<void> {
+    console.log('removeFromFriends invoke');
     const payload: TokenPayload = request.user;
     await this.userAccountService.removeFromFriendsList(payload.userId, dto.friendId);
   }

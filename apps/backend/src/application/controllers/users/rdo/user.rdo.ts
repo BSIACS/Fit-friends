@@ -17,4 +17,5 @@ export class UserRdo {
   calories: number;
   caloriesPerDay: number;
   isReadyForTraining: boolean;
+  friends: UUID[];
 }

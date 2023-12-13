@@ -10,6 +10,6 @@ export enum AppRoutes {
   TRAINING_CARD_USER = 'userAccount/trainingCard/:id',
   TRAINING_CARD_TRAINER = 'trainerAccount/trainingCard/:id',
   TRAINING_CATALOG = '/trainingCatalog',
-  USERS_CATALOG = 'userAccount/usersCatalog',
+  USERS_CATALOG = '/userAccount/usersCatalog',
   USER_CARD = '/userCard',
 }

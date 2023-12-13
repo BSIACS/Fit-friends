@@ -22,6 +22,7 @@ export const fromEntityToUserRdo = (entity: UserEntityInterface): UserRdo => {
     trainingDuration: entity.trainingDuration,
     trainingType: entity.trainingType,
     isReadyForTraining: entity.isReadyForTraining,
+    friends: entity.friends,
   }
 }
 

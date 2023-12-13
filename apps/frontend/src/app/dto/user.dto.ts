@@ -13,4 +13,5 @@ export class UserDTO {
   trainingType?: string[];
   merits?: string;
   isReadyForTraining?: boolean;
+  friends?: string[];
 }

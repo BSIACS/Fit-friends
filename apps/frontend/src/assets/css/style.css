@@ -2705,6 +2705,28 @@ input:active + .custom-textarea__text {
   border-radius: 100px;
 }
 
+.user-card__status-not-ready {
+  position: relative;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  margin-bottom: 35px;
+  padding: 12px 20px 12px 34px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 12px;
+  color: #333333;
+  text-transform: uppercase;
+  border: 1px solid #adadad;
+  border-radius: 100px;
+}
+
 .user-card__status::after {
   content: "";
   position: absolute;
@@ -2713,6 +2735,17 @@ input:active + .custom-textarea__text {
   width: 8px;
   height: 8px;
   background-color: #c5ec2a;
+  border-radius: 100px;
+}
+
+.user-card__status-not-ready::after {
+  content: "";
+  position: absolute;
+  top: 14px;
+  left: 20px;
+  width: 8px;
+  height: 8px;
+  background-color: #adadad;
   border-radius: 100px;
 }
 

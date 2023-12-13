@@ -7,7 +7,6 @@ import { RootState } from '../store';
 import { UpdateTrainerRequest } from '../../types/update-trainer-request.interface';
 import { UpdateUserRequest } from '../../types/update-user-request.interface';
 import { UUID } from '../../types/uuid.type';
-import { setIsLoading } from './application.slice';
 
 
 const requestWithAccessTokenInterceptor = (config: InternalAxiosRequestConfig) => {
@@ -41,7 +40,6 @@ export const getTrainerDetailThunk = createAsyncThunk(
       const axiosInstance = axios.create();
       axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
       const response = await axiosInstance.get<any>(`http://localhost:3042/api/users/detail/trainer/${userId}`);
-      console.log(response.data);
 
       return response.data;
     } catch (error: any) {
@@ -59,12 +57,7 @@ export const updateTrainerDataThunk = createAsyncThunk(
         headers: { "Content-Type": "multipart/form-data" },
       });
       axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
-
-      console.log(`FORM DATA ${payload.formData.get('description')}`);
-
-
       const response = await axiosInstance.patch<any>(`http://localhost:3042/api/users/update/trainer`, payload.formData);
-      console.log(response.data);
 
       return response.data;
     } catch (error: any) {
@@ -84,9 +77,7 @@ export const updateUserDataThunk = createAsyncThunk(
         headers: { "Content-Type": "multipart/form-data" },
       });
       axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
-
       const response = await axiosInstance.patch<any>(`http://localhost:3042/api/users/update/user`, payload.formData);
-      console.log(response.data);
 
       return response.data;
     } catch (error: any) {
