@@ -346,14 +346,7 @@ export function TrainingCatalogPage(): JSX.Element {
               </div>
               <div className="training-catalog">
                 <ul className="training-catalog__list">
-                  {trainings.map(training => <TrainingListItemComponent
-                    key={training.id}
-                    name={training.name}
-                    description={training.description}
-                    calories={training.calories}
-                    price={training.price}
-                    rating={training.rating}
-                  />)}
+                  {trainings.map(training => <TrainingListItemComponent training={training} />)}
                 </ul>
                 {/* <div className="show-more training-catalog__show-more">
                   <button className="btn show-more__button show-more__button--more" type="button">Показать еще</button>

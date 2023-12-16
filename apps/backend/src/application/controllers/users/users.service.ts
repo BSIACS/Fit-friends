@@ -173,7 +173,7 @@ export class UsersService {
   public async updateTrainer(dto: UpdateTrainerDto, certificateFileName?: string): Promise<TrainerEntityInterface> {
     let updatedUser;
     try {
-      updatedUser = await this.usersRepository.updateTrainer({...dto, certificateFileName: certificateFileName});
+      updatedUser = await this.usersRepository.updateTrainer({...dto}, certificateFileName);
     } catch (error) {
       console.log(error);
 

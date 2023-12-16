@@ -19,6 +19,17 @@ export class PersonalTrainingRequestRepository {
     return foundPersonalTrainingRequest;
   }
 
+  public async getUnderConsideration(requesterId: UUID, responserId: UUID): Promise<PersonalTrainingRequestEntityInterface> {
+    const foundPersonalTrainingRequest = await this.prisma.personalTrainingRequest.findFirst({
+      where: {
+        requestorId: requesterId,
+        responserId: responserId,
+        status: PersonalTrainingRequestStatusEnum.UNDER_CONSIDERATION
+      }
+    });
+
+    return foundPersonalTrainingRequest;
+  }
 
   public async create(requesterId: UUID, responserId: UUID): Promise<PersonalTrainingRequestEntityInterface> {
     const createdAt = new Date();

@@ -1,4 +1,4 @@
-import { Body, Controller, Patch, Post, Req, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Req, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { JwtGuard } from '../../../guards/jwtGuard.guard';
 import { IsUserRoleGuard } from '../../../guards/is-user-role.guard';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
@@ -8,6 +8,7 @@ import { PersonalTrainingRequestService } from './personal-training-request.serv
 import { TokenPayload } from '../../../types/token-payload.interface';
 import { ChangePersonalTrainingRequestStatusDto } from './dto/change-personal-training-request-status.dto';
 import { PersonalTrainingRequestEntityInterface } from '../../../entities/personal-training-request.entity';
+import { GetUnderConsiderationtDto } from './dto/get-under-consideration.dto';
 
 
 @ApiTags('personalTrainingRequest')
@@ -18,6 +19,18 @@ export class PersonalTrainingRequestController {
   constructor(
     private readonly personalTrainingRequestService: PersonalTrainingRequestService,
   ) { }
+
+  @Post('/getUnderConsideration')
+  @ApiBody({ type: CreatePersonalTrainingRequestDto })
+  @UseGuards(IsUserRoleGuard)
+  @UsePipes(ValidationPipe)
+  public async getUnderConsideration(@Req() request: RequestWithTokenPayload, @Body() dto: GetUnderConsiderationtDto): Promise<PersonalTrainingRequestEntityInterface> {
+    const payload: TokenPayload = request.user;
+
+    const createPersonalTrainingRequest = await this.personalTrainingRequestService.getUnderConsideration(payload.userId, dto.responserId);
+
+    return createPersonalTrainingRequest;
+  }
 
   @Post('/')
   @ApiBody({ type: CreatePersonalTrainingRequestDto })

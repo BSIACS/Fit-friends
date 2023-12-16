@@ -5,6 +5,7 @@ import { JwtGuard } from '../../../guards/jwtGuard.guard';
 import { ApiHeader, ApiTags } from '@nestjs/swagger';
 import { fromEntitiesToTrainingsRdos, fromEntityToTrainingRdo } from '../trainer-account/mappers/training.mapper';
 import { TrainingDetailDto } from './dto/training-detail.dto';
+import { UUID } from '../../../types/uuid.type';
 
 
 @ApiTags('trainings')
@@ -23,6 +24,17 @@ export class TrainingsController {
   @Get('/catalogue')
   public async trainingsCatalogue(@Body() data: any, @Query() query: GetTrainingsCatalogueQuery) {
     const foundTrainings = await this.trainingsService.findTrainings(query);
+
+    return fromEntitiesToTrainingsRdos(foundTrainings);
+  }
+
+  @ApiHeader({
+    name: 'Authorization:'
+  })
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @Post('/catalogue')
+  public async getTrainingsByTrainerId(@Body() dto: {trainerId: UUID}) {
+    const foundTrainings = await this.trainingsService.findTrainingByTrainerId(dto.trainerId);
 
     return fromEntitiesToTrainingsRdos(foundTrainings);
   }

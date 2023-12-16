@@ -1,0 +1,12 @@
+.readyForTraining{
+  color: #adadad;
+  border: 1px solid #cfcfcf;
+}
+
+.visible{
+  display: inline-flex;
+}
+
+.invisible{
+  display: none;
+}

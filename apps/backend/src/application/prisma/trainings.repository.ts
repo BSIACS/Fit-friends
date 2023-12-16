@@ -97,22 +97,32 @@ export class TrainingsRepository {
     return foundTraining;
   }
 
-  public async findTrainingsByCreatorId(id: UUID, filter: GetTrainingsListQuery): Promise<TrainingEntityInterface[] | null> {
-    const foundTrainings = await this.prisma.training.findMany({
-      where: {
-        trainingCreatorId: id,
-        calories: filter.caloriesRange ? {
-          lte: filter.caloriesRange[1],
-          gte: filter.caloriesRange[0]
-        } : {},
-        price: filter.priceRange ? {
-          lte: filter.priceRange[1],
-          gte: filter.priceRange[0]
-        } : {},
-        rating: filter.rate,
-        trainingDuration: filter.duration,
-      }
-    });
+  public async findTrainingsByCreatorId(id: UUID, filter: GetTrainingsListQuery = undefined): Promise<TrainingEntityInterface[] | null> {
+    let foundTrainings;
+    if (!filter) {
+      foundTrainings = await this.prisma.training.findMany({
+        where: {
+          trainingCreatorId: id,
+        }
+      });
+    }
+    else {
+      foundTrainings = await this.prisma.training.findMany({
+        where: {
+          trainingCreatorId: id,
+          calories: filter.caloriesRange ? {
+            lte: filter.caloriesRange[1],
+            gte: filter.caloriesRange[0]
+          } : {},
+          price: filter.priceRange ? {
+            lte: filter.priceRange[1],
+            gte: filter.priceRange[0]
+          } : {},
+          rating: filter.rate,
+          trainingDuration: filter.duration,
+        }
+      });
+    }
 
     return foundTrainings;
   }
@@ -132,7 +142,7 @@ export class TrainingsRepository {
 
   public async findTrainings(query: GetTrainingsCatalogueQuery): Promise<TrainingEntityInterface[] | null> {
     let trainingTypes = undefined;
-    if(query.trainingType !== undefined){
+    if (query.trainingType !== undefined) {
       trainingTypes = query.trainingType.split(',')
     }
 

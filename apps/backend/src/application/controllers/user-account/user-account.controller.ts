@@ -7,13 +7,15 @@ import { RemoveFrindDto } from './dto/remove-friend.dto';
 import { AddToBalanceDto } from './dto/add-to-balance.dto';
 import { UsersService } from '../users/users.service';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { fromEntitiesToUsersRdos } from '../users/mappers/users.mappers';
+import { fromEntitiesToUsersAndTrainersRdos, fromEntitiesToUsersRdos } from '../users/mappers/users.mappers';
 import { UserRdo } from '../users/rdo/user.rdo';
 import { RequestWithTokenPayload } from '../../../types/request-with-token-payload.interface';
 import { TokenPayload } from '../../../types/token-payload.interface';
 import { RemoveFromBalanceDto } from './dto/remove-from-balance.dto';
 import { SubscribeForNewTrainingsNotificationsDto } from './dto/subscribe-for-new-trainings-notifications.dto';
 import { UnsubscribeFromTrainingsNotificationsDto } from './dto/unsubscribe-from-trainings-notifications.dto';
+import { UserEntityInterface } from '../../../entities/user-entity.interface';
+import { TrainerEntityInterface } from '../../../entities/trainer-entity.interface';
 
 @ApiTags('userAccount')
 @UseGuards(JwtGuard)
@@ -27,17 +29,16 @@ export class UserAccountController {
     ) { }
 
   @Get('friends/:id')
-  public async getFriendList(@Req() request: RequestWithTokenPayload): Promise<UserRdo[]> {
+  public async getFriendList(@Req() request: RequestWithTokenPayload): Promise<(UserEntityInterface | TrainerEntityInterface)[]> {
     const payload: TokenPayload = request.user;
     const foundFriends = await this.userAccountService.getFriendList(payload.userId);
 
-    return fromEntitiesToUsersRdos(foundFriends);
+    return fromEntitiesToUsersAndTrainersRdos(foundFriends);
   }
 
   @ApiBody({ type: AddFriendDto })
   @Post('friends')
   public async addFriend(@Req() request: RequestWithTokenPayload, @Body() dto: AddFriendDto): Promise<void> {
-    console.log('addFriend invoke');
     const payload: TokenPayload = request.user;
 
     await this.userAccountService.addToFriendsList(payload.userId, dto.newFriendId);
@@ -46,7 +47,6 @@ export class UserAccountController {
   @ApiBody({ type: RemoveFrindDto })
   @Post('friends/remove')
   public async removeFromFriends(@Req() request: RequestWithTokenPayload, @Body() dto: RemoveFrindDto): Promise<void> {
-    console.log('removeFromFriends invoke');
     const payload: TokenPayload = request.user;
     await this.userAccountService.removeFromFriendsList(payload.userId, dto.friendId);
   }

@@ -23,6 +23,12 @@ export class TrainingsService {
     return foundTraining;
   }
 
+  public async findTrainingByTrainerId(id: UUID): Promise<TrainingEntityInterface[]> {
+    const foundTrainings = await this.trainingsRepository.findTrainingsByCreatorId(id);
+
+    return foundTrainings;
+  }
+
   public async findTrainings(query: GetTrainingsCatalogueQuery): Promise<TrainingEntityInterface[]> {
     const foundTrainings = await this.trainingsRepository.findTrainings(query);
 

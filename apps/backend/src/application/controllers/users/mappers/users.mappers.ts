@@ -3,6 +3,7 @@ import { TrainerRdo } from '../rdo/trainer.rdo';
 import { UserRdo } from '../rdo/user.rdo';
 import { TrainerEntityInterface } from '../../../../entities/trainer-entity.interface';
 import { UserEntityInterface } from '../../../../entities/user-entity.interface';
+import { UserRoleEnum } from '../../../../types/user-role.enum';
 
 export const fromEntityToUserRdo = (entity: UserEntityInterface): UserRdo => {
   return {
@@ -30,6 +31,10 @@ export const fromEntitiesToUsersRdos = (entities: UserEntityInterface[]): UserRd
   return entities.map((entity) => fromEntityToUserRdo(entity));
 }
 
+export const fromEntitiesToUsersAndTrainersRdos = (entities: (UserEntityInterface | TrainerEntityInterface)[]): (UserRdo | TrainerRdo)[] => {
+  return entities.map((entity) => entity.role === UserRoleEnum.USER ? fromEntityToUserRdo(entity as UserEntityInterface) : fromEntityToTrainerRdo(entity));
+}
+
 export const fromEntityToTrainerRdo = (entity: TrainerEntityInterface): TrainerRdo => {
   return {
     id: entity.id,
@@ -46,6 +51,7 @@ export const fromEntityToTrainerRdo = (entity: TrainerEntityInterface): TrainerR
     trainingType: entity.trainingType,
     merits: entity.merits,
     isReadyForTraining: entity.isReadyForTraining,
+    subscribers: entity.subscribers,
   }
 }
 

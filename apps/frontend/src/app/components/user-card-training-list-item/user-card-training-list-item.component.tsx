@@ -1,15 +1,17 @@
 import { TrainingDTO } from '../../dto/training.dto'
+import { TrainingTypeEnum } from '../../types/training-type.enum';
+import { getTypeTrainingTag } from '../../utils/view-transform';
 
 type TrainingListItemComponentProps = {
   training: TrainingDTO
 
 }
 
-export function TrainingListItemComponent({ training }: TrainingListItemComponentProps): JSX.Element {
-  const { id, name, description, calories, rating, price, backgroundImgFileName } = training;
+export function UserCardTrainingListItemComponent({ training }: TrainingListItemComponentProps): JSX.Element {
+  const { id, name, description, calories, rating, price, backgroundImgFileName, trainingType } = training;
 
   return (
-    <li className="training-catalog__item">
+    <div >
       <div className="thumbnail-training">
         <div className="thumbnail-training__inner">
           <div className="thumbnail-training__image">
@@ -25,7 +27,7 @@ export function TrainingListItemComponent({ training }: TrainingListItemComponen
           <div className="thumbnail-training__info">
             <ul className="thumbnail-training__hashtags-list">
               <li className="thumbnail-training__hashtags-item">
-                <div className="hashtag thumbnail-training__hashtag"><span>#кроссфит</span></div>
+                <div className="hashtag thumbnail-training__hashtag"><span>{getTypeTrainingTag(trainingType as TrainingTypeEnum)}</span></div>
               </li>
               <li className="thumbnail-training__hashtags-item">
                 <div className="hashtag thumbnail-training__hashtag"><span>#{calories}ккал</span></div>
@@ -46,6 +48,6 @@ export function TrainingListItemComponent({ training }: TrainingListItemComponen
           </div>
         </div>
       </div>
-    </li>
+    </div>
   )
 }

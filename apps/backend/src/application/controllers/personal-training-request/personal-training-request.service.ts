@@ -19,6 +19,26 @@ export class PersonalTrainingRequestService {
     private readonly usersRepository: UsersRepository
   ) { }
 
+  public async getUnderConsideration(requesterId: UUID, responserId: UUID): Promise<PersonalTrainingRequestEntityInterface> {
+    if(requesterId === responserId){
+      throw new WrongResponserException(responserId);
+    }
+
+    let foundResponser: UserEntityInterface | TrainerEntityInterface = await this.usersRepository.findUserById(responserId);
+
+    if(!foundResponser){
+      foundResponser = await this.usersRepository.findTrainerById(responserId);
+    }
+
+    if(!foundResponser){
+      throw new UserDoesNotExistsException(responserId, 'id');
+    }
+
+    const foundPersonalTrainingRequest = await this.personalTrainingRequestRepository.getUnderConsideration(requesterId, responserId);
+
+    return foundPersonalTrainingRequest;
+  }
+
   public async createPersonalTrainingRequest(requesterId: UUID, responserId: UUID): Promise<PersonalTrainingRequestEntityInterface> {
     if(requesterId === responserId){
       throw new WrongResponserException(responserId);

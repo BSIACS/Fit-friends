@@ -1,3 +1,5 @@
+import { UUID } from '../types/uuid.type';
+
 export class TrainerDTO {
   id?: string;
   name?: string;
@@ -13,4 +15,5 @@ export class TrainerDTO {
   trainingType?: string[];
   merits?: string;
   isReadyForTraining?: boolean;
+  subscribers?: UUID[];
 }

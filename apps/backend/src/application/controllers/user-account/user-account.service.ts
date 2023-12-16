@@ -10,6 +10,7 @@ import { UserBalanceEntityInterface } from '../../../entities/user-balance-entit
 import { TrainingsRepository } from '../../prisma/trainings.repository';
 import { TrainingDoesNotExistsException } from '../../../exceptions/training-does-not-exists.exception';
 import { BalanceNotFoundException } from '../../../exceptions/balance-not-found.exception';
+import { TrainerEntityInterface } from '../../../entities/trainer-entity.interface';
 
 @Injectable()
 export class UserAccountService {
@@ -20,7 +21,7 @@ export class UserAccountService {
     private readonly trainingsRepository: TrainingsRepository,
     ) { }
 
-  public async getFriendList(id: UUID): Promise<UserEntityInterface[]> {
+  public async getFriendList(id: UUID): Promise<(UserEntityInterface | TrainerEntityInterface)[]> {
     const foundUser = await this.usersRepository.findUserById(id);
 
     if (!foundUser) {
@@ -39,7 +40,11 @@ export class UserAccountService {
       throw new UserDoesNotExistsException(id, 'id');
     }
 
-    const foundNewFriend = await this.usersRepository.findUserById(newFriendId);
+    let foundNewFriend: UserEntityInterface | TrainerEntityInterface = await this.usersRepository.findUserById(newFriendId);
+
+    if (!foundNewFriend) {
+      foundNewFriend = await this.usersRepository.findTrainerById(newFriendId);
+    }
 
     if (!foundNewFriend) {
       throw new UserDoesNotExistsException(newFriendId, 'id');

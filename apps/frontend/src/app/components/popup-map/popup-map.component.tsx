@@ -30,7 +30,7 @@ export function PopupMapComponent({ isActive, geocode, location, handleSetIsPopu
               <span>{location}</span>
             </p>
             <button className="btn-icon btn-icon--outlined btn-icon--big" type="button" aria-label="close" onClick={closeButtonClickHandler}>
-              <svg width="20" height="20" aria-hidden="true" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L21 21M1 21L21 1" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <svg width="20" height="20" aria-hidden="true" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L21 21M1 21L21 1" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
           </div>
           <div className="popup__content-map">

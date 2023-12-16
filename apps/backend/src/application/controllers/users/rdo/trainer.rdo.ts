@@ -15,4 +15,5 @@ export class TrainerRdo {
   trainingType: string[];
   merits: string;
   isReadyForTraining: boolean;
+  subscribers: UUID[];
 }

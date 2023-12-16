@@ -10,7 +10,7 @@ export function IndexPage(): JSX.Element {
       <HeaderComponent />
       <main>
         <h1 className="visually-hidden">FitFriends — Время находить тренировки, спортзалы и друзей спортсменов</h1>
-        <SpecialForYouComponent/>
+        <SpecialForYouComponent />
         <section className="special-offers">
           <div className="container">
             <div className="special-offers__wrapper">
@@ -310,11 +310,9 @@ export function IndexPage(): JSX.Element {
             <div className="look-for-company__wrapper">
               <div className="look-for-company__title-wrapper">
                 <h2 className="look-for-company__title">Ищут компанию для тренировки</h2>
-                <button className="btn-flat btn-flat--light look-for-company__button" type="button"><span>Смотреть все</span>
-                  <svg width="14" height="10" aria-hidden="true">
-                    <use xlinkHref="#arrow-right"></use>
-                  </svg>
-                </button>
+                <Link to={AppRoutes.USERS_CATALOG} className="btn-flat btn-flat--light look-for-company__button" type="button"><span>Смотреть все</span>
+                  <svg width="14" height="10" aria-hidden="true" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.0012 1L15 6L10.0012 11M1 6H14.86" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </Link>
                 <div className="look-for-company__controls">
                   <button className="btn-icon btn-icon--outlined look-for-company__control" type="button"
                     aria-label="previous">

@@ -1,5 +1,4 @@
-import styles from './users-card.module.css';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { UserDTO } from '../../dto/user.dto';
 import { getAccessToken } from '../../services/token';
@@ -47,12 +46,6 @@ export function UserCardPage(): JSX.Element {
       getFriendsData();
     }
   }, [authoriztionData]);
-
-  useEffect(() => {
-    // if (loggedUser && addTofriendsButton.current !== null) {
-    //   addTofriendsButton.current.disabled = loggedUser.friends?.includes(id as string) ? true : false;
-    // }
-  }, [friends]);
 
   const getUserData = async () => {
     const axiosInstance = axios.create();

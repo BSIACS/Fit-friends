@@ -4,6 +4,7 @@ import { LocationEnum } from '../../types/location.enum';
 import { TrainingTypeEnum } from '../../types/training-type.enum';
 import { UUID } from '../../types/uuid.type';
 import { getLocationTag, getTypeTrainingTag } from '../../utils/view-transform';
+import { UserRoleEnum } from '../../types/user-role.enum';
 
 type UsersListItemComponentProps = {
   id: UUID;
@@ -42,7 +43,7 @@ export function UsersListItemComponent({ id, name, role, avatarFileName, locatio
           </li>
           )}
         </ul>
-        <Link className="btn btn--medium thumbnail-user__button" to={`${AppRoutes.USER_CARD}/${id}`}>Подробнее</Link>
+        <Link className="btn btn--medium thumbnail-user__button" to={role === UserRoleEnum.USER ? `${AppRoutes.USER_CARD}/${id}` : `${AppRoutes.TRAINER_CARD}/${id}`}>Подробнее</Link>
       </div>
     </li>
   );

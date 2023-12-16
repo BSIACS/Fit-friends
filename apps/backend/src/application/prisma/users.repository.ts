@@ -128,12 +128,13 @@ export class UsersRepository {
     return createdUser;
   }
 
-  public async updateTrainer(entity: TrainerEntityInterface): Promise<TrainerEntityInterface> {
+  public async updateTrainer(dto: UpdateTrainerDto, certificateFileName: string): Promise<TrainerEntityInterface> {
     const updatedTrainer: TrainerEntityInterface | null = await this.prisma.trainer.update({
       where: {
-        id: entity.id
+        id: dto.id,
+        certificateFileName: certificateFileName ? certificateFileName : ''
       },
-      data: entity
+      data: dto
     });
 
     return updatedTrainer;
@@ -155,7 +156,7 @@ export class UsersRepository {
   }
 
   public async findTrainerDetail(id: UUID): Promise<TrainerEntityInterface> {
-    const foundUser: TrainerEntityInterface  = await this.prisma.trainer.findFirst({
+    const foundUser: TrainerEntityInterface = await this.prisma.trainer.findFirst({
       where: {
         id: id,
       }
@@ -183,7 +184,7 @@ export class UsersRepository {
         location: {
           in: filterParams.locations ? filterParams.locations : undefined
         },
-        trainingType: filterParams.trainingType ?  {hasSome: filterParams.trainingType} : undefined,
+        trainingType: filterParams.trainingType ? { hasSome: filterParams.trainingType } : undefined,
         trainingLevel: filterParams.trainingLevel,
       }
     });
@@ -197,7 +198,7 @@ export class UsersRepository {
         location: {
           in: filterParams.locations ? filterParams.locations : undefined
         },
-        trainingType: filterParams.trainingType ?  {hasSome: filterParams.trainingType} : undefined,
+        trainingType: filterParams.trainingType ? { hasSome: filterParams.trainingType } : undefined,
         trainingLevel: filterParams.trainingLevel,
       }
     });
@@ -231,7 +232,7 @@ export class UsersRepository {
     return foundSubscribersIds;
   }
 
-  public async findFriends(id: UUID): Promise<UserEntityInterface[]> {
+  public async findFriends(id: UUID): Promise<(UserEntityInterface | TrainerEntityInterface)[]> {
     const foundFriendsIds = (await this.prisma.user.findFirst({
       where: {
         id: id
@@ -241,7 +242,7 @@ export class UsersRepository {
       }
     })).friends;
 
-    const foundFriends = await this.prisma.user.findMany({
+    const foundUsers = await this.prisma.user.findMany({
       where: {
         id: {
           in: foundFriendsIds
@@ -249,10 +250,20 @@ export class UsersRepository {
       }
     });
 
+    const foundTrainers = await this.prisma.trainer.findMany({
+      where: {
+        id: {
+          in: foundFriendsIds
+        }
+      }
+    });
+
+    const foundFriends = [...foundUsers, ... foundTrainers];
+
     return foundFriends;
   }
 
-  public async addToFriendsList(userId: UUID, newFriendId: UUID): Promise<void>{
+  public async addToFriendsList(userId: UUID, newFriendId: UUID): Promise<void> {
     const foundFriendsIds = (await this.prisma.user.findFirst({
       where: {
         id: userId
@@ -274,7 +285,7 @@ export class UsersRepository {
     })
   }
 
-  public async removeFromFriendsList(userId: UUID, friendId: UUID): Promise<void>{
+  public async removeFromFriendsList(userId: UUID, friendId: UUID): Promise<void> {
     const foundFriendsIds = (await this.prisma.user.findFirst({
       where: {
         id: userId
@@ -286,7 +297,7 @@ export class UsersRepository {
 
     const elementToRemoveIndex = foundFriendsIds.indexOf(friendId);
 
-    if(elementToRemoveIndex < 0){
+    if (elementToRemoveIndex < 0) {
       return;
     }
 
@@ -302,7 +313,7 @@ export class UsersRepository {
     })
   }
 
-  public async addToSubscribers(trainerId: UUID, newSubscriberId: UUID): Promise<void>{
+  public async addToSubscribers(trainerId: UUID, newSubscriberId: UUID): Promise<void> {
     const foundSubscribersIds = (await this.prisma.trainer.findFirst({
       where: {
         id: trainerId
@@ -324,7 +335,7 @@ export class UsersRepository {
     })
   }
 
-  public async removeFromSubscribers(trainerId: UUID, subscriberId: UUID): Promise<void>{
+  public async removeFromSubscribers(trainerId: UUID, subscriberId: UUID): Promise<void> {
     const foundFriendsIds = (await this.prisma.trainer.findFirst({
       where: {
         id: trainerId
@@ -336,7 +347,7 @@ export class UsersRepository {
 
     const elementToRemoveIndex = foundFriendsIds.indexOf(subscriberId);
 
-    if(elementToRemoveIndex < 0){
+    if (elementToRemoveIndex < 0) {
       return;
     }
 
