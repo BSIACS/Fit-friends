@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { UUID } from '../../../types/uuid.type';
-import { PersonalTrainingRequestStatusEnum } from '../../../types/personal-training-request-status.enum';
-import { PersonalTrainingRequestEntityInterface } from '../../../entities/personal-training-request.entity';
+import { PrismaService } from './prisma.service';
+import { UUID } from '../../types/uuid.type';
+import { TrainingRequestStatusEnum } from '../../types/training-request-status.enum';
+import { PersonalTrainingRequestEntityInterface } from '../../entities/personal-training-request.entity';
+import { GetAllForRequesterDto } from '../controllers/training-request/dto/get-all-for-requester.dto';
 
 @Injectable()
 export class PersonalTrainingRequestRepository {
@@ -24,7 +25,29 @@ export class PersonalTrainingRequestRepository {
       where: {
         requestorId: requesterId,
         responserId: responserId,
-        status: PersonalTrainingRequestStatusEnum.UNDER_CONSIDERATION
+        status: TrainingRequestStatusEnum.UNDER_CONSIDERATION
+      }
+    });
+
+    return foundPersonalTrainingRequest;
+  }
+
+  public async findAllByRequesterId(requesterId: UUID, dto: GetAllForRequesterDto): Promise<PersonalTrainingRequestEntityInterface[]> {
+    const foundPersonalTrainingRequest = await this.prisma.personalTrainingRequest.findMany({
+      where: {
+        requestorId: requesterId,
+        status: dto.status ? dto.status : undefined,
+      }
+    });
+
+    return foundPersonalTrainingRequest;
+  }
+
+  public async findAllByResponserId(responserId: UUID, dto: GetAllForRequesterDto): Promise<PersonalTrainingRequestEntityInterface[]> {
+    const foundPersonalTrainingRequest = await this.prisma.personalTrainingRequest.findMany({
+      where: {
+        responserId: responserId,
+        status: dto.status ? dto.status : undefined,
       }
     });
 
@@ -39,14 +62,14 @@ export class PersonalTrainingRequestRepository {
         responserId: responserId,
         createdAt: createdAt,
         statusChangedAt: createdAt,
-        status: PersonalTrainingRequestStatusEnum.UNDER_CONSIDERATION
+        status: TrainingRequestStatusEnum.UNDER_CONSIDERATION
       }
     });
 
     return createdPersonalTrainingRequest;
   }
 
-  public async update(id: UUID, newStatus: PersonalTrainingRequestStatusEnum): Promise<PersonalTrainingRequestEntityInterface> {
+  public async update(id: UUID, newStatus: TrainingRequestStatusEnum): Promise<PersonalTrainingRequestEntityInterface> {
     const updatedPersonalTrainingRequest = await this.prisma.personalTrainingRequest.update({
       where: {
         id: id

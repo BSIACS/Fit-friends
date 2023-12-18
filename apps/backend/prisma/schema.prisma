@@ -133,6 +133,17 @@ model PersonalTrainingRequest {
   @@map("personal_training_requests")
 }
 
+model CooperativeTrainingRequest {
+  id              String   @id @unique @default(uuid()) @db.Uuid
+  requesterId     String   @map("requester_id") @db.Uuid
+  responserId     String   @map("responser_id") @db.Uuid
+  createdAt       DateTime @map("created_at") @db.Timestamptz()
+  statusChangedAt DateTime @map("status_changed_at") @db.Timestamptz()
+  status          String   @db.VarChar(64)
+
+  @@map("cooperative_training_requests")
+}
+
 model Notification {
   id        String   @id @unique @default(uuid()) @db.Uuid
   user      User     @relation(fields: [userId], references: [id])

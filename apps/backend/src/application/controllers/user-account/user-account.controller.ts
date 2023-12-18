@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { UserAccountService } from './user-account.service';
 import { JwtGuard } from '../../../guards/jwtGuard.guard';
 import { IsUserRoleGuard } from '../../../guards/is-user-role.guard';
@@ -16,6 +16,8 @@ import { SubscribeForNewTrainingsNotificationsDto } from './dto/subscribe-for-ne
 import { UnsubscribeFromTrainingsNotificationsDto } from './dto/unsubscribe-from-trainings-notifications.dto';
 import { UserEntityInterface } from '../../../entities/user-entity.interface';
 import { TrainerEntityInterface } from '../../../entities/trainer-entity.interface';
+import { GetFriendsListQuery } from './query/get-friends-list.query';
+import { GetFriendsListRdo } from './rdo/user.rdo';
 
 @ApiTags('userAccount')
 @UseGuards(JwtGuard)
@@ -29,11 +31,15 @@ export class UserAccountController {
     ) { }
 
   @Get('friends/:id')
-  public async getFriendList(@Req() request: RequestWithTokenPayload): Promise<(UserEntityInterface | TrainerEntityInterface)[]> {
+  public async getFriendList(@Req() request: RequestWithTokenPayload, @Query() query: GetFriendsListQuery): Promise<GetFriendsListRdo> {
     const payload: TokenPayload = request.user;
-    const foundFriends = await this.userAccountService.getFriendList(payload.userId);
+    const foundFriends = await this.userAccountService.getFriendList(payload.userId, query.friendsPerPage, query.pageNumber);
+    const friendsNumber = await this.userAccountService.getFriendsNumber(payload.userId);
 
-    return fromEntitiesToUsersAndTrainersRdos(foundFriends);
+    return {
+      friends: fromEntitiesToUsersAndTrainersRdos(foundFriends),
+      friendsNumber: friendsNumber,
+    }
   }
 
   @ApiBody({ type: AddFriendDto })

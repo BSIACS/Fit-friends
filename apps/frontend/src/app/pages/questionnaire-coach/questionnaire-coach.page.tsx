@@ -103,7 +103,7 @@ export function QuestionnaireCoachPage(): JSX.Element {
   }
 
   if (actualTrainerData.trainingLevel) {
-    return <Navigate to={AppRoutes.COACH_ACCOUNT} />
+    return <Navigate to={AppRoutes.TRAINER_ACCOUNT} />
   }
 
   return (

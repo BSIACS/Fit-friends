@@ -1,6 +1,6 @@
 import { IsEnum, IsUUID } from 'class-validator';
 import { UUID } from '../../../../types/uuid.type';
-import { PersonalTrainingRequestStatusEnum } from '../../../../types/personal-training-request-status.enum';
+import { TrainingRequestStatusEnum } from '../../../../types/training-request-status.enum';
 import { ApiProperty } from '@nestjs/swagger';
 
 
@@ -16,6 +16,6 @@ export class ChangePersonalTrainingRequestStatusDto {
     description: 'Training request new status',
     example: 'ACCEPTED',
   })
-  @IsEnum(PersonalTrainingRequestStatusEnum)
-  status: PersonalTrainingRequestStatusEnum;
+  @IsEnum(TrainingRequestStatusEnum)
+  status: TrainingRequestStatusEnum;
 }

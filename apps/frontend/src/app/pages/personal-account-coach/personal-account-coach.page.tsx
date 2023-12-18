@@ -5,11 +5,12 @@ import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { getTrainerDetailThunk, updateTrainerDataThunk } from '../../store/slices/application.thunk';
 import { changeEditTrainerFormData, setIsLoading } from '../../store/slices/application.slice';
-import { Navigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { getLocation, getSex, getTrainingLevel } from '../../utils/view-transform';
 import { TrainingLevelEnum } from '../../types/training-level.enum';
 import { SexEnum } from '../../types/sex.enum';
 import { LocationEnum } from '../../types/location.enum';
+import { AppRoutes } from '../../constants/app-routes.constants';
 
 
 export function PersonalAccountCoachPage(): JSX.Element {
@@ -322,12 +323,13 @@ export function PersonalAccountCoachPage(): JSX.Element {
                       </div>
                       <span className="thumbnail-link__text">Создать тренировку</span>
                     </a>
-                    <a className="thumbnail-link thumbnail-link--theme-light" href="#">
+                    <Link className="thumbnail-link thumbnail-link--theme-light" to={AppRoutes.FRIEND_LIST_TRAINER}>
                       <div className="thumbnail-link__icon thumbnail-link__icon--theme-light">
                         <svg width="30" height="26" aria-hidden="true" viewBox="0 0 30 21" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.5 10.2951C24.7784 10.2951 26.6254 8.46058 26.6254 6.19756C26.6254 3.93454 24.7784 2.1 22.5 2.1C20.2216 2.1 18.3746 3.93454 18.3746 6.19756C18.3746 8.46058 20.2216 10.2951 22.5 10.2951Z" fill="currentColor" /><path d="M9.64286 10.2439C12.5722 10.2439 14.947 7.95073 14.947 5.12195C14.947 2.29318 12.5722 0 9.64286 0C6.71348 0 4.33876 2.29318 4.33876 5.12195C4.33876 7.95073 6.71348 10.2439 9.64286 10.2439Z" fill="currentColor" /><path d="M9.64286 12.8049C9.52291 12.8049 9.40347 12.8066 9.28457 12.8101C4.13499 12.9606 0 16.3425 0 20.4878C0 20.7746 0.23338 21 0.53041 21H18.7553C19.0523 21 19.2857 20.7746 19.2857 20.4878C19.2857 20.307 19.2778 20.1277 19.2624 19.95C19.2313 19.5927 19.1694 19.2422 19.0789 18.9C18.6759 17.3762 17.7048 16.0183 16.3515 14.973C14.6142 13.6312 12.247 12.8049 9.64286 12.8049Z" fill="currentColor" /><path fill-rule="evenodd" clip-rule="evenodd" d="M17.4923 13.9177C18.8214 12.9394 20.5777 12.3439 22.5 12.3439C26.6337 12.3439 30 15.0975 30 18.4902C30 18.7197 29.8185 18.9 29.5875 18.9H21.394C21.1529 16.8579 19.6704 15.0676 17.4923 13.9177ZM19.2624 19.95C19.2313 19.5927 19.1694 19.2422 19.0789 18.9C18.6759 17.3762 17.7048 16.0183 16.3515 14.973C14.6142 13.6312 12.247 12.8049 9.64286 12.8049C9.52291 12.8049 9.40347 12.8066 9.28457 12.8101C5.17731 13.6013 2.14286 16.2931 2.14286 19.489C2.14286 19.7472 2.37624 19.95 2.67327 19.95H19.2624Z" fill="currentColor" /></svg>
                       </div>
                       <span className="thumbnail-link__text">Мои друзья</span>
-                    </a><a className="thumbnail-link thumbnail-link--theme-light" href="#">
+                    </Link>
+                    <a className="thumbnail-link thumbnail-link--theme-light" href="#">
                       <div className="thumbnail-link__icon thumbnail-link__icon--theme-light">
                         <svg width="30" height="26" viewBox="0 0 26 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24.7034 10.4423C23.7185 9.33242 22.2336 8.6875 20.1754 8.46252V7.32266C20.1754 5.2679 19.3227 3.28813 17.8232 1.90829C16.309 0.498454 14.339 -0.161468 12.2955 0.0335087C8.78186 0.378468 5.82688 3.84306 5.82688 7.59262V8.46252C3.76869 8.6875 2.28385 9.33242 1.29886 10.4423C-0.127173 12.0621 -0.0830689 14.2218 0.0786462 15.7217L1.10774 24.0757C1.41647 27.0004 2.57788 30 8.89947 30H17.1028C23.4244 30 24.5858 27.0004 24.8946 24.0907L25.9237 15.7067C26.0854 14.2218 26.1148 12.0621 24.7034 10.4423ZM12.5013 2.11826C13.9714 1.98328 15.3681 2.44823 16.456 3.45311C17.5292 4.44299 18.1319 5.85283 18.1319 7.32266V8.37253H7.87037V7.59262C7.87037 4.92294 10.0315 2.35824 12.5013 2.11826ZM7.73806 16.7266H7.72336C6.91478 16.7266 6.25322 16.0516 6.25322 15.2267C6.25322 14.4018 6.91478 13.7269 7.72336 13.7269C8.54664 13.7269 9.2082 14.4018 9.2082 15.2267C9.2082 16.0516 8.54664 16.7266 7.73806 16.7266ZM18.029 16.7266H18.0143C17.2057 16.7266 16.5442 16.0516 16.5442 15.2267C16.5442 14.4018 17.2057 13.7269 18.0143 13.7269C18.8376 13.7269 19.4992 14.4018 19.4992 15.2267C19.4992 16.0516 18.8376 16.7266 18.029 16.7266Z" fill="currentColor" /></svg>
                       </div>

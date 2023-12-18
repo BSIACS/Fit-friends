@@ -11,7 +11,7 @@ import { mailOptions } from '../config/mail.config';
 import { TrainingsModule } from './controllers/trainings/training.module';
 import { ReviewsModule } from './controllers/reviews/reviews.module';
 import { NotitficationsModule } from './controllers/notifications/notifications.module';
-import { PersonalTrainingRequestModule } from './controllers/personal-training-request/personal-training-request.module';
+import { TrainingRequestModule } from './controllers/training-request/training-request.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
@@ -34,7 +34,7 @@ import { join } from 'path';
     TrainingsModule,
     ReviewsModule,
     NotitficationsModule,
-    PersonalTrainingRequestModule,
+    TrainingRequestModule,
     PrismaModule
   ],
   controllers: [],

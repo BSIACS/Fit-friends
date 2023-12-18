@@ -232,8 +232,8 @@ export class UsersRepository {
     return foundSubscribersIds;
   }
 
-  public async findFriends(id: UUID): Promise<(UserEntityInterface | TrainerEntityInterface)[]> {
-    const foundFriendsIds = (await this.prisma.user.findFirst({
+  public async findFriends(id: UUID, friendsPerPage: number | undefined, pageNumber: number | undefined): Promise<(UserEntityInterface | TrainerEntityInterface)[]> {
+    let foundFriendsIds = (await this.prisma.user.findFirst({
       where: {
         id: id
       },
@@ -241,6 +241,13 @@ export class UsersRepository {
         friends: true
       }
     })).friends;
+
+    const indexStart = (friendsPerPage * pageNumber) - friendsPerPage;
+    const indexStop = friendsPerPage * pageNumber;
+
+    if(friendsPerPage && pageNumber){
+      foundFriendsIds = foundFriendsIds.slice(indexStart, indexStop);
+    }
 
     const foundUsers = await this.prisma.user.findMany({
       where: {

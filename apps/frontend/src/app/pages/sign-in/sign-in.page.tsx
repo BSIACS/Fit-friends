@@ -39,7 +39,7 @@ export function SignInPage(): JSX.Element {
   }
 
   if (authoriztionStatus === AuthorizationStatusEnum.AUTHORIZED) {
-    return userData.role === 'user' ? <Navigate to={AppRoutes.INDEX} /> : <Navigate to={'/coachAccount'} />
+    return userData.role === 'user' ? <Navigate to={AppRoutes.INDEX} /> : <Navigate to={AppRoutes.TRAINER_ACCOUNT} />
   }
 
   return (

@@ -9,6 +9,7 @@ import { setIsRegistrationComplete } from '../../store/slices/authorization.slic
 import { Navigate } from 'react-router-dom';
 import { getLocation } from '../../utils/view-transform';
 import { LocationEnum } from '../../types/location.enum';
+import { AppRoutes } from '../../constants/app-routes.constants';
 
 interface SignUpPageState {
   name: string;
@@ -124,11 +125,11 @@ export function SignUpPage(): JSX.Element {
   }
 
   if (isRegistrationComplete && authoriztionData.role === 'trainer') {
-    return <Navigate to={'/questionnaireCoach'} />;
+    return <Navigate to={AppRoutes.QUESTIONNAIRE_COACH} />;
   }
 
   if (isRegistrationComplete && authoriztionData.role === 'user') {
-    return <Navigate to={'/questionnaireUser'} />;
+    return <Navigate to={AppRoutes.QUESTIONNAIRE_USER} />;
   }
 
   return (

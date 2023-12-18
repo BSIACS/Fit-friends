@@ -21,16 +21,22 @@ export class UserAccountService {
     private readonly trainingsRepository: TrainingsRepository,
     ) { }
 
-  public async getFriendList(id: UUID): Promise<(UserEntityInterface | TrainerEntityInterface)[]> {
+  public async getFriendList(id: UUID, friendsPerPage: number | undefined, pageNumber: number | undefined): Promise<(UserEntityInterface | TrainerEntityInterface)[]> {
     const foundUser = await this.usersRepository.findUserById(id);
 
     if (!foundUser) {
       throw new UserDoesNotExistsException(id, 'id');
     }
 
-    const foundUserFriends = await this.usersRepository.findFriends(id)
+    const foundUserFriends = await this.usersRepository.findFriends(id, friendsPerPage, pageNumber)
 
     return foundUserFriends;
+  }
+
+  public async getFriendsNumber(id: UUID): Promise<number>{
+    const foundUserIds = await this.usersRepository.findFriendsIds(id);
+
+    return foundUserIds.length;
   }
 
   public async addToFriendsList(id, newFriendId): Promise<void> {
@@ -89,7 +95,6 @@ export class UserAccountService {
 
   public async addToBalance(id: UUID, trainingId: UUID, quantity: number): Promise<void> {
     const foundUser = await this.usersRepository.findUserById(id);
-    console.log('=======', foundUser);
 
     if (!foundUser) {
       throw new UserDoesNotExistsException(id, 'id');
@@ -100,7 +105,6 @@ export class UserAccountService {
     if (!foundTraining) {
       throw new TrainingDoesNotExistsException(id, 'id');
     }
-    console.log('=======', foundTraining);
     const foundBalance = await this.userBalanceRepository.findInBalanceByTrainingId(id, trainingId);
 
     if(foundBalance){

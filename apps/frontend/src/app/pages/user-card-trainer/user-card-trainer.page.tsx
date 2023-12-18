@@ -19,11 +19,12 @@ import { TrainerDTO } from '../../dto/trainer.dto';
 import { TrainingDTO } from '../../dto/training.dto';
 import { TrainingListItemComponent } from '../../components/training-list-item/training-list-item.component';
 import { UserCardTrainingListItemComponent } from '../../components/user-card-training-list-item/user-card-training-list-item.component';
-import { PersonalTrainingSuggestionDTO } from '../../dto/personal-training-suggestion.dto';
+import { PersonalTrainingInvitationDTO } from '../../dto/personal-training-suggestion.dto';
 import { PersonalTrainingRequestStatusEnum } from '../../types/personal-training-request-status.enum';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider, { Settings } from "react-slick";
+import { FriendsListDTO } from '../../dto/friends-list.dto';
 
 const requestWithAccessTokenInterceptor = (config: InternalAxiosRequestConfig) => {
   config.headers.Authorization = `Bearer ${getAccessToken()}`;
@@ -43,7 +44,7 @@ export function UserCardTrainerPage(): JSX.Element {
   const [isFriendsDataLoaded, setIsFriendsDataLoaded] = useState<boolean>(false);
   const [isSubscribersDataLoaded, setIsSubscribersDataLoaded] = useState<boolean>(false);
   const [isPersonalTrainingSuggestionDataLoaded, setIsPersonalTrainingSuggestionDataLoaded] = useState<boolean>(false);
-  const [actualPersonalTrainingSuggestion, setActualPersonalTrainingSuggestion] = useState<PersonalTrainingSuggestionDTO>();
+  const [actualPersonalTrainingSuggestion, setActualPersonalTrainingSuggestion] = useState<PersonalTrainingInvitationDTO>();
   const [isRequestError, setIsRequestError] = useState<boolean>(false);
   const [isPopupActive, setIsPopupActive] = useState<boolean>(false);
   const sliderRef = useRef<any>();
@@ -66,10 +67,6 @@ export function UserCardTrainerPage(): JSX.Element {
     getTrainingData();
     getActualPersonalTrainingSuggestion();
   }, []);
-
-  console.log('++++++', actualPersonalTrainingSuggestion);
-  console.log('------', isPersonalTrainingSuggestionDataLoaded);
-
 
   useEffect(() => {
     if (authoriztionData.role) {
@@ -116,9 +113,9 @@ export function UserCardTrainerPage(): JSX.Element {
     const axiosInstance = axios.create();
     axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
-      const response = await axiosInstance.get<UserDTO[]>(`http://localhost:3042/api/userAccount/friends/${authoriztionData.userId}`);
-      const friends = response.data.map((item) => item.id);
-      console.log(response.data);
+      const response = await axiosInstance.get<FriendsListDTO>(`http://localhost:3042/api/userAccount/friends/${authoriztionData.userId}`);
+      const friends = response.data.friends?.map((item) => item.id);
+      console.log(response.data.friends);
 
       setFriends(friends as string[]);
       setIsFriendsDataLoaded(true);
@@ -217,7 +214,7 @@ export function UserCardTrainerPage(): JSX.Element {
     axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsPersonalTrainingSuggestionDataLoaded(false);
-      const response = await axiosInstance.post<PersonalTrainingSuggestionDTO>(`http://localhost:3042/api/personalTrainingRequest/getUnderConsideration`,
+      const response = await axiosInstance.post<PersonalTrainingInvitationDTO>(`http://localhost:3042/api/trainingRequest/getUnderConsideration`,
         {
           responserId: id,
         },
@@ -238,7 +235,7 @@ export function UserCardTrainerPage(): JSX.Element {
     axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsPersonalTrainingSuggestionDataLoaded(false);
-      const response = await axiosInstance.post<PersonalTrainingSuggestionDTO>(`http://localhost:3042/api/personalTrainingRequest`, {
+      const response = await axiosInstance.post<PersonalTrainingInvitationDTO>(`http://localhost:3042/api/trainingRequest`, {
         responserId: id
       });
       setActualPersonalTrainingSuggestion(response.data);

@@ -4,6 +4,7 @@ import { useAppSelector } from '../../hooks/useAppSelector';
 import { AuthorizationStatusEnum } from '../../types/authorization-status.enum';
 import { getAccessToken } from '../../services/token';
 import { AccessDeniedPage } from '../../pages/access-denied/access-denied.page';
+import { LoaderComponent } from '../loader/loader.component';
 
 
 type PrivateRouteComponentProps = {
@@ -21,18 +22,13 @@ export function PrivateRouteComponent({ validRole, children }: PrivateRouteCompo
   const currentUserRole = useAppSelector((state) => state.authorization.authoriztionData.role);
   const isLoading = useAppSelector((state) => state.authorization.isLoading);
 
-  console.log(currentUserRole);
-
-
   if(isLoading){
-    return <h1>Loading</h1>;
+    return <LoaderComponent isHidden={false}/>;
   }
 
-  //return status === AuthorizationStatusEnum.AUTHORIZED ? children : <Navigate to={'/signIn'} />;
-
-  if(validRole !== currentUserRole){
-    return <AccessDeniedPage/>
-  }
+  // if(validRole !== currentUserRole){
+  //   return <AccessDeniedPage/>
+  // }
 
   if(status === AuthorizationStatusEnum.AUTHORIZED){
     return children;
@@ -41,6 +37,6 @@ export function PrivateRouteComponent({ validRole, children }: PrivateRouteCompo
     return <Navigate to={'/signIn'} />;
   }
   else{
-    return <h1>LOADING</h1>
+    return <LoaderComponent isHidden={false}/>;
   }
 }

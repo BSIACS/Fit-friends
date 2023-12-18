@@ -1,8 +1,8 @@
 import { UUID } from '../types/uuid.type';
 
-export class PersonalTrainingInvitationDTO {
+export class CooperativeTrainingInvitationDTO {
   public id?: UUID;
-  public requestorId?: UUID;
+  public requesterId?: UUID;
   public responserId?: UUID;
   public status?: string;
   public createdAt?: string;
