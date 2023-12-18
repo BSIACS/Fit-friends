@@ -7,15 +7,12 @@ import { RemoveFrindDto } from './dto/remove-friend.dto';
 import { AddToBalanceDto } from './dto/add-to-balance.dto';
 import { UsersService } from '../users/users.service';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { fromEntitiesToUsersAndTrainersRdos, fromEntitiesToUsersRdos } from '../users/mappers/users.mappers';
-import { UserRdo } from '../users/rdo/user.rdo';
+import { fromEntitiesToUsersAndTrainersRdos } from '../users/mappers/users.mappers';
 import { RequestWithTokenPayload } from '../../../types/request-with-token-payload.interface';
 import { TokenPayload } from '../../../types/token-payload.interface';
 import { RemoveFromBalanceDto } from './dto/remove-from-balance.dto';
 import { SubscribeForNewTrainingsNotificationsDto } from './dto/subscribe-for-new-trainings-notifications.dto';
 import { UnsubscribeFromTrainingsNotificationsDto } from './dto/unsubscribe-from-trainings-notifications.dto';
-import { UserEntityInterface } from '../../../entities/user-entity.interface';
-import { TrainerEntityInterface } from '../../../entities/trainer-entity.interface';
 import { GetFriendsListQuery } from './query/get-friends-list.query';
 import { GetFriendsListRdo } from './rdo/user.rdo';
 

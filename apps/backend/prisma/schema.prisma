@@ -59,6 +59,7 @@ model Trainer {
   merits                    String                               @db.VarChar(256)
   isReadyForTraining        Boolean                              @default(false) @map("is_ready_for_training") @db.Boolean
   subscribers               String[]                             @db.Uuid
+  friends                   String[]                             @db.Uuid
   Training                  Training[]
   PersonalTrainingRequest   PersonalTrainingRequest[]
   newTrainingsNotifications NewTrainingsScheduledNotifications[]

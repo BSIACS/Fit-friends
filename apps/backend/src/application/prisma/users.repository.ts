@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotImplementedException } from '@nestjs/common';
 import { CreateUserDto } from '../controllers/users/dto/create-user.dto';
 import { CreateTrainerDto } from '../controllers/users/dto/create-trainer.dto';
 import { PrismaService } from './prisma.service';
@@ -270,7 +270,7 @@ export class UsersRepository {
     return foundFriends;
   }
 
-  public async addToFriendsList(userId: UUID, newFriendId: UUID): Promise<void> {
+  public async addUserToUserFriendsList(userId: UUID, newFriendId: UUID): Promise<void> {
     const foundFriendsIds = (await this.prisma.user.findFirst({
       where: {
         id: userId
@@ -292,7 +292,7 @@ export class UsersRepository {
     })
   }
 
-  public async removeFromFriendsList(userId: UUID, friendId: UUID): Promise<void> {
+  public async removeUserFromUsersFriendsList(userId: UUID, friendId: UUID): Promise<void> {
     const foundFriendsIds = (await this.prisma.user.findFirst({
       where: {
         id: userId
@@ -313,6 +313,56 @@ export class UsersRepository {
     await this.prisma.user.update({
       where: {
         id: userId
+      },
+      data: {
+        friends: foundFriendsIds
+      }
+    })
+  }
+
+  public async addUserToTrainerFriendsList(trainerId: UUID, newFriendId: UUID): Promise<void> {
+    const foundFriendsIds = (await this.prisma.trainer.findFirst({
+      where: {
+        id: trainerId
+      },
+      select: {
+        friends: true
+      }
+    })).friends;
+
+    foundFriendsIds.push(newFriendId);
+
+    await this.prisma.trainer.update({
+      where: {
+        id: trainerId
+      },
+      data: {
+        friends: foundFriendsIds
+      }
+    })
+  }
+
+  public async removeUserFromTrainersFriendsList(trainerId: UUID, friendId: UUID): Promise<void> {
+    const foundFriendsIds = (await this.prisma.trainer.findFirst({
+      where: {
+        id: trainerId
+      },
+      select: {
+        friends: true
+      }
+    })).friends;
+
+    const elementToRemoveIndex = foundFriendsIds.indexOf(friendId);
+
+    if (elementToRemoveIndex < 0) {
+      return;
+    }
+
+    foundFriendsIds.splice(elementToRemoveIndex, 1);
+
+    await this.prisma.trainer.update({
+      where: {
+        id: trainerId
       },
       data: {
         friends: foundFriendsIds

@@ -11,6 +11,7 @@ import { TrainingsRepository } from '../../prisma/trainings.repository';
 import { TrainingDoesNotExistsException } from '../../../exceptions/training-does-not-exists.exception';
 import { BalanceNotFoundException } from '../../../exceptions/balance-not-found.exception';
 import { TrainerEntityInterface } from '../../../entities/trainer-entity.interface';
+import { UserRoleEnum } from '../../../types/user-role.enum';
 
 @Injectable()
 export class UserAccountService {
@@ -19,7 +20,7 @@ export class UserAccountService {
     private readonly usersRepository: UsersRepository,
     private readonly userBalanceRepository: UserBalanceRepository,
     private readonly trainingsRepository: TrainingsRepository,
-    ) { }
+  ) { }
 
   public async getFriendList(id: UUID, friendsPerPage: number | undefined, pageNumber: number | undefined): Promise<(UserEntityInterface | TrainerEntityInterface)[]> {
     const foundUser = await this.usersRepository.findUserById(id);
@@ -33,7 +34,7 @@ export class UserAccountService {
     return foundUserFriends;
   }
 
-  public async getFriendsNumber(id: UUID): Promise<number>{
+  public async getFriendsNumber(id: UUID): Promise<number> {
     const foundUserIds = await this.usersRepository.findFriendsIds(id);
 
     return foundUserIds.length;
@@ -62,7 +63,14 @@ export class UserAccountService {
       throw new AlreadyAddedToFriendsList(newFriendId);
     }
 
-    await this.usersRepository.addToFriendsList(id, newFriendId);
+    await this.usersRepository.addUserToUserFriendsList(id, newFriendId);
+
+    if (foundNewFriend.role === UserRoleEnum.USER) {
+      await this.usersRepository.addUserToUserFriendsList(newFriendId, id);
+    }
+    else{
+      await this.usersRepository.addUserToTrainerFriendsList(newFriendId, id);
+    }
   }
 
   public async removeFromFriendsList(id, friendId): Promise<void> {
@@ -72,13 +80,30 @@ export class UserAccountService {
       throw new UserDoesNotExistsException(id, 'id');
     }
 
+    let foundNewFriend: UserEntityInterface | TrainerEntityInterface = await this.usersRepository.findUserById(friendId);
+
+    if (!foundNewFriend) {
+      foundNewFriend = await this.usersRepository.findTrainerById(friendId);
+    }
+
+    if (!foundNewFriend) {
+      throw new UserDoesNotExistsException(friendId, 'id');
+    }
+
     const foundFriendsIds = await this.usersRepository.findFriendsIds(id);
 
     if (!foundFriendsIds.includes(friendId)) {
       throw new NotFoundInFriendsList(friendId);
     }
 
-    await this.usersRepository.removeFromFriendsList(id, friendId);
+    await this.usersRepository.removeUserFromUsersFriendsList(id, friendId);
+
+    if (foundNewFriend.role === UserRoleEnum.USER) {
+      await this.usersRepository.removeUserFromUsersFriendsList(friendId, id);
+    }
+    else{
+      await this.usersRepository.removeUserFromTrainersFriendsList(friendId, id);
+    }
   }
 
   public async getUserBalance(id: UUID): Promise<UserBalanceEntityInterface[]> {
@@ -107,7 +132,7 @@ export class UserAccountService {
     }
     const foundBalance = await this.userBalanceRepository.findInBalanceByTrainingId(id, trainingId);
 
-    if(foundBalance){
+    if (foundBalance) {
       await this.userBalanceRepository.updateInUserBalance(id, trainingId, foundBalance.remained + quantity)
 
       return;
@@ -133,7 +158,7 @@ export class UserAccountService {
 
     const foundBalance = await this.userBalanceRepository.findInBalanceByTrainingId(id, trainingId);
 
-    if(!foundBalance){
+    if (!foundBalance) {
       throw new BalanceNotFoundException();
     }
 
