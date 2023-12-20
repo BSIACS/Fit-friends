@@ -121,8 +121,12 @@ export class UsersController {
   @Patch('update/user')
   @UseGuards(JwtGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  public async updateUser(@Body() data: UpdateUserDto): Promise<UserRdo> {
-    const updatedUser = await this.usersService.updateUser(data);
+  @UseInterceptors(FileInterceptor('userAvatar'))
+  public async updateUser(@UploadedFile() file, @Body() data: UpdateUserDto): Promise<UserRdo> {
+    if(file){
+      this.uploadFileManagerService.saveAvatar(data.id, file);
+    }
+    const updatedUser = await this.usersService.updateUser(data, file ? file.originalname : undefined);
 
     return fromEntityToUserRdo(updatedUser);
   }

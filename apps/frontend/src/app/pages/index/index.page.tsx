@@ -2,12 +2,106 @@ import { Link } from 'react-router-dom';
 import { HeaderComponent } from '../../components/header/header.component'
 import { SpecialForYouComponent } from './components/special-for-you/special-for-you.component';
 import { AppRoutes } from '../../constants/app-routes.constants';
+import { useEffect, useRef, useState } from 'react';
+import { PersonDTO } from '../../dto/person.dto';
+import { requestWithAccessTokenInterceptor } from '../../services/interceptors';
+import axios from 'axios';
+import { BadRequestPage } from '../bad-request/bad-request.page';
+import { useAppSelector } from '../../hooks/useAppSelector';
+import { UserRoleEnum } from '../../types/user-role.enum';
+import { LookingForCompanyListItemComponent } from '../../components/looking-for-company-list-item/looking-for-company-list-item.component';
+import Slider, { Settings } from "react-slick";
+import { TrainingDTO } from '../../dto/training.dto';
+import { LoaderComponent } from '../../components/loader/loader.component';
+import { UserCardTrainingListItemComponent } from '../../components/user-card-training-list-item/user-card-training-list-item.component';
+
 
 export function IndexPage(): JSX.Element {
+  const authoriztionData = useAppSelector(state => state.authorization.authoriztionData);
+  const isAuthoriztionDataLoading = useAppSelector(state => state.authorization.isLoading);
+  const [users, setUsers] = useState<PersonDTO[]>([]);
+  const [trainings, setTrainings] = useState<TrainingDTO[]>();
+
+  const [isTrainingsDataLoaded, setIsTrainingsDataLoaded] = useState<boolean>(false);
+  const [isUsersDataLoaded, setIsUsersDataLoaded] = useState<boolean>(false);
+  const [isRequestError, setIsRequestError] = useState<boolean>(false);
+
+  const popularTrainingsSliderRef = useRef<any>();
+  const lokkingForCompanySliderRef = useRef<any>();
+
+
+  const settings: Settings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    variableWidth: true,
+    adaptiveHeight: true,
+    arrows: false,
+  };
+
+  useEffect(() => {
+    if (authoriztionData) {
+      getUsersData('isReadyForTraining=true&limit=8');
+      getTrainingData();
+    }
+  }, [authoriztionData]);
+
+  const getUsersData = async (queryString: string) => {
+    const axiosInstance = axios.create();
+    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
+    try {
+      setIsUsersDataLoaded(false);
+      const response = await axiosInstance.get<PersonDTO[]>(`http://localhost:3042/api/users/usersList?${queryString}`);
+
+      setUsers(response.data.filter((user) => user.role === UserRoleEnum.USER && user.isReadyForTraining === true));
+      setIsUsersDataLoaded(true);
+    }
+    catch (error) {
+      setIsUsersDataLoaded(true);
+      setIsRequestError(true);
+    }
+  }
+
+  const getTrainingData = async () => {
+    const axiosInstance = axios.create();
+    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
+    try {
+      const response = await axiosInstance.get(`http://localhost:3042/api/trainings/catalogue`);
+      setTrainings(response.data);
+      setIsTrainingsDataLoaded(true);
+    }
+    catch (error) {
+      setIsTrainingsDataLoaded(true);
+      setIsRequestError(true);
+    }
+  }
+
+  const popularTrainingsLeftArrowButtonClickHandler = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    popularTrainingsSliderRef.current.slickPrev();
+  }
+
+  const popularTrainingsRightArrowButtonClickHandler = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    popularTrainingsSliderRef.current.slickNext();
+  }
+
+  const lookingForCompanyLeftArrowButtonClickHandler = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    lokkingForCompanySliderRef.current.slickPrev();
+  }
+
+  const lookingForCompanyRightArrowButtonClickHandler = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    lokkingForCompanySliderRef.current.slickNext();
+  }
+
+  if (isRequestError) {
+    return <BadRequestPage />;
+  }
 
   return (
     <div className="wrapper">
       <HeaderComponent />
+      <LoaderComponent isHidden={!isAuthoriztionDataLoading && isUsersDataLoaded && isTrainingsDataLoaded} />
       <main>
         <h1 className="visually-hidden">FitFriends — Время находить тренировки, спортзалы и друзей спортсменов</h1>
         <SpecialForYouComponent />
@@ -16,95 +110,102 @@ export function IndexPage(): JSX.Element {
             <div className="special-offers__wrapper">
               <h2 className="visually-hidden">Специальные предложения</h2>
               <ul className="special-offers__list">
-                <li className="special-offers__item is-active">
-                  <aside className="promo-slider">
-                    <div className="promo-slider__overlay"></div>
-                    <div className="promo-slider__image">
-                      <img src="assets/img/content/promo-1.png" srcSet="assets/img/content/promo-1@2x.png 2x" width="1040" height="469" alt="promo-photo" />
-                    </div>
-                    <div className="promo-slider__header">
-                      <h3 className="promo-slider__title">Fitball</h3>
-                      <div className="promo-slider__logo">
-                        <svg width="74" height="74" aria-hidden="true">
-                          <use xlinkHref="#logotype"></use>
-                        </svg>
-                      </div>
-                    </div><span className="promo-slider__text">Горячие предложения на тренировки на фитболе</span>
-                    <div className="promo-slider__bottom-container">
-                      <div className="promo-slider__slider-dots">
-                        <button className="promo-slider__slider-dot--active promo-slider__slider-dot"
-                          aria-label="первый слайд"></button>
-                        <button className="promo-slider__slider-dot" aria-label="второй слайд"></button>
-                        <button className="promo-slider__slider-dot" aria-label="третий слайд"></button>
-                      </div>
-                      <div className="promo-slider__price-container">
-                        <p className="promo-slider__price">1600 ₽</p>
-                        <p className="promo-slider__sup">за занятие</p>
-                        <p className="promo-slider__old-price">2000 ₽</p>
-                      </div>
-                    </div>
-                  </aside>
-                </li>
-                <li className="special-offers__item">
-                  <aside className="promo-slider">
-                    <div className="promo-slider__overlay"></div>
-                    <div className="promo-slider__image">
-                      <img src="assets/img/content/promo-2.png" srcSet="assets/img/content/promo-2@2x.png 2x" width="1040" height="469" alt="promo-photo" />
-                    </div>
-                    <div className="promo-slider__header">
-                      <h3 className="promo-slider__title">Fleksbend</h3>
-                      <div className="promo-slider__logo">
-                        <svg width="74" height="74" aria-hidden="true">
-                          <use xlinkHref="#logotype"></use>
-                        </svg>
-                      </div>
-                    </div><span className="promo-slider__text">Горячие предложения на&nbsp;Тренировки с&nbsp;резинкой для
-                      фитнеса</span>
-                    <div className="promo-slider__bottom-container">
-                      <div className="promo-slider__slider-dots">
-                        <button className="promo-slider__slider-dot" aria-label="первый слайд"></button>
-                        <button className="promo-slider__slider-dot--active promo-slider__slider-dot"
-                          aria-label="второй слайд"></button>
-                        <button className="promo-slider__slider-dot" aria-label="третий слайд"></button>
-                      </div>
-                      <div className="promo-slider__price-container">
-                        <p className="promo-slider__price">2400 ₽</p>
-                        <p className="promo-slider__sup">за занятие</p>
-                        <p className="promo-slider__old-price">2800 ₽</p>
-                      </div>
-                    </div>
-                  </aside>
-                </li>
-                <li className="special-offers__item">
-                  <aside className="promo-slider">
-                    <div className="promo-slider__overlay"></div>
-                    <div className="promo-slider__image">
-                      <img src="assets/img/content/promo-3.png" srcSet="assets/img/content/promo-3@2x.png 2x" width="1040" height="469" alt="promo-photo" />
-                    </div>
-                    <div className="promo-slider__header">
-                      <h3 className="promo-slider__title">Full Body Stretch</h3>
-                      <div className="promo-slider__logo">
-                        <svg width="74" height="74" aria-hidden="true">
-                          <use xlinkHref="#logotype"></use>
-                        </svg>
-                      </div>
-                    </div><span className="promo-slider__text">Горячие предложения на&nbsp;Комплекс упражнений
-                      на&nbsp;растяжку всего тела для новичков</span>
-                    <div className="promo-slider__bottom-container">
-                      <div className="promo-slider__slider-dots">
-                        <button className="promo-slider__slider-dot" aria-label="первый слайд"></button>
-                        <button className="promo-slider__slider-dot" aria-label="второй слайд"></button>
-                        <button className="promo-slider__slider-dot--active promo-slider__slider-dot"
-                          aria-label="третий слайд"></button>
-                      </div>
-                      <div className="promo-slider__price-container">
-                        <p className="promo-slider__price">1800 ₽</p>
-                        <p className="promo-slider__sup">за занятие</p>
-                        <p className="promo-slider__old-price">2200 ₽</p>
-                      </div>
-                    </div>
-                  </aside>
-                </li>
+                {
+                  <Slider arrows={true} dots={true}>
+                    {<>
+                      <li id='1' className="special-offers__item is-active">
+                        <aside className="promo-slider">
+                          <div className="promo-slider__overlay"></div>
+                          <div className="promo-slider__image">
+                            <img src="assets/img/content/promo-1.png" srcSet="assets/img/content/promo-1@2x.png 2x" width="1040" height="469" alt="promo-photo" />
+                          </div>
+                          <div className="promo-slider__header">
+                            <h3 className="promo-slider__title">Fitball</h3>
+                            <div className="promo-slider__logo">
+                              <svg width="74" height="74" aria-hidden="true">
+                                <use xlinkHref="#logotype"></use>
+                              </svg>
+                            </div>
+                          </div><span className="promo-slider__text">Горячие предложения на тренировки на фитболе</span>
+                          <div className="promo-slider__bottom-container">
+                            <div className="promo-slider__slider-dots">
+                              <button className="promo-slider__slider-dot--active promo-slider__slider-dot"
+                                aria-label="первый слайд"></button>
+                              <button className="promo-slider__slider-dot" aria-label="второй слайд"></button>
+                              <button className="promo-slider__slider-dot" aria-label="третий слайд"></button>
+                            </div>
+                            <div className="promo-slider__price-container">
+                              <p className="promo-slider__price">1600 ₽</p>
+                              <p className="promo-slider__sup">за занятие</p>
+                              <p className="promo-slider__old-price">2000 ₽</p>
+                            </div>
+                          </div>
+                        </aside>
+                      </li>
+                      <li id='2' className="special-offers__item">
+                        <aside className="promo-slider">
+                          <div className="promo-slider__overlay"></div>
+                          <div className="promo-slider__image">
+                            <img src="assets/img/content/promo-2.png" srcSet="assets/img/content/promo-2@2x.png 2x" width="1040" height="469" alt="promo-photo" />
+                          </div>
+                          <div className="promo-slider__header">
+                            <h3 className="promo-slider__title">Fleksbend</h3>
+                            <div className="promo-slider__logo">
+                              <svg width="74" height="74" aria-hidden="true">
+                                <use xlinkHref="#logotype"></use>
+                              </svg>
+                            </div>
+                          </div><span className="promo-slider__text">Горячие предложения на&nbsp;Тренировки с&nbsp;резинкой для
+                            фитнеса</span>
+                          <div className="promo-slider__bottom-container">
+                            <div className="promo-slider__slider-dots">
+                              <button className="promo-slider__slider-dot" aria-label="первый слайд"></button>
+                              <button className="promo-slider__slider-dot--active promo-slider__slider-dot"
+                                aria-label="второй слайд"></button>
+                              <button className="promo-slider__slider-dot" aria-label="третий слайд"></button>
+                            </div>
+                            <div className="promo-slider__price-container">
+                              <p className="promo-slider__price">2400 ₽</p>
+                              <p className="promo-slider__sup">за занятие</p>
+                              <p className="promo-slider__old-price">2800 ₽</p>
+                            </div>
+                          </div>
+                        </aside>
+                      </li>
+                      <li className="special-offers__item">
+                        <aside className="promo-slider">
+                          <div className="promo-slider__overlay"></div>
+                          <div className="promo-slider__image">
+                            <img src="assets/img/content/promo-3.png" srcSet="assets/img/content/promo-3@2x.png 2x" width="1040" height="469" alt="promo-photo" />
+                          </div>
+                          <div className="promo-slider__header">
+                            <h3 className="promo-slider__title">Full Body Stretch</h3>
+                            <div className="promo-slider__logo">
+                              <svg width="74" height="74" aria-hidden="true">
+                                <use xlinkHref="#logotype"></use>
+                              </svg>
+                            </div>
+                          </div><span className="promo-slider__text">Горячие предложения на&nbsp;Комплекс упражнений
+                            на&nbsp;растяжку всего тела для новичков</span>
+                          <div className="promo-slider__bottom-container">
+                            <div className="promo-slider__slider-dots">
+                              <button className="promo-slider__slider-dot" aria-label="первый слайд"></button>
+                              <button className="promo-slider__slider-dot" aria-label="второй слайд"></button>
+                              <button className="promo-slider__slider-dot--active promo-slider__slider-dot"
+                                aria-label="третий слайд"></button>
+                            </div>
+                            <div className="promo-slider__price-container">
+                              <p className="promo-slider__price">1800 ₽</p>
+                              <p className="promo-slider__sup">за занятие</p>
+                              <p className="promo-slider__old-price">2200 ₽</p>
+                            </div>
+                          </div>
+                        </aside>
+                      </li>
+                    </>
+                    }
+                  </Slider>
+                }
               </ul>
               <div className="thumbnail-spec-gym">
                 <div className="thumbnail-spec-gym__image">
@@ -127,180 +228,28 @@ export function IndexPage(): JSX.Element {
               <div className="popular-trainings__title-wrapper">
                 <h2 className="popular-trainings__title">Популярные тренировки</h2>
                 <Link to={AppRoutes.TRAINING_CATALOG} className="btn-flat popular-trainings__button" type="button"><span>Смотреть все</span>
-                  <svg width="14" height="10" aria-hidden="true">
-                    <use xlinkHref="#arrow-right"></use>
-                  </svg>
+                  <svg width="14" height="10" aria-hidden="true" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.0012 1L15 6L10.0012 11M1 6H14.86" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </Link>
                 <div className="popular-trainings__controls">
-                  <button className="btn-icon popular-trainings__control" type="button" aria-label="previous">
-                    <svg width="16" height="14" aria-hidden="true">
-                      <use xlinkHref="#arrow-left"></use>
-                    </svg>
+                  <button className="btn-icon popular-trainings__control" type="button" aria-label="previous"
+                    onClick={popularTrainingsLeftArrowButtonClickHandler}>
+                    <svg width="16" height="14" aria-hidden="true" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.99882 1L1 6L5.99882 11M15 6H1.14" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </button>
-                  <button className="btn-icon popular-trainings__control" type="button" aria-label="next">
-                    <svg width="16" height="14" aria-hidden="true">
-                      <use xlinkHref="#arrow-right"></use>
-                    </svg>
+                  <button className="btn-icon popular-trainings__control" type="button" aria-label="next"
+                    onClick={popularTrainingsRightArrowButtonClickHandler}>
+                    <svg width="16" height="14" aria-hidden="true" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.0012 1L15 6L10.0012 11M1 6H14.86" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </button>
                 </div>
               </div>
               <ul className="popular-trainings__list">
-                <li className="popular-trainings__item">
-                  <div className="thumbnail-training">
-                    <div className="thumbnail-training__inner">
-                      <div className="thumbnail-training__image">
-                        <picture>
-                          <source type="image/webp" srcSet="assets/img/content/thumbnails/training-06.webp, img/content/thumbnails/training-06@2x.webp 2x" />
-                          <img src="assets/img/content/thumbnails/training-06.jpg" srcSet="assets/img/content/thumbnails/training-06@2x.jpg 2x" width="330" height="190" alt="" />
-                        </picture>
-                      </div>
-                      <p className="thumbnail-training__price"><span
-                        className="thumbnail-training__price-value">1600</span><span>₽</span>
-                      </p>
-                      <h3 className="thumbnail-training__title">run, forrest, run</h3>
-                      <div className="thumbnail-training__info">
-                        <ul className="thumbnail-training__hashtags-list">
-                          <li className="thumbnail-training__hashtags-item">
-                            <div className="hashtag thumbnail-training__hashtag"><span>#бег</span></div>
-                          </li>
-                          <li className="thumbnail-training__hashtags-item">
-                            <div className="hashtag thumbnail-training__hashtag"><span>#500ккал</span></div>
-                          </li>
-                        </ul>
-                        <div className="thumbnail-training__rate">
-                          <svg width="16" height="16" aria-hidden="true">
-                            <use xlinkHref="#icon-star"></use>
-                          </svg><span className="thumbnail-training__rate-value">5</span>
-                        </div>
-                      </div>
-                      <div className="thumbnail-training__text-wrapper">
-                        <p className="thumbnail-training__text">Узнайте правильную технику бега, развивайте выносливость
-                          и&nbsp;откройте для себя все секреты длительных пробежек.</p>
-                      </div>
-                      <div className="thumbnail-training__button-wrapper">
-                        <a className="btn btn--small thumbnail-training__button-catalog" href="#">Подробнее</a>
-                        <a className="btn btn--small btn--outlined thumbnail-training__button-catalog" href="#">Отзывы</a>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-                <li className="popular-trainings__item">
-                  <div className="thumbnail-training">
-                    <div className="thumbnail-training__inner">
-                      <div className="thumbnail-training__image">
-                        <picture>
-                          <source type="image/webp" srcSet="assets/img/content/thumbnails/training-07.webp, img/content/thumbnails/training-07@2x.webp 2x" />
-                          <img src="assets/img/content/thumbnails/training-07.jpg" srcSet="assets/img/content/thumbnails/training-07@2x.jpg 2x" width="330" height="190" alt="" />
-                        </picture>
-                      </div>
-                      <p className="thumbnail-training__price"><span
-                        className="thumbnail-training__price-value">1600</span><span>₽</span>
-                      </p>
-                      <h3 className="thumbnail-training__title">fitball</h3>
-                      <div className="thumbnail-training__info">
-                        <ul className="thumbnail-training__hashtags-list">
-                          <li className="thumbnail-training__hashtags-item">
-                            <div className="hashtag thumbnail-training__hashtag"><span>#пилатес</span></div>
-                          </li>
-                          <li className="thumbnail-training__hashtags-item">
-                            <div className="hashtag thumbnail-training__hashtag"><span>#200ккал</span></div>
-                          </li>
-                        </ul>
-                        <div className="thumbnail-training__rate">
-                          <svg width="16" height="16" aria-hidden="true">
-                            <use xlinkHref="#icon-star"></use>
-                          </svg><span className="thumbnail-training__rate-value">5</span>
-                        </div>
-                      </div>
-                      <div className="thumbnail-training__text-wrapper">
-                        <p className="thumbnail-training__text">Тренировка на&nbsp;фитболе&nbsp;&mdash; отличном тренажере для
-                          развития чувства баланса и&nbsp;равновесия, улучшения координации.</p>
-                      </div>
-                      <div className="thumbnail-training__button-wrapper">
-                        <a className="btn btn--small thumbnail-training__button-catalog" href="#">Подробнее</a>
-                        <a className="btn btn--small btn--outlined thumbnail-training__button-catalog" href="#">Отзывы</a>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-                <li className="popular-trainings__item">
-                  <div className="thumbnail-training">
-                    <div className="thumbnail-training__inner">
-                      <div className="thumbnail-training__image">
-                        <picture>
-                          <source type="image/webp" srcSet="assets/img/content/thumbnails/training-11.webp, img/content/thumbnails/training-11@2x.webp 2x" />
-                          <img src="assets/img/content/thumbnails/training-11.jpg" srcSet="assets/img/content/thumbnails/training-11@2x.jpg 2x" width="330" height="190" alt="" />
-                        </picture>
-                      </div>
-                      <p className="thumbnail-training__price"><span
-                        className="thumbnail-training__price-value">2200</span><span>₽</span>
-                      </p>
-                      <h3 className="thumbnail-training__title">devil's cindy</h3>
-                      <div className="thumbnail-training__info">
-                        <ul className="thumbnail-training__hashtags-list">
-                          <li className="thumbnail-training__hashtags-item">
-                            <div className="hashtag thumbnail-training__hashtag"><span>#кроссфит</span></div>
-                          </li>
-                          <li className="thumbnail-training__hashtags-item">
-                            <div className="hashtag thumbnail-training__hashtag"><span>#950ккал</span></div>
-                          </li>
-                        </ul>
-                        <div className="thumbnail-training__rate">
-                          <svg width="16" height="16" aria-hidden="true">
-                            <use xlinkHref="#icon-star"></use>
-                          </svg><span className="thumbnail-training__rate-value">5</span>
-                        </div>
-                      </div>
-                      <div className="thumbnail-training__text-wrapper">
-                        <p className="thumbnail-training__text">Знаменитый кроссфит комплекс. Синди&nbsp;&mdash; универсальная
-                          тренировка для развития функциональной силы.</p>
-                      </div>
-                      <div className="thumbnail-training__button-wrapper">
-                        <a className="btn btn--small thumbnail-training__button-catalog" href="#">Подробнее</a>
-                        <a className="btn btn--small btn--outlined thumbnail-training__button-catalog" href="#">Отзывы</a>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-                <li className="popular-trainings__item">
-                  <div className="thumbnail-training">
-                    <div className="thumbnail-training__inner">
-                      <div className="thumbnail-training__image">
-                        <picture>
-                          <source type="image/webp" srcSet="assets/img/content/thumbnails/training-09.webp, img/content/thumbnails/training-09@2x.webp 2x" />
-                          <img src="assets/img/content/thumbnails/training-09.jpg" srcSet="assets/img/content/thumbnails/training-09@2x.jpg 2x" width="330" height="190" alt="" />
-                        </picture>
-                      </div>
-                      <p className="thumbnail-training__price"><span
-                        className="thumbnail-training__price-value">1800</span><span>₽</span>
-                      </p>
-                      <h3 className="thumbnail-training__title">full body stretch</h3>
-                      <div className="thumbnail-training__info">
-                        <ul className="thumbnail-training__hashtags-list">
-                          <li className="thumbnail-training__hashtags-item">
-                            <div className="hashtag thumbnail-training__hashtag"><span>#стретчинг</span></div>
-                          </li>
-                          <li className="thumbnail-training__hashtags-item">
-                            <div className="hashtag thumbnail-training__hashtag"><span>#400ккал</span></div>
-                          </li>
-                        </ul>
-                        <div className="thumbnail-training__rate">
-                          <svg width="16" height="16" aria-hidden="true">
-                            <use xlinkHref="#icon-star"></use>
-                          </svg><span className="thumbnail-training__rate-value">5</span>
-                        </div>
-                      </div>
-                      <div className="thumbnail-training__text-wrapper">
-                        <p className="thumbnail-training__text">Комплекс упражнений на&nbsp;растяжку всего тела для новичков.
-                          Плавное погружение в&nbsp;стретчинг и&nbsp;умеренная нагрузка.</p>
-                      </div>
-                      <div className="thumbnail-training__button-wrapper">
-                        <a className="btn btn--small thumbnail-training__button-catalog" href="#">Подробнее</a>
-                        <a className="btn btn--small btn--outlined thumbnail-training__button-catalog" href="#">Отзывы</a>
-                      </div>
-                    </div>
-                  </div>
-                </li>
+                {
+                  trainings &&
+                  <Slider ref={popularTrainingsSliderRef} {...settings}>
+                    {
+                      trainings.map((item) =>
+                        <UserCardTrainingListItemComponent key={item.id} training={item} />)
+                    }
+                  </Slider>}
               </ul>
             </div>
           </div>
@@ -311,136 +260,29 @@ export function IndexPage(): JSX.Element {
               <div className="look-for-company__title-wrapper">
                 <h2 className="look-for-company__title">Ищут компанию для тренировки</h2>
                 <Link to={AppRoutes.USERS_CATALOG} className="btn-flat btn-flat--light look-for-company__button" type="button"><span>Смотреть все</span>
-                  <svg width="14" height="10" aria-hidden="true" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.0012 1L15 6L10.0012 11M1 6H14.86" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                  <svg width="14" height="10" aria-hidden="true" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.0012 1L15 6L10.0012 11M1 6H14.86" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </Link>
                 <div className="look-for-company__controls">
                   <button className="btn-icon btn-icon--outlined look-for-company__control" type="button"
-                    aria-label="previous">
-                    <svg width="16" height="14" aria-hidden="true">
-                      <use xlinkHref="#arrow-left"></use>
-                    </svg>
+                    aria-label="previous" onClick={lookingForCompanyLeftArrowButtonClickHandler}>
+                    <svg width="16" height="14" aria-hidden="true" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.99882 1L1 6L5.99882 11M15 6H1.14" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </button>
-                  <button className="btn-icon btn-icon--outlined look-for-company__control" type="button" aria-label="next">
-                    <svg width="16" height="14" aria-hidden="true">
-                      <use xlinkHref="#arrow-right"></use>
-                    </svg>
+                  <button className="btn-icon btn-icon--outlined look-for-company__control" type="button"
+                    aria-label="next" onClick={lookingForCompanyRightArrowButtonClickHandler}>
+                    <svg width="16" height="14" aria-hidden="true" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.0012 1L15 6L10.0012 11M1 6H14.86" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   </button>
                 </div>
               </div>
               <ul className="look-for-company__list">
-                <li className="look-for-company__item">
-                  <div className="thumbnail-user thumbnail-user--role-user thumbnail-user--dark">
-                    <div className="thumbnail-user__image">
-                      <picture>
-                        <source type="image/webp" srcSet="assets/img/content/thumbnails/user-04.webp, img/content/thumbnails/user-04@2x.webp 2x" />
-                        <img src="assets/img/content/thumbnails/user-04.jpg" srcSet="assets/img/content/thumbnails/user-04@2x.jpg 2x" width="82" height="82" alt="" />
-                      </picture>
-                    </div>
-                    <div className="thumbnail-user__top-status thumbnail-user__top-status--role-user">
-                      <svg width="12" height="12" aria-hidden="true">
-                        <use xlinkHref="#icon-crown"></use>
-                      </svg>
-                    </div>
-                    <div className="thumbnail-user__header">
-                      <h3 className="thumbnail-user__name">Диана</h3>
-                      <div className="thumbnail-user__location">
-                        <svg width="14" height="16" aria-hidden="true">
-                          <use xlinkHref="#icon-location"></use>
-                        </svg>
-                        <address className="thumbnail-user__location-address">Невский проспект</address>
-                      </div>
-                    </div>
-                    <ul className="thumbnail-user__hashtags-list">
-                      <li className="thumbnail-user__hashtags-item">
-                        <div className="hashtag thumbnail-user__hashtag"><span>#пилатес</span></div>
-                      </li>
-                    </ul>
-                    <a className="btn btn--outlined btn--dark-bg btn--medium thumbnail-user__button" href="#">Подробнее</a>
-                  </div>
-                </li>
-                <li className="look-for-company__item">
-                  <div className="thumbnail-user thumbnail-user--role-user thumbnail-user--dark">
-                    <div className="thumbnail-user__image">
-                      <picture>
-                        <source type="image/webp"
-                          srcSet="assets/img/content/thumbnails/user-05.webp, img/content/thumbnails/user-05@2x.webp 2x" />
-                        <img src="assets/img/content/thumbnails/user-05.jpg" srcSet="assets/img/content/thumbnails/user-05@2x.jpg 2x" width="82" height="82" alt="" />
-                      </picture>
-                    </div>
-                    <div className="thumbnail-user__header">
-                      <h3 className="thumbnail-user__name">Константин</h3>
-                      <div className="thumbnail-user__location">
-                        <svg width="14" height="16" aria-hidden="true">
-                          <use xlinkHref="#icon-location"></use>
-                        </svg>
-                        <address className="thumbnail-user__location-address">Комендантский проспект</address>
-                      </div>
-                    </div>
-                    <ul className="thumbnail-user__hashtags-list">
-                      <li className="thumbnail-user__hashtags-item">
-                        <div className="hashtag thumbnail-user__hashtag"><span>#силовые</span></div>
-                      </li>
-                    </ul>
-                    <a className="btn btn--outlined btn--dark-bg btn--medium thumbnail-user__button" href="#">Подробнее</a>
-                  </div>
-                </li>
-                <li className="look-for-company__item">
-                  <div className="thumbnail-user thumbnail-user--role-user thumbnail-user--dark">
-                    <div className="thumbnail-user__image">
-                      <picture>
-                        <source type="image/webp" srcSet="assets/img/content/thumbnails/user-06.webp, img/content/thumbnails/user-06@2x.webp 2x" />
-                        <img src="assets/img/content/thumbnails/user-06.jpg" srcSet="assets/img/content/thumbnails/user-06@2x.jpg 2x" width="82" height="82" alt="" />
-                      </picture>
-                    </div>
-                    <div className="thumbnail-user__header">
-                      <h3 className="thumbnail-user__name">Иван</h3>
-                      <div className="thumbnail-user__location">
-                        <svg width="14" height="16" aria-hidden="true">
-                          <use xlinkHref="#icon-location"></use>
-                        </svg>
-                        <address className="thumbnail-user__location-address">Чёрная речка</address>
-                      </div>
-                    </div>
-                    <ul className="thumbnail-user__hashtags-list">
-                      <li className="thumbnail-user__hashtags-item">
-                        <div className="hashtag thumbnail-user__hashtag"><span>#бег</span></div>
-                      </li>
-                    </ul>
-                    <a className="btn btn--outlined btn--dark-bg btn--medium thumbnail-user__button" href="#">Подробнее</a>
-                  </div>
-                </li>
-                <li className="look-for-company__item">
-                  <div className="thumbnail-user thumbnail-user--role-user thumbnail-user--dark">
-                    <div className="thumbnail-user__image">
-                      <picture>
-                        <source type="image/webp"
-                          srcSet="assets/img/content/thumbnails/user-07.webp, img/content/thumbnails/user-07@2x.webp 2x" />
-                        <img src="assets/img/content/thumbnails/user-07.jpg" srcSet="assets/img/content/thumbnails/user-07@2x.jpg 2x"
-                          width="82" height="82" alt="" />
-                      </picture>
-                    </div>
-                    <div className="thumbnail-user__top-status thumbnail-user__top-status--role-user">
-                      <svg width="12" height="12" aria-hidden="true">
-                        <use xlinkHref="#icon-crown"></use>
-                      </svg>
-                    </div>
-                    <div className="thumbnail-user__header">
-                      <h3 className="thumbnail-user__name">Яна</h3>
-                      <div className="thumbnail-user__location">
-                        <svg width="14" height="16" aria-hidden="true">
-                          <use xlinkHref="#icon-location"></use>
-                        </svg>
-                        <address className="thumbnail-user__location-address">Крестовский остров</address>
-                      </div>
-                    </div>
-                    <ul className="thumbnail-user__hashtags-list">
-                      <li className="thumbnail-user__hashtags-item">
-                        <div className="hashtag thumbnail-user__hashtag"><span>#пилатес</span></div>
-                      </li>
-                    </ul>
-                    <a className="btn btn--outlined btn--dark-bg btn--medium thumbnail-user__button" href="#">Подробнее</a>
-                  </div>
-                </li>
+                {
+                  <Slider ref={lokkingForCompanySliderRef} {...settings}>
+                    {
+                      users.map((user) =>
+                        <LookingForCompanyListItemComponent key={user.id} user={user} />
+                      )
+                    }
+                  </Slider>
+                }
               </ul>
             </div>
           </div>

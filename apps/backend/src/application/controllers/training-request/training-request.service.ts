@@ -55,6 +55,18 @@ export class TrainingRequestService {
     return foundPersonalTrainingRequest;
   }
 
+  public async getPersonalTrainingsByResponserId(responserId: UUID, dto: GetAllForRequesterDto): Promise<PersonalTrainingRequestEntityInterface[]> {
+    let foundPersonalTrainingRequest;
+
+    try {
+      foundPersonalTrainingRequest = await this.personalTrainingRequestRepository.findAllByResponserId(responserId, dto);
+    } catch (error) {
+      throw new BadRequestException();
+    }
+
+    return foundPersonalTrainingRequest;
+  }
+
   public async getCooperativeTrainingsByResponserId(responserId: UUID, dto: GetAllForRequesterDto): Promise<PersonalTrainingRequestEntityInterface[]> {
     let foundCooperativeTrainingRequest;
 

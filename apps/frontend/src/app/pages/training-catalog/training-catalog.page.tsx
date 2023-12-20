@@ -8,13 +8,14 @@ import { TrainingListItemComponent } from '../../components/training-list-item/t
 import ReactSlider from "react-slider";
 import { TrainingTypeEnum } from '../../types/training-type.enum';
 import { SortEnum } from '../../types/sort.enum';
+import { LoaderComponent } from '../../components/loader/loader.component';
 
 
 const queryParamsInitialValue = {
   priceRange: [100, 5000],
   rating: [0, 5],
   price: [0, 10000],
-  calories: [1000, 4000],
+  calories: [0, 5000],
   trainingTypes: [              ///Переделать инициализацию
     TrainingTypeEnum.AEROBICS,
     TrainingTypeEnum.BOX,
@@ -103,13 +104,11 @@ export function TrainingCatalogPage(): JSX.Element {
     setSearchParams([...searchParams]);
   }
 
-  if (isTrainingDataLoading) {
-    return <h1>Loading...</h1>;
-  }
 
   return (
     <div className="wrapper">
       <HeaderComponent />
+      <LoaderComponent isHidden={!isTrainingDataLoading}/>
       <main>
         <section className="inner-page">
           <div className="container">

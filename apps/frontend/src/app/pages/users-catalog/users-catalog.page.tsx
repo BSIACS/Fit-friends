@@ -6,12 +6,13 @@ import { InternalAxiosRequestConfig } from 'axios';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { PersonDTO } from '../../dto/person.dto';
 import { UsersListItemComponent } from '../../components/users-list-item/users-list-item.component';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { LocationEnum } from '../../types/location.enum';
 import { TrainingTypeEnum } from '../../types/training-type.enum';
 import { UUID } from '../../types/uuid.type';
 import { TrainingLevelEnum } from '../../types/training-level.enum';
 import { UserRoleEnum } from '../../types/user-role.enum';
+import { AppRoutes } from '../../constants/app-routes.constants';
 
 
 const DEFAULT_TRAINING_LEVEL = TrainingLevelEnum.AMATEUR;
@@ -144,10 +145,10 @@ export function UsersCatalogPage(): JSX.Element {
               <div className="user-catalog-form">
                 <h2 className="visually-hidden">Каталог пользователя</h2>
                 <div className="user-catalog-form__wrapper">
-                  <button className="btn-flat btn-flat--underlined user-catalog-form__btnback" type="button">
+                  <Link className="btn-flat btn-flat--underlined user-catalog-form__btnback" to={AppRoutes.INDEX}>
                     <svg width="14" height="10" aria-hidden="true" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.99882 1L1 6L5.99882 11M15 6H1.14" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" /></svg>
                     <span>Назад</span>
-                  </button>
+                  </Link>
                   <h3 className="user-catalog-form__title">Фильтры</h3>
                   <form className="user-catalog-form__form">
                     <div className="user-catalog-form__block user-catalog-form__block--location">

@@ -1,4 +1,6 @@
+import { Link } from 'react-router-dom';
 import { TrainingDTO } from '../../dto/training.dto'
+import { AppRoutes } from '../../constants/app-routes.constants';
 
 type TrainingListItemComponentProps = {
   training: TrainingDTO
@@ -41,8 +43,8 @@ export function TrainingListItemComponent({ training }: TrainingListItemComponen
             <p className="thumbnail-training__text">{description}</p>
           </div>
           <div className="thumbnail-training__button-wrapper">
-            <a className="btn btn--small thumbnail-training__button-catalog" href="#">Подробнее</a>
-            <a className="btn btn--small btn--outlined thumbnail-training__button-catalog" href="#">Отзывы</a>
+            <Link className="btn btn--small thumbnail-training__button-catalog" to={`${AppRoutes.TRAINING_CARD_USER}/${id}`}>Подробнее</Link>
+            <Link className="btn btn--small btn--outlined thumbnail-training__button-catalog" to={`${AppRoutes.TRAINING_CARD_USER}/${id}`}>Отзывы</Link>
           </div>
         </div>
       </div>

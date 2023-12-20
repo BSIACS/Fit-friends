@@ -19,4 +19,5 @@ export interface TrainerEntityInterface {
   merits?: string;
   isReadyForTraining?: boolean;
   subscribers?: UUID[];
+  friends?: UUID[];
 }

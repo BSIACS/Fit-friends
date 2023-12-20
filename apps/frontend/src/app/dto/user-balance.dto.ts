@@ -18,7 +18,7 @@ export interface UserBalance{
     rating: string;
     votesNumber: string;
     trainingCreatorId: string;
-    isSpecial: string;
+    isSpecial: boolean;
   };
 }
 

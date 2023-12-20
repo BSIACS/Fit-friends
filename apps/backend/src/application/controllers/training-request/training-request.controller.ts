@@ -12,6 +12,8 @@ import { GetUnderConsiderationtDto } from './dto/get-under-consideration.dto';
 import { GetAllForRequesterDto } from './dto/get-all-for-requester.dto';
 import { CooperativeTrainingRequestEntityInterface } from '../../../entities/cooperative-training-request.entity';
 import { CreateCooperativeTrainingRequestDto } from './dto/create-cooperative-training-request.dto';
+import { GetAllForResponserDto } from './dto/get-all-for-responser.dto';
+import { IsTrainerRoleGuard } from '../../../guards/is-trainer-role.guard';
 
 
 @ApiTags('trainingRequest')
@@ -43,6 +45,18 @@ export class TrainingRequestController {
     const payload: TokenPayload = request.user;
 
     const createPersonalTrainingRequest = await this.personalTrainingRequestService.getPersonalTrainingsByRequesterId(payload.userId, dto);
+
+    return createPersonalTrainingRequest;
+  }
+
+  @Post('/getPersonalTrainingsByResponserId')
+  @ApiBody({ type: CreatePersonalTrainingRequestDto })
+  @UseGuards(IsTrainerRoleGuard)
+  @UsePipes(ValidationPipe)
+  public async getPersonalTrainingsByResponserId(@Req() request: RequestWithTokenPayload, @Body() dto: GetAllForResponserDto): Promise<PersonalTrainingRequestEntityInterface[]> {
+    const payload: TokenPayload = request.user;
+
+    const createPersonalTrainingRequest = await this.personalTrainingRequestService.getPersonalTrainingsByResponserId(payload.userId, dto);
 
     return createPersonalTrainingRequest;
   }

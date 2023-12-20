@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { signInThunk } from '../../store/slices/authorization.thunk';
 import { useAppSelector } from '../../hooks/useAppSelector';
@@ -8,6 +8,8 @@ import { AppRoutes } from '../../constants/app-routes.constants';
 
 
 export function SignInPage(): JSX.Element {
+  const emailAPIError = useAppSelector(state => state.authorization.emailAPIError);
+  const passwordAPIError = useAppSelector(state => state.authorization.passwordAPIError);
   const [emailField, setEmailField] = useState<string>('');
   const [passwordField, setPasswordField] = useState<string>('');
   const [emailError, setEmailError] = useState({ isError: false, message: '' });
@@ -18,6 +20,19 @@ export function SignInPage(): JSX.Element {
 
   const authoriztionStatus = useAppSelector((state) => state.authorization.authoriztionStatus);
   const userData = useAppSelector((state) => state.authorization.authoriztionData);
+
+  // useEffect(() => {
+  //   setEmailError({isError: false, message: ''});
+  //   setPasswordError({isError: false, message: ''});
+  // }, []);
+
+  useEffect(() => {
+    setEmailError(emailAPIError);
+  }, [emailAPIError]);
+
+  useEffect(() => {
+    setPasswordError(passwordAPIError);
+  }, [passwordAPIError]);
 
   const onEmailFieldChangeHandler = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setEmailField(evt.currentTarget.value);

@@ -15,6 +15,8 @@ export interface AuthorizationState {
   authoriztionData: AuthoriztionData;
   isRegistrationComplete: boolean;
   authoriztionStatus: AuthorizationStatusEnum;
+  emailAPIError: { isError: boolean, message: string }
+  passwordAPIError: { isError: boolean, message: string }
 }
 
 const initialState: AuthorizationState = {
@@ -22,6 +24,8 @@ const initialState: AuthorizationState = {
   authoriztionData: {},
   isRegistrationComplete: false,
   authoriztionStatus: AuthorizationStatusEnum.UNDEFINED,
+  emailAPIError: { isError: false, message: '' },
+  passwordAPIError: { isError: false, message: '' },
 };
 
 export const authorizationSlice = createSlice({
@@ -36,6 +40,24 @@ export const authorizationSlice = createSlice({
     },
     setAuthorizationStatus: (state, action: PayloadAction<AuthorizationStatusEnum>) => {
       state.authoriztionStatus = action.payload;
+    },
+    setAPIError: (state, action: PayloadAction<string>) => {
+      let errorMessage = action.payload;
+      if (errorMessage.includes('[email] ')) {
+        errorMessage = errorMessage.replace('[email] ', '');
+        state.emailAPIError = { isError: true, message: errorMessage };
+      }
+      else{
+        state.emailAPIError = { isError: false, message: '' };
+      }
+
+      if (errorMessage.includes('[password] ')) {
+        errorMessage = errorMessage.replace('[password] ', '');
+        state.passwordAPIError = { isError: true, message: errorMessage };
+      }
+      else{
+        state.passwordAPIError = { isError: false, message: '' };
+      }
     },
   },
   extraReducers(builder) {
@@ -54,11 +76,9 @@ export const authorizationSlice = createSlice({
         }
       })
       .addCase(refreshTokensPairThunk.pending, (state) => {
-        console.log('refreshTokensPairThunk.pending');
         state.isLoading = true;
       })
       .addCase(refreshTokensPairThunk.fulfilled, (state, action: PayloadAction<RefreshTokensPairDTO>) => {
-        console.log('refreshTokensPairThunk.fulfilled');
         if (action.payload.accessToken && action.payload.refreshToken) {
           setAccessToken(action.payload.accessToken);
           setRefreshToken(action.payload.refreshToken);
@@ -106,5 +126,5 @@ export const authorizationSlice = createSlice({
   }
 });
 
-export const { setIsRegistrationComplete, setIsLoading } = authorizationSlice.actions;
+export const { setIsRegistrationComplete, setIsLoading, setAPIError } = authorizationSlice.actions;
 export const authorizationReducer = authorizationSlice.reducer;

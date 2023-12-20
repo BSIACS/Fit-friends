@@ -1,4 +1,4 @@
-import { IsArray, IsEnum, IsOptional } from 'class-validator';
+import { IsArray, IsBoolean, IsEnum, IsIn, IsOptional, IsString } from 'class-validator';
 import { LocationEnum } from '../../../../types/location.enum';
 import { TrainingLevelEnum } from '../../../../types/training-level.enum';
 import { TrainingTypeEnum } from '../../../../types/training-type.enum';
@@ -42,4 +42,14 @@ export class GetUsersListQuery{
   @IsEnum(UserRoleEnum)
   @IsOptional()
   public sortPriority: UserRoleEnum;
+
+  @ApiProperty({
+    description: 'Sort by priority',
+    enum: UserRoleEnum,
+    required: false
+  })
+  @IsString()
+  @IsIn(['false', 'true'])
+  @IsOptional()
+  public isReadyForTraining: string;
 }

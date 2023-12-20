@@ -23,6 +23,8 @@ import { UserCardPage } from './pages/user-card/user-card.page';
 import { UserCardTrainerPage } from './pages/user-card-trainer/user-card-trainer.page';
 import { FriendsListUserPage } from './pages/friends-list-user/friends-list-user.page';
 import { FriendsListTrainerPage } from './pages/friends-list-trainer/friends-list-trainer.page';
+import { PersonalAccountUserPage } from './pages/personal-account-user/personal-account-user.page';
+import { MyPurchasesPage } from './pages/my-purchases/my-purchases.page';
 
 export function App() {
   const dispatch = useAppDispatch();
@@ -45,15 +47,17 @@ export function App() {
       <Route path={AppRoutes.INDEX} element={<PrivateRouteComponent validRole='user'><IndexPage /></PrivateRouteComponent>} />
       <Route path={AppRoutes.TRAINING_CATALOG} element={<PrivateRouteComponent validRole='user'><TrainingCatalogPage /></PrivateRouteComponent>} />
       <Route path={AppRoutes.TRAINER_ACCOUNT} element={<PrivateRouteComponent validRole='trainer'><PersonalAccountCoachPage /></PrivateRouteComponent>} />
+      <Route path={AppRoutes.USER_ACCOUNT} element={<PrivateRouteComponent validRole='user'><PersonalAccountUserPage /></PrivateRouteComponent>} />
       <Route path={AppRoutes.QUESTIONNAIRE_COACH} element={<PrivateRouteComponent validRole='trainer'><QuestionnaireCoachPage /></PrivateRouteComponent>} />
       <Route path={AppRoutes.QUESTIONNAIRE_USER} element={<PrivateRouteComponent validRole='user'><QuestionnaireUserPage /></PrivateRouteComponent>} />
-      <Route path={AppRoutes.TRAINING_CARD_USER} element={<TrainingCardUserPage />} />
+      <Route path={AppRoutes.MY_PURCHASES} element={<PrivateRouteComponent validRole='user'><MyPurchasesPage /></PrivateRouteComponent>} />
+      <Route path={`${AppRoutes.TRAINING_CARD_USER}/:id`} element={<TrainingCardUserPage />} />
       <Route path={AppRoutes.TRAINING_CARD_TRAINER} element={<TrainingCardTrainerPage />} />
-      <Route path={AppRoutes.USERS_CATALOG} element={<UsersCatalogPage/>} />
-      <Route path={`${AppRoutes.USER_CARD}/:id`} element={<UserCardPage/>} />
-      <Route path={`${AppRoutes.TRAINER_CARD}/:id`} element={<PrivateRouteComponent validRole='user'><UserCardTrainerPage/></PrivateRouteComponent>} />
-      <Route path={AppRoutes.FRIEND_LIST_USER} element={<PrivateRouteComponent validRole='user'><FriendsListUserPage/></PrivateRouteComponent>} />
-      <Route path={AppRoutes.FRIEND_LIST_TRAINER} element={<PrivateRouteComponent validRole='trainer'><FriendsListTrainerPage/></PrivateRouteComponent>} />
+      <Route path={AppRoutes.USERS_CATALOG} element={<UsersCatalogPage />} />
+      <Route path={`${AppRoutes.USER_CARD}/:id`} element={<UserCardPage />} />
+      <Route path={`${AppRoutes.TRAINER_CARD}/:id`} element={<PrivateRouteComponent validRole='user'><UserCardTrainerPage /></PrivateRouteComponent>} />
+      <Route path={AppRoutes.FRIEND_LIST_USER} element={<PrivateRouteComponent validRole='user'><FriendsListUserPage /></PrivateRouteComponent>} />
+      <Route path={AppRoutes.FRIEND_LIST_TRAINER} element={<PrivateRouteComponent validRole='trainer'><FriendsListTrainerPage /></PrivateRouteComponent>} />
       <Route path={'/notFound'} element={<NotFoundPage />} />
       <Route path={'/badRequest'} element={<BadRequestPage />} />
       <Route path='*' element={<NotFoundPage />} />

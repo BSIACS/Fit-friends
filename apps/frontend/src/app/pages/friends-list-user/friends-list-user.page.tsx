@@ -66,14 +66,14 @@ export function FriendsListUserPage(): JSX.Element {
     try {
       setIsFriendsDataLoaded(false);
       const response = await axiosInstance.
-        get<FriendsListDTO>(`http://localhost:3042/api/userAccount/friends/${authoriztionData.userId}?friendsPerPage=${3}&pageNumber=${currentPageNumber}`);
+        get<FriendsListDTO>(`http://localhost:3042/api/userAccount/friends/${authoriztionData.userId}?friendsPerPage=${6}&pageNumber=${currentPageNumber}`);
       if (friends === undefined) {
         setFriends(response.data.friends);
       }
       else {
         setFriends([...friends, ...response.data.friends as (UserDTO | TrainerDTO)[]]);
       }
-      console.log(response.data.friendsNumber);
+      console.log(response.data.friends);
 
       setFriendsNumber(response.data.friendsNumber as number);
       setCurrentPageNumber(currentPageNumber + 1);
@@ -234,6 +234,9 @@ export function FriendsListUserPage(): JSX.Element {
     return <BadRequestPage />
   }
 
+  console.log('friendsNumber', friendsNumber);
+
+
   return (
     <div className="wrapper">
       <LoaderComponent isHidden={!isAuthoriztionDataLoading && isFriendsDataLoaded && isPersonalTrainingResponsesDataLoaded && isCooperativeTrainingRequestsDataLoaded} />
@@ -248,17 +251,6 @@ export function FriendsListUserPage(): JSX.Element {
               </Link>
               <div className="friends-list__title-wrapper">
                 <h1 className="friends-list__title">Мои друзья</h1>
-                <div className="custom-toggle custom-toggle--switch custom-toggle--switch-right" data-validate-type="checkbox">
-                  <label>
-                    <input type="checkbox" value="user-agreement-1" name="user-agreement" />
-                    <span className="custom-toggle__icon" >
-                      <svg width="9" height="6" aria-hidden="true">
-                        <use xlinkHref="#arrow-check"></use>
-                      </svg>
-                    </span>
-                    <span className="custom-toggle__label">Только онлайн</span>
-                  </label>
-                </div>
               </div>
               <ul className="friends-list__list">
                 {
@@ -282,10 +274,9 @@ export function FriendsListUserPage(): JSX.Element {
               </ul>
               <div className="show-more friends-list__show-more">
                 {
-                  friends &&
+                  friends && !((friends as (UserDTO | TrainerDTO)[]).length >= friendsNumber) &&
                   <button className="btn show-more__button show-more__button--more" disabled={(friends as (UserDTO | TrainerDTO)[]).length >= friendsNumber}
-                  onClick={showMoreButtonClick} type="button">Показать еще</button>
-                // <button className="btn show-more__button show-more__button--to-top" type="button">Вернуться в начало</button>
+                    onClick={showMoreButtonClick} type="button">Показать еще</button>
                 }
               </div>
             </div>

@@ -129,27 +129,34 @@ export class UsersRepository {
   }
 
   public async updateTrainer(dto: UpdateTrainerDto, certificateFileName: string): Promise<TrainerEntityInterface> {
+    console.log(dto);
+    let newData;
+
+    if (certificateFileName) {
+      newData = { ...dto, certificateFileName: certificateFileName }
+    }
+    else {
+      newData = dto;
+    }
+
     const updatedTrainer: TrainerEntityInterface | null = await this.prisma.trainer.update({
       where: {
         id: dto.id,
-        certificateFileName: certificateFileName ? certificateFileName : ''
       },
-      data: dto
+      data: newData
     });
 
     return updatedTrainer;
   }
 
-  public async updateUser(dto: UpdateUserDto): Promise<UserEntityInterface> {
+  public async updateUser(dto: UpdateUserDto, avatarFileName: string | undefined = undefined): Promise<UserEntityInterface> {
     console.log(dto);
 
-    const updatedUser: UserEntityInterface | null = await this.prisma.user.update({
+    const updatedUser: UserEntityInterface = await this.prisma.user.update({
       where: {
         id: dto.id
       },
-      data: {
-        calories: dto.caloriesPerDay
-      }
+      data: {...dto, avatarFileName: avatarFileName}
     });
 
     return updatedUser;
@@ -232,7 +239,7 @@ export class UsersRepository {
     return foundSubscribersIds;
   }
 
-  public async findFriends(id: UUID, friendsPerPage: number | undefined, pageNumber: number | undefined): Promise<(UserEntityInterface | TrainerEntityInterface)[]> {
+  public async findUsersFriends(id: UUID, friendsPerPage: number | undefined, pageNumber: number | undefined): Promise<(UserEntityInterface | TrainerEntityInterface)[]> {
     let foundFriendsIds = (await this.prisma.user.findFirst({
       where: {
         id: id
@@ -245,7 +252,7 @@ export class UsersRepository {
     const indexStart = (friendsPerPage * pageNumber) - friendsPerPage;
     const indexStop = friendsPerPage * pageNumber;
 
-    if(friendsPerPage && pageNumber){
+    if (friendsPerPage && pageNumber) {
       foundFriendsIds = foundFriendsIds.slice(indexStart, indexStop);
     }
 
@@ -265,7 +272,45 @@ export class UsersRepository {
       }
     });
 
-    const foundFriends = [...foundUsers, ... foundTrainers];
+    const foundFriends = [...foundUsers, ...foundTrainers];
+
+    return foundFriends;
+  }
+
+  public async findTrainersFriends(id: UUID, friendsPerPage: number | undefined, pageNumber: number | undefined): Promise<(UserEntityInterface | TrainerEntityInterface)[]> {
+    let foundFriendsIds = (await this.prisma.trainer.findFirst({
+      where: {
+        id: id
+      },
+      select: {
+        friends: true
+      }
+    })).friends;
+
+    const indexStart = (friendsPerPage * pageNumber) - friendsPerPage;
+    const indexStop = friendsPerPage * pageNumber;
+
+    if (friendsPerPage && pageNumber) {
+      foundFriendsIds = foundFriendsIds.slice(indexStart, indexStop);
+    }
+
+    const foundUsers = await this.prisma.user.findMany({
+      where: {
+        id: {
+          in: foundFriendsIds
+        }
+      }
+    });
+
+    const foundTrainers = await this.prisma.trainer.findMany({
+      where: {
+        id: {
+          in: foundFriendsIds
+        }
+      }
+    });
+
+    const foundFriends = [...foundUsers, ...foundTrainers];
 
     return foundFriends;
   }

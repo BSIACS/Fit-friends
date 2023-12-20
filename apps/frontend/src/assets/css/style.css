@@ -11074,6 +11074,7 @@ input:active + .custom-textarea__text {
   top: 20px;
   height: 1px;
 }
+
 .horizontal-slider .example-thumb {
   top: 12px;
   width: 17px;
@@ -11084,10 +11085,12 @@ input:active + .custom-textarea__text {
 
 .slick-list{
   width: 1400px;
+  padding-bottom: 30px;
 }
 
+/*
 .slick-slide{
   margin-left: 11px;
   margin-right: 10px;
   padding-bottom: 60px;
-}
+} */

@@ -43,7 +43,7 @@ export function HeaderComponent(): JSX.Element {
               <li className="main-nav__item">
                 {
                   authoriztionData.role === UserRoleEnum.USER &&
-                  <Link className="main-nav__link" to={AppRoutes.INDEX} aria-label="Личный кабинет">
+                  <Link className={`main-nav__link ${location.pathname === AppRoutes.USER_ACCOUNT && 'is-active'}`} to={AppRoutes.USER_ACCOUNT} aria-label="Личный кабинет">
                     <svg width="16" height="18" aria-hidden="true" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 8.78049C10.4303 8.78049 12.4004 6.81491 12.4004 4.39024C12.4004 1.96558 10.4303 0 8 0C5.5697 0 3.59956 1.96558 3.59956 4.39024C3.59956 6.81491 5.5697 8.78049 8 8.78049Z" fill="currentColor" /><path d="M8 10.9756C3.59076 10.9756 0 13.9259 0 17.561C0 17.8068 0.193619 18 0.440044 18H15.56C15.8064 18 16 17.8068 16 17.561C16 13.9259 12.4092 10.9756 8 10.9756Z" fill="currentColor" /></svg>
                   </Link>
                 }

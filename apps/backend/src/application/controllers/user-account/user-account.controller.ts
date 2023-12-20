@@ -14,7 +14,8 @@ import { RemoveFromBalanceDto } from './dto/remove-from-balance.dto';
 import { SubscribeForNewTrainingsNotificationsDto } from './dto/subscribe-for-new-trainings-notifications.dto';
 import { UnsubscribeFromTrainingsNotificationsDto } from './dto/unsubscribe-from-trainings-notifications.dto';
 import { GetFriendsListQuery } from './query/get-friends-list.query';
-import { GetFriendsListRdo } from './rdo/user.rdo';
+import { GetFriendsListRdo } from './rdo/get-friends-list.rdo';
+import { UserBalanceEntityInterface } from '../../../entities/user-balance-entity.interface';
 
 @ApiTags('userAccount')
 @UseGuards(JwtGuard)
@@ -55,7 +56,7 @@ export class UserAccountController {
   }
 
   @Get('balance')
-  public async getBalance(@Req() request: RequestWithTokenPayload) {
+  public async getBalance(@Req() request: RequestWithTokenPayload): Promise<UserBalanceEntityInterface[]> {
     const payload: TokenPayload = request.user;
     const foundBalance = await this.userAccountService.getUserBalance(payload.userId);
 

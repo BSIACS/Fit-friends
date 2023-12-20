@@ -17,6 +17,9 @@ import { TrainingRdo } from './rdo/training.rdo';
 import { fromEntitiesToTrainingsRdos, fromEntityToTrainingRdo } from './mappers/training.mapper';
 import { RequestWithTokenPayload } from '../../../types/request-with-token-payload.interface';
 import { TokenPayload } from '../../../types/token-payload.interface';
+import { GetFriendsListQuery } from './query/get-friends-list.query';
+import { GetFriendsListRdo } from './rdo/get-friends-list.rdo';
+import { fromEntitiesToUsersAndTrainersRdos } from '../users/mappers/users.mappers';
 
 
 interface GetTrainingByIdParamsInterface {
@@ -114,5 +117,17 @@ export class TrainerAccountController {
     const foundTrainingIds = await this.trainerAccountService.getPurchasesByTrainerId(payload.userId);
 
     return foundTrainingIds;
+  }
+
+  @Get('friends/:id')
+  public async getFriendList(@Req() request: RequestWithTokenPayload, @Query() query: GetFriendsListQuery): Promise<GetFriendsListRdo> {
+    const payload: TokenPayload = request.user;
+    const foundFriends = await this.trainerAccountService.getFriendList(payload.userId, query.friendsPerPage, query.pageNumber);
+    const friendsNumber = await this.trainerAccountService.getFriendsNumber(payload.userId);
+
+    return {
+      friends: fromEntitiesToUsersAndTrainersRdos(foundFriends),
+      friendsNumber: friendsNumber,
+    }
   }
 }

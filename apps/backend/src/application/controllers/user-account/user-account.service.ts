@@ -29,7 +29,7 @@ export class UserAccountService {
       throw new UserDoesNotExistsException(id, 'id');
     }
 
-    const foundUserFriends = await this.usersRepository.findFriends(id, friendsPerPage, pageNumber)
+    const foundUserFriends = await this.usersRepository.findUsersFriends(id, friendsPerPage, pageNumber)
 
     return foundUserFriends;
   }
@@ -161,10 +161,6 @@ export class UserAccountService {
     if (!foundBalance) {
       throw new BalanceNotFoundException();
     }
-
-    // if(foundBalance.remained <= quantity){
-    //   await this.userBalanceRepository.removeFromUserBalance(id, trainingId);
-    // }
 
     await this.userBalanceRepository.updateInUserBalance(id, trainingId, foundBalance.remained - quantity)
   }

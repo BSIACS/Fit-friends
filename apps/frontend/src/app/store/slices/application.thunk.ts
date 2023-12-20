@@ -140,30 +140,5 @@ export const getTrainingsDataThunk = createAsyncThunk(
   }
 );
 
-export interface getTrainingReviewsPayload {
-  id: UUID;
-  setIsLoaded: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsRequestError: React.Dispatch<React.SetStateAction<boolean>>;
-  testFunc: any;
-}
-
-// export const getTrainingReviewsThunk = createAsyncThunk(
-//   'application/getTrainingReviewsThunk',
-//   async (payload: getTrainingReviewsPayload, thunkApi) => {
-//     try {
-//       const axiosInstance = axios.create();
-//       //payload.setIsLoaded(true);
-//       axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
-//       const response = await axiosInstance.get<any>(`http://localhost:3042/api/reviews/${payload.id}`);
-//       console.log(response.data);
-
-//       return response.data;
-//     } catch (error: any) {
-//       //payload.setIsRequestError(true);
-
-//       return thunkApi.rejectWithValue(error.message);
-//     }
-//   }
-// );
 
 

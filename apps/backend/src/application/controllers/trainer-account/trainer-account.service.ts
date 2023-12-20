@@ -7,6 +7,9 @@ import { PurchasesRepository } from '../../prisma/purchases.repository';
 import { GetTrainingsListQuery } from './query/get-trainings-list.query';
 import { NewTrainingsScheduledNotificationsRepository } from '../../prisma/new-trainings-scheduled-notifications.repository';
 import { UsersRepository } from '../../prisma/users.repository';
+import { UserDoesNotExistsException } from '../../../exceptions/user-does-not-exists.exception';
+import { UserEntityInterface } from '../../../entities/user-entity.interface';
+import { TrainerEntityInterface } from '../../../entities/trainer-entity.interface';
 
 @Injectable()
 export class TrainerAccountService {
@@ -132,5 +135,23 @@ export class TrainerAccountService {
     }
 
     return subscribersIds;
+  }
+
+  public async getFriendList(id: UUID, friendsPerPage: number | undefined, pageNumber: number | undefined): Promise<(UserEntityInterface | TrainerEntityInterface)[]> {
+    const foundUser = await this.usersRepository.findTrainerById(id);
+
+    if (!foundUser) {
+      throw new UserDoesNotExistsException(id, 'id');
+    }
+
+    const foundUserFriends = await this.usersRepository.findTrainersFriends(id, friendsPerPage, pageNumber)
+
+    return foundUserFriends;
+  }
+
+  public async getFriendsNumber(id: UUID): Promise<number> {
+    const foundTrainer = await this.usersRepository.findTrainerById(id);
+
+    return foundTrainer.friends.length;
   }
 }

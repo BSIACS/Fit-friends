@@ -159,10 +159,10 @@ export class UsersService {
     return foundTrainer;
   }
 
-  public async updateUser(dto: UpdateUserDto) {
+  public async updateUser(dto: UpdateUserDto, avatarFileName: string | undefined = undefined) {
     let updatedUser;
     try {
-      updatedUser = await this.usersRepository.updateUser(dto);
+      updatedUser = await this.usersRepository.updateUser(dto, avatarFileName);
     } catch (error) {
       throw new UserDoesNotExistsException(dto.id, 'id');
     }

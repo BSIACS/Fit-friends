@@ -4,19 +4,18 @@ import axios from 'axios';
 import { AuthorizationRequest } from '../../types/authorization-request.interface';
 import { SignInDTO } from '../../dto/sign-in.dto';
 import { RegisterTrainerDTO } from '../../dto/register-trainer.dto';
-
-import { decodeToken, useJwt } from 'react-jwt';
 import { RefreshTokensPairDTO } from '../../dto/refresh-tokens-pair.dto';
-import { getAccessToken, getRefreshToken } from '../../services/token';
 import { RefreshTokenRequest } from '../../types/refresh-token-request.interface';
 import { AuthorizationHeader, AxiosFactory } from '../../services/axios';
 import { CreateTrainerRequest } from '../../types/create-trainer-request.interface';
+import { setAPIError } from './authorization.slice';
 
 
 export const signInThunk = createAsyncThunk(
   'authorization/signInThunk',
   async (payload: AuthorizationRequest, thunkApi) => {
     try {
+      thunkApi.dispatch(setAPIError(''))
       const response = await AxiosFactory.createAxiosInstance(AuthorizationHeader.UNDEFINED).post<SignInDTO>('/users/login', {
         email: payload.email,
         password: payload.password
@@ -24,6 +23,16 @@ export const signInThunk = createAsyncThunk(
 
       return response.data;
     } catch (error: any) {
+      let isErrorDetected = false;
+
+      if(Array.isArray(error.response.data.message)){
+        isErrorDetected = true;
+        thunkApi.dispatch(setAPIError(error.response.data.message[0]));
+      }
+      if(error.response.data.message && !isErrorDetected){
+        thunkApi.dispatch(setAPIError(error.response.data.message));
+      }
+
       return thunkApi.rejectWithValue(error.message);
     }
   }

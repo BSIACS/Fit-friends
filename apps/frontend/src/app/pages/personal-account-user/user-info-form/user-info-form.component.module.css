@@ -1,0 +1,29 @@
+.appListVisible{
+  opacity: 100;
+  visibility: visible;
+  max-height: 200px;
+  bottom: 1px;
+  border-radius: 0px 0px 8px 8px;
+  border: 1px solid #333333;
+  /* border-top: 2px; */
+  -webkit-box-shadow: 0 0 0 2px #c5ec2a;
+  box-shadow: 0 0 0 2px #c5ec2a;
+}
+
+.appListHidden{
+  opacity: 0;
+  visibility: hidden;
+  bottom: 1px;
+  border: 1px solid rgba(24, 24, 24, 0.1);
+  border-radius: 0px 0px 8px 8px;
+}
+
+.appListItem{
+  padding: 9px;
+  padding-left: 18px;
+}
+
+.appButtonNoBottomBorderRounds{
+  border-radius: 8px 8px 0px 0px;
+}
+/* border: '1px solid rgba(24, 24, 24, 0.1)' } */
