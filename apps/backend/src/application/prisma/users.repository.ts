@@ -91,7 +91,7 @@ export class UsersRepository {
         createdAt: new Date(),
         trainingLevel: '',
         trainingType: [],
-        certificateFileName: '',
+        certificateFilesNames: [],
         merits: '',
         isReadyForTraining: false,
       }

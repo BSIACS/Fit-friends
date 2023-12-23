@@ -19,19 +19,20 @@ export class TrainingsRepository {
     const createdTraining: TrainingEntityInterface = await this.prisma.training.create({
       data: {
         name: dto.name,
-        backgroundImgFileName: dto.backgroundImgFileName,
+        backgroundImgFileName: 'defaultTrainingImage',
         trainingLevel: dto.trainingLevel,
         trainingType: dto.trainingType,
         trainingDuration: dto.trainingDuration,
-        price: dto.price,
-        calories: dto.calories,
+        price: Number(dto.price),
+        calories: Number(dto.calories),
         description: dto.description,
         sex: dto.sex,
         videoDemoFileName: videoDemoFileName,
         rating: 0,
         votesNumber: 0,
+        pointsSum: 0,
         trainingCreatorId: dto.trainingCreatorId,
-        isSpecial: dto.isSpecial,
+        isSpecial: false,
       }
     });
 

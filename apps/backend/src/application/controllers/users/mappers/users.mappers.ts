@@ -52,6 +52,7 @@ export const fromEntityToTrainerRdo = (entity: TrainerEntityInterface): TrainerR
     merits: entity.merits,
     isReadyForTraining: entity.isReadyForTraining,
     subscribers: entity.subscribers,
+    certificateFilesNames: entity.certificateFilesNames,
   }
 }
 

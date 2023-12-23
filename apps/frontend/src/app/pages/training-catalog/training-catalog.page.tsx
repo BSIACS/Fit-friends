@@ -334,10 +334,6 @@ export function TrainingCatalogPage(): JSX.Element {
                           <input type="radio" name="sort" value={SortEnum.DESC} checked={searchParams.get('sortDirection') ? searchParams.get('sortDirection') === SortEnum.DESC : false} onChange={sortByPriceClickHandler} />
                           <span className="btn-radio-sort__label" >Дороже</span>
                         </label>
-                        {/* <label>
-                          <input type="radio" name="sort" value={'free'} onChange={sortByPriceClickHandler}/>
-                          <span className="btn-radio-sort__label">Бесплатные</span>
-                        </label> */}
                       </div>
                     </div>
                   </form>

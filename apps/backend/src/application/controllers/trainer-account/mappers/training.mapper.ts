@@ -16,7 +16,7 @@ export const fromEntityToTrainingRdo = (entity: TrainingEntityInterface): Traini
     description: entity.description,
     sex: entity.sex,
     videoDemoFileName: entity.videoDemoFileName,
-    rating: entity.votesNumber <= 0 ? '0' : (entity.rating / entity.votesNumber).toFixed(1),
+    rating: +entity.rating,
     trainingCreatorId: entity.trainingCreatorId,
     isSpecial: entity.isSpecial,
   }

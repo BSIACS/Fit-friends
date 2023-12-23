@@ -13,4 +13,5 @@ export class TrainerData {
   trainingType?: string[];
   merits?: string;
   isReadyForTraining?: boolean;
+  certificateFilesNames?: string[];
 }

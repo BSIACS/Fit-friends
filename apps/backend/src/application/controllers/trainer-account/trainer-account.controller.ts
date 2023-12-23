@@ -20,6 +20,7 @@ import { TokenPayload } from '../../../types/token-payload.interface';
 import { GetFriendsListQuery } from './query/get-friends-list.query';
 import { GetFriendsListRdo } from './rdo/get-friends-list.rdo';
 import { fromEntitiesToUsersAndTrainersRdos } from '../users/mappers/users.mappers';
+import { UploadFileManagerService } from '../../upload-file-manager/upload-file-manager.service';
 
 
 interface GetTrainingByIdParamsInterface {
@@ -35,22 +36,21 @@ export class TrainerAccountController {
     private trainerAccountService: TrainerAccountService,
     private userService: UsersService,
     private mailService: MailService,
-    private trainingsService: TrainingsService
-
+    private trainingsService: TrainingsService,
+    private readonly uploadFileManagerService: UploadFileManagerService
   ) { }
 
   @Post('createTraining')
   @ApiBody({ type: CreateTrainingDto })
   @UseGuards(IsTrainerRoleGuard)
-  @UseInterceptors(FileFieldsInterceptor([
-    { name: 'videoDemo' }
-  ], multerUploadTrainingFileOptions))
   @UsePipes(new ValidationPipe({transform: true}))
-  public async createTraining(@UploadedFiles() files, @Body() dto: CreateTrainingDto): Promise<TrainingRdo> {
-    const createdTraining = await this.trainerAccountService.createTraining(
-      dto,
-      files.videoDemo[0].filename
-    );
+  @UseInterceptors(FileInterceptor('videoDemo'))
+  public async createTraining(@UploadedFile() file: Express.Multer.File, @Body() dto: CreateTrainingDto) {//: Promise<TrainingRdo> {
+    const createdTraining = await this.trainerAccountService.createTraining(dto, file.originalname);
+
+    if (file) {
+      this.uploadFileManagerService.saveTrainingVideoDemo(createdTraining.id, file);
+    }
 
     await this.trainerAccountService.createNewTrainingScheduledNotification(createdTraining.trainingCreatorId, createdTraining.id);
 
@@ -91,7 +91,7 @@ export class TrainerAccountController {
     console.log(file);
   }
 
-  @ApiParam({name: 'id', description: 'Training UUID'})
+  @ApiParam({ name: 'id', description: 'Training UUID' })
   @UseGuards(IsTrainerRoleGuard)
   @Get('training/:id')
   public async getTrainingById(@Param() { id }: GetTrainingByIdParamsInterface) {

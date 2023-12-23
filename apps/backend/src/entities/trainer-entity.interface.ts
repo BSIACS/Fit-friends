@@ -15,7 +15,7 @@ export interface TrainerEntityInterface {
   createdAt?: Date;
   trainingLevel?: string;
   trainingType?: string[];
-  certificateFileName?: string;
+  certificateFilesNames?: string[];
   merits?: string;
   isReadyForTraining?: boolean;
   subscribers?: UUID[];

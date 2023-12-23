@@ -30,7 +30,6 @@ export class TrainerAccountService {
 
   public async createTraining(dto: CreateTrainingDto, videoDemoFileName: string) {
     let createdTraining;
-    console.log('asdsadsad');
 
     try {
       createdTraining = await this.trainingsRepository.createTraining(dto, videoDemoFileName);

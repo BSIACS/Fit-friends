@@ -16,4 +16,5 @@ export class TrainerDTO {
   merits?: string;
   isReadyForTraining?: boolean;
   subscribers?: UUID[];
+  certificateFilesNames?: string[];
 }

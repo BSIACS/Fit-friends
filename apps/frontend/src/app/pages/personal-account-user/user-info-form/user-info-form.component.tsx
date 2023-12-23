@@ -35,7 +35,6 @@ export function UserFormInfoComponent({ user }: UserFormInfoComponentProps): JSX
   const userInfoEditSubmitHandler = (evt: React.MouseEvent<HTMLFormElement, MouseEvent>) => {
     evt.preventDefault();
     if(nameError.isError || descriptionError.isError){
-      console.log('!!!!!');
 
       return;
     }

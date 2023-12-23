@@ -25,11 +25,23 @@ export class UploadFileManagerService {
     if (!existsSync(`${UPLOADS_FILES_PATH}/users-data/${userId}`)) {
       mkdirSync(`${UPLOADS_FILES_PATH}/users-data/${userId}`);
     }
-    console.log('CHECK - ', file.filename);
-
 
     if (file.buffer) {
       writeFile(`${UPLOADS_FILES_PATH}/users-data/${userId}/${file.originalname}`, file.buffer, 'ascii', (error) => {
+        if (error) {
+          throw error;
+        };
+      });
+    }
+  }
+
+  public saveTrainingVideoDemo(trainingId: string, file: Express.Multer.File) {
+    if (!existsSync(`${UPLOADS_FILES_PATH}/training-data/${trainingId}`)) {
+      mkdirSync(`${UPLOADS_FILES_PATH}/training-data/${trainingId}`);
+    }
+
+    if (file.buffer) {
+      writeFile(`${UPLOADS_FILES_PATH}/training-data/${trainingId}/${file.originalname}`, file.buffer, 'ascii', (error) => {
         if (error) {
           throw error;
         };

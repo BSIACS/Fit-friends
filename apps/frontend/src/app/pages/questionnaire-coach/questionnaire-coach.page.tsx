@@ -86,8 +86,6 @@ export function QuestionnaireCoachPage(): JSX.Element {
 
     const trainingTypeLength = ((questionnaireFormData.getAll('trainingType[]'))).length;
 
-    console.log('LENGTH', trainingTypeLength);
-
     (trainingTypeLength > 3 || trainingTypeLength < 1) ?
       setTrainingTypeInputError({ ...trainingTypeInputError, isError: true }) :
       setTrainingTypeInputError({ ...trainingTypeInputError, isError: false });

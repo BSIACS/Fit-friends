@@ -12,7 +12,7 @@ export class TrainingRdo {
   description: string;
   sex: string;
   videoDemoFileName: string;
-  rating: string;
+  rating: number;
   trainingCreatorId: string;
   isSpecial: boolean;
 }

@@ -9569,7 +9569,9 @@ input:active + .custom-textarea__text {
 }
 
 .certificate-card__button--save {
-  display: none;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
 }
 
 .certificate-card__controls {

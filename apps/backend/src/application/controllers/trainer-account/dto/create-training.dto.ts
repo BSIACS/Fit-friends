@@ -82,12 +82,4 @@ export class CreateTrainingDto {
   })
   @IsUUID()
   trainingCreatorId: string;
-
-  @ApiProperty({
-    description: 'The flag identifies the training participation as a special offer',
-    example: false,
-  })
-  @Transform(({value}) => value === 'true')
-  @IsBoolean()
-  isSpecial: boolean;
 }

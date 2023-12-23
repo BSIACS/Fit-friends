@@ -28,7 +28,7 @@ export async function fillTrainers(prisma: PrismaClient) {
       createdAt: getRandomDate(new Date('2020-1-1'), new Date('2023-10-1')),
       trainingLevel: TrainingLevelEnum.AMATEUR,
       trainingType: [TrainingTypeEnum.YOGA, TrainingTypeEnum.RUNNING, TrainingTypeEnum.BOX],
-      certificateFileName: 'fe96380b936ca514d9cda583b039053b',
+      certificateFilesNames: ['1.pdf', '2.pdf', '3.pdf', '4.pdf', '5.pdf', '6.pdf'],
       merits: 'Персональный тренер и инструктор групповых программ с опытом  более 4х лет. Специализация: коррекция фигуры и осанки, снижение веса, восстановление после травм, пилатес.',
       isReadyForTraining: true,
     }
@@ -52,7 +52,7 @@ export async function fillTrainers(prisma: PrismaClient) {
       createdAt: getRandomDate(new Date('2020-1-1'), new Date('2023-10-1')),
       trainingLevel: TrainingLevelEnum.PROFESSIONAL,
       trainingType: [TrainingTypeEnum.BOX, TrainingTypeEnum.RUNNING, TrainingTypeEnum.CROSSFIT],
-      certificateFileName: 'fe96380b936ca514d9cda583b039053b',
+      certificateFilesNames: ['1.pdf', '2.pdf', '3.pdf', '4.pdf', '5.pdf', '6.pdf'],
       merits: 'Персональный тренер и инструктор групповых программ с опытом  более 10 лет.',
       isReadyForTraining: true,
     }

@@ -4,12 +4,12 @@ import { SignInPage } from './pages/sign-in/sign-in.page';
 import { refreshTokensPairThunk } from './store/slices/authorization.thunk';
 import { useAppDispatch } from './hooks/useAppDispatch';
 import { getRefreshToken } from './services/token';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { IndexPage } from './pages/index/index.page';
 import { PrivateRouteComponent } from './components/private-route/private-route.component';
 import { NotFoundPage } from './pages/not-found/not-found.page';
 import { SignUpPage } from './pages/sign-up/sign-up.page';
-import { PersonalAccountCoachPage } from './pages/personal-account-coach/personal-account-coach.page';
+import { PersonalAccountTrainerPage } from './pages/personal-account-coach/personal-account-trainer.page';
 import { QuestionnaireCoachPage } from './pages/questionnaire-coach/questionnaire-coach.page';
 import { setIsLoading } from './store/slices/authorization.slice';
 import { BadRequestPage } from './pages/bad-request/bad-request.page';
@@ -25,15 +25,15 @@ import { FriendsListUserPage } from './pages/friends-list-user/friends-list-user
 import { FriendsListTrainerPage } from './pages/friends-list-trainer/friends-list-trainer.page';
 import { PersonalAccountUserPage } from './pages/personal-account-user/personal-account-user.page';
 import { MyPurchasesPage } from './pages/my-purchases/my-purchases.page';
+import { CreateTrainingPage } from './pages/create-training/create-training.page';
+import { MyTrainingsPage } from './pages/my-trainings/my-trainings.page';
+import { MyOrdersPage } from './pages/my-orders/my-orders.page';
+
 
 export function App() {
   const dispatch = useAppDispatch();
   const refreshToken = getRefreshToken();
 
-  // if (refreshToken) {
-  //   setIsLoading(true);
-  //   dispatch(refreshTokensPairThunk({ refreshToken: refreshToken }));
-  // }
   useEffect(() => {
     setIsLoading(true);
     dispatch(refreshTokensPairThunk({ refreshToken: refreshToken }));
@@ -46,7 +46,10 @@ export function App() {
       <Route path={AppRoutes.SIGN_UP} element={<SignUpPage />} />
       <Route path={AppRoutes.INDEX} element={<PrivateRouteComponent validRole='user'><IndexPage /></PrivateRouteComponent>} />
       <Route path={AppRoutes.TRAINING_CATALOG} element={<PrivateRouteComponent validRole='user'><TrainingCatalogPage /></PrivateRouteComponent>} />
-      <Route path={AppRoutes.TRAINER_ACCOUNT} element={<PrivateRouteComponent validRole='trainer'><PersonalAccountCoachPage /></PrivateRouteComponent>} />
+      <Route path={AppRoutes.TRAINER_ACCOUNT} element={<PrivateRouteComponent validRole='trainer'><PersonalAccountTrainerPage /></PrivateRouteComponent>} />
+      <Route path={AppRoutes.CREATE_TRAINING} element={<PrivateRouteComponent validRole='trainer'><CreateTrainingPage /></PrivateRouteComponent>} />
+      <Route path={AppRoutes.MY_TRAININGS} element={<PrivateRouteComponent validRole='trainer'><MyTrainingsPage /></PrivateRouteComponent>} />
+      <Route path={AppRoutes.MY_ORDERS} element={<PrivateRouteComponent validRole='trainer'><MyOrdersPage /></PrivateRouteComponent>} />
       <Route path={AppRoutes.USER_ACCOUNT} element={<PrivateRouteComponent validRole='user'><PersonalAccountUserPage /></PrivateRouteComponent>} />
       <Route path={AppRoutes.QUESTIONNAIRE_COACH} element={<PrivateRouteComponent validRole='trainer'><QuestionnaireCoachPage /></PrivateRouteComponent>} />
       <Route path={AppRoutes.QUESTIONNAIRE_USER} element={<PrivateRouteComponent validRole='user'><QuestionnaireUserPage /></PrivateRouteComponent>} />

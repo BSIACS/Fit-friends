@@ -123,6 +123,8 @@ export class UsersController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseInterceptors(FileInterceptor('userAvatar'))
   public async updateUser(@UploadedFile() file, @Body() data: UpdateUserDto): Promise<UserRdo> {
+    console.log('asdasd');
+
     if(file){
       this.uploadFileManagerService.saveAvatar(data.id, file);
     }

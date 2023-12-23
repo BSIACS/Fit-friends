@@ -55,7 +55,7 @@ model Trainer {
   createdAt                 DateTime                             @map("created_at") @db.Timestamptz()
   trainingLevel             String                               @map("training_level") @db.VarChar(64)
   trainingType              String[]                             @map("training_type") @db.VarChar(64)
-  certificateFileName       String                               @map("certificate_file_name") @db.VarChar(256)
+  certificateFilesNames     String[]                             @map("certificate_files_names") @db.VarChar(256)
   merits                    String                               @db.VarChar(256)
   isReadyForTraining        Boolean                              @default(false) @map("is_ready_for_training") @db.Boolean
   subscribers               String[]                             @db.Uuid
@@ -81,6 +81,7 @@ model Training {
   videoDemoFileName         String                               @map("video_demo_file_name") @db.VarChar(256)
   rating                    Int
   votesNumber               Int                                  @map("votes_number")
+  pointsSum                 Int                                  @map("points_sum")
   trainer                   Trainer                              @relation(fields: [trainingCreatorId], references: [id])
   trainingCreatorId         String                               @map("training_creator_id") @db.Uuid
   isSpecial                 Boolean                              @default(false) @map("is_special") @db.Boolean

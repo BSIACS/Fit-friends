@@ -56,6 +56,25 @@ export const getLocationTag = (location: LocationEnum) => {
   };
 }
 
+export const getTypeTraining = (trainingType: TrainingTypeEnum) => {
+  switch (trainingType) {
+    case TrainingTypeEnum.AEROBICS:
+      return 'аэробика';
+    case TrainingTypeEnum.BOX:
+      return 'бокс';
+    case TrainingTypeEnum.CROSSFIT:
+      return 'кроссфит';
+    case TrainingTypeEnum.PILATES:
+      return 'пилатес';
+    case TrainingTypeEnum.RUNNING:
+      return 'бег';
+    case TrainingTypeEnum.STRETCHING:
+      return 'стрэтчинг';
+    case TrainingTypeEnum.YOGA:
+      return 'йога';
+  };
+}
+
 export const getTypeTrainingTag = (trainingType: TrainingTypeEnum) => {
   switch (trainingType) {
     case TrainingTypeEnum.AEROBICS:

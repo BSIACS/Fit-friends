@@ -11,10 +11,12 @@ import { NewTrainingsScheduledNotificationsRepository } from '../../prisma/new-t
 import { UsersRepository } from '../../prisma/users.repository';
 import { TrainingsService } from '../trainings/trainings.service';
 import { PurchasesRepository } from '../../prisma/purchases.repository';
+import { UploadFileManagerService } from '../../upload-file-manager/upload-file-manager.service';
+import { UploadFileManagerModule } from '../../upload-file-manager/upload-file-manager';
 
 
 @Module({
-  imports: [TrainingsModule, UsersModule, MailModule, ],
+  imports: [TrainingsModule, UsersModule, MailModule, UploadFileManagerModule],
   controllers: [TrainerAccountController],
   providers: [
     TrainerAccountService,
@@ -24,7 +26,8 @@ import { PurchasesRepository } from '../../prisma/purchases.repository';
     NewTrainingsScheduledNotificationsRepository,
     UsersRepository,
     TrainingsService,
-    PurchasesRepository
+    PurchasesRepository,
+    UploadFileManagerService
   ],
 })
 export class TrainerAccountModule { }
