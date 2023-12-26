@@ -215,7 +215,7 @@ export function CreateTrainingPage(): JSX.Element {
                   <div className="create-training">
                     <div className="create-training__wrapper">
                       <div className="create-training__block">
-                        <input name='trainingCreatorId' value={authoriztionData.userId} hidden={true}/>
+                        <input name='trainingCreatorId' value={authoriztionData?.userId} hidden={true}/>
                         <h2 className="create-training__legend">Название тренировки</h2>
                         <div className="custom-input create-training__input">
                           <label>

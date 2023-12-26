@@ -12,7 +12,8 @@ import { RegisterUserDTO } from '../../dto/register-user.dto';
 
 export interface AuthorizationState {
   isLoading: boolean;
-  authoriztionData: AuthoriztionData;
+  isRefreshRejected: boolean;
+  authoriztionData: AuthoriztionData | undefined;
   isRegistrationComplete: boolean;
   authoriztionStatus: AuthorizationStatusEnum;
   emailAPIError: { isError: boolean, message: string }
@@ -21,7 +22,8 @@ export interface AuthorizationState {
 
 const initialState: AuthorizationState = {
   isLoading: false,
-  authoriztionData: {},
+  isRefreshRejected: false,
+  authoriztionData: undefined,
   isRegistrationComplete: false,
   authoriztionStatus: AuthorizationStatusEnum.UNDEFINED,
   emailAPIError: { isError: false, message: '' },
@@ -76,6 +78,8 @@ export const authorizationSlice = createSlice({
         }
       })
       .addCase(refreshTokensPairThunk.pending, (state) => {
+        state.isRefreshRejected = false;
+        state.authoriztionData = {};
         state.isLoading = true;
       })
       .addCase(refreshTokensPairThunk.fulfilled, (state, action: PayloadAction<RefreshTokensPairDTO>) => {
@@ -87,6 +91,10 @@ export const authorizationSlice = createSlice({
           state.authoriztionData = { userId: decodedToken.userId, role: decodedToken.role };
         }
         state.authoriztionStatus = AuthorizationStatusEnum.AUTHORIZED;
+        state.isLoading = false;
+      })
+      .addCase(refreshTokensPairThunk.rejected, (state) => {
+        state.authoriztionStatus = AuthorizationStatusEnum.UNAUTHORIZED;
         state.isLoading = false;
       })
       .addCase(registerTrainerThunk.pending, (state) => {
@@ -102,6 +110,8 @@ export const authorizationSlice = createSlice({
         }
         state.authoriztionStatus = AuthorizationStatusEnum.AUTHORIZED;
         state.isLoading = false;
+        state.emailAPIError = {isError: false, message: ''};
+        state.passwordAPIError = {isError: false, message: ''};
       })
       .addCase(registerUserThunk.pending, (state) => {
         state.isLoading = true;

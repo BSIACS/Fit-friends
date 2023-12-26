@@ -5,11 +5,12 @@ import { ReviewSideBarItemComponent } from '../../components/review-side-bar-ite
 import axios from 'axios';
 import { InternalAxiosRequestConfig } from 'axios';
 import { getAccessToken } from '../../services/token';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { TrainingDTO } from '../../dto/training.dto';
 import { BadRequestPage } from '../bad-request/bad-request.page';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { HeaderComponent } from '../../components/header/header.component';
+import { AppRoutes } from '../../constants/app-routes.constants';
 
 const requestWithAccessTokenInterceptor = (config: InternalAxiosRequestConfig) => {
   config.headers.Authorization = `Bearer ${getAccessToken()}`;
@@ -133,8 +134,6 @@ export function TrainingCardTrainerPage(): JSX.Element {
 
   return (
     <>
-      {/* <div style={{ width: '100%', height: '100%', position: 'fixed', backgroundColor: 'black', zIndex: '100', opacity: .5 }}
-        hidden={isReviewsLoaded && isTrainingDataLoaded}></div> */}
       <LoaderComponent isHidden={isReviewsLoaded && isTrainingDataLoaded}/>
       <div className="wrapper">
         <HeaderComponent />
@@ -144,10 +143,10 @@ export function TrainingCardTrainerPage(): JSX.Element {
               <div className="inner-page__wrapper">
                 <h1 className="visually-hidden">Карточка тренировки</h1>
                 <aside className="reviews-side-bar">
-                  <button className="btn-flat btn-flat--underlined reviews-side-bar__back" type="button">
+                  <Link className="btn-flat btn-flat--underlined reviews-side-bar__back" to={AppRoutes.MY_TRAININGS}>
                     <svg width="14" height="10" aria-hidden="true" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.99882 1L1 6L5.99882 11M15 6H1.14" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" /></svg>
                     <span>Назад</span>
-                  </button>
+                  </Link>
                   <h2 className="reviews-side-bar__title">Отзывы</h2>
                   <ul className="reviews-side-bar__list">
                     {reviews.map((item) => <ReviewSideBarItemComponent key={item.id} userId={item.userId as UUID} name={item.user?.name as string} avatarFileName={item.user?.avatarFileName as string} rating={item.rating as number} text={item.text as string} />)}

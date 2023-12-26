@@ -43,7 +43,7 @@ export function UserCardPage(): JSX.Element {
   console.log(user);
 
   useEffect(() => {
-    if (authoriztionData.role) {
+    if (authoriztionData?.role) {
       getFriendsData();
     }
   }, [authoriztionData]);
@@ -68,7 +68,7 @@ export function UserCardPage(): JSX.Element {
     const axiosInstance = axios.create();
     axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
-      const response = await axiosInstance.get<FriendsListDTO>(`http://localhost:3042/api/userAccount/friends/${authoriztionData.userId}`);
+      const response = await axiosInstance.get<FriendsListDTO>(`http://localhost:3042/api/userAccount/friends/${authoriztionData?.userId}`);
       const friends = response.data.friends?.map((item) => item.id);
       setFriends(friends as string[]);
       setIsFriendsDataLoaded(true);

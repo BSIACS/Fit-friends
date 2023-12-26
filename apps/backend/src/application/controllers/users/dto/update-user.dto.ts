@@ -95,7 +95,7 @@ export class UpdateUserDto {
     type: 'string',
     required: false
   })
-  @IsNumberString()
+  @IsInt()
   @Validate((value) => +value >= 1000 && +value <= 5000)
   @Transform(({value}) => +value)
   @IsOptional()

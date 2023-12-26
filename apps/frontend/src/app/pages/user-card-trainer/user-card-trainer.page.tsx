@@ -69,7 +69,7 @@ export function UserCardTrainerPage(): JSX.Element {
   }, []);
 
   useEffect(() => {
-    if (authoriztionData.role) {
+    if (authoriztionData?.role) {
       getFriendsData();
     }
   }, [authoriztionData]);
@@ -113,7 +113,7 @@ export function UserCardTrainerPage(): JSX.Element {
     const axiosInstance = axios.create();
     axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
-      const response = await axiosInstance.get<FriendsListDTO>(`http://localhost:3042/api/userAccount/friends/${authoriztionData.userId}`);
+      const response = await axiosInstance.get<FriendsListDTO>(`http://localhost:3042/api/userAccount/friends/${authoriztionData?.userId}`);
       const friends = response.data.friends?.map((item) => item.id);
       console.log(response.data.friends);
 
@@ -384,7 +384,7 @@ export function UserCardTrainerPage(): JSX.Element {
                           <div className="user-card-coach__training-check">
                             <div className="custom-toggle custom-toggle--checkbox">
                               <label>
-                                <input type="checkbox" value="user-agreement-1" name="user-agreement" onChange={subscribeInputChangeHandler} defaultChecked={subscribers.includes(authoriztionData.userId as UUID)} />
+                                <input type="checkbox" value="user-agreement-1" name="user-agreement" onChange={subscribeInputChangeHandler} defaultChecked={subscribers.includes(authoriztionData?.userId as UUID)} />
                                 <span className="custom-toggle__icon">
                                   <svg width="9" height="6" aria-hidden="true" viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 4L3.99647 7L10 1" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" /></svg>
                                 </span>

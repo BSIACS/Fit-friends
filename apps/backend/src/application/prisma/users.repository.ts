@@ -128,20 +128,62 @@ export class UsersRepository {
     return createdUser;
   }
 
-  public async updateTrainer(dto: UpdateTrainerDto, certificateFileName: string): Promise<TrainerEntityInterface> {
-    console.log(dto);
+  public async updateTrainer(dto: UpdateTrainerDto, certificateFileName: string, userAvatarFileName: string): Promise<TrainerEntityInterface> {
     let newData;
 
     if (certificateFileName) {
-      newData = { ...dto, certificateFileName: certificateFileName }
+      const foundTrainer = await this.prisma.trainer.findFirst({
+        where: {
+          id: dto.id
+        },
+        select: {
+          certificateFilesNames: true,
+        }
+      })
+
+      newData = { ...dto, certificateFilesNames: [...foundTrainer.certificateFilesNames, certificateFileName], userAvatarFileName: userAvatarFileName }
     }
     else {
       newData = dto;
     }
 
+    if (userAvatarFileName) {
+      newData = { ...dto, avatarFileName: userAvatarFileName }
+    }
+
     const updatedTrainer: TrainerEntityInterface | null = await this.prisma.trainer.update({
       where: {
         id: dto.id,
+      },
+      data: newData
+    });
+
+    return updatedTrainer;
+  }
+
+  public async deleteTrainersCertificate(id: UUID, certificateFileName: string): Promise<TrainerEntityInterface> {
+    let newData;
+
+    if (certificateFileName) {
+      const foundTrainer = await this.prisma.trainer.findFirst({
+        where: {
+          id: id
+        },
+        select: {
+          id: true,
+          certificateFilesNames: true,
+        }
+      })
+
+      const indexToDelete = foundTrainer.certificateFilesNames.indexOf(certificateFileName);
+      foundTrainer.certificateFilesNames.splice(indexToDelete, 1);
+
+      newData = { id: id, certificateFilesNames: foundTrainer.certificateFilesNames }
+    }
+
+    const updatedTrainer: TrainerEntityInterface = await this.prisma.trainer.update({
+      where: {
+        id: id,
       },
       data: newData
     });

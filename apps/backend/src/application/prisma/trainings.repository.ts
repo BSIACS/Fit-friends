@@ -98,34 +98,65 @@ export class TrainingsRepository {
     return foundTraining;
   }
 
-  public async findTrainingsByCreatorId(id: UUID, filter: GetTrainingsListQuery = undefined): Promise<TrainingEntityInterface[] | null> {
-    let foundTrainings;
-    if (!filter) {
-      foundTrainings = await this.prisma.training.findMany({
-        where: {
-          trainingCreatorId: id,
-        }
-      });
-    }
-    else {
-      foundTrainings = await this.prisma.training.findMany({
-        where: {
-          trainingCreatorId: id,
-          calories: filter.caloriesRange ? {
-            lte: filter.caloriesRange[1],
-            gte: filter.caloriesRange[0]
-          } : {},
-          price: filter.priceRange ? {
-            lte: filter.priceRange[1],
-            gte: filter.priceRange[0]
-          } : {},
-          rating: filter.rate,
-          trainingDuration: filter.duration,
-        }
-      });
+  public async findTrainingsByCreatorId(id: UUID, query: GetTrainingsListQuery = undefined): Promise<TrainingEntityInterface[]> {
+    let trainingDuration = undefined;
+    if (query !== undefined && query.trainingDuration !== undefined) {
+      trainingDuration = query.trainingDuration.split(',')
     }
 
+    const foundTrainings = await this.prisma.training.findMany({
+      take: query ? query.trainingsPerPage * query.pageNumber : undefined,
+      where: {
+        trainingCreatorId: id,
+        calories: query?.minCalories !== undefined && query?.maxCalories !== undefined ? {
+          lte: +query?.maxCalories,
+          gte: +query?.minCalories
+        } : {},
+        price: query?.minPrice !== undefined && query?.maxPrice !== undefined ? {
+          lte: +query?.maxPrice,
+          gte: +query?.minPrice
+        } : {},
+        rating: query?.minRate !== undefined && query?.maxRate !== undefined ? {
+          lte: +query?.maxRate,
+          gte: +query?.minRate
+        } : {},
+        trainingDuration: {
+          in: trainingDuration ? trainingDuration : undefined
+        }
+      },
+    });
+
     return foundTrainings;
+  }
+
+  public async getTrainingsCountByCreatorId(id: UUID, query: GetTrainingsListQuery = undefined): Promise<number> {
+    let trainingDuration = undefined;
+    if (query.trainingDuration !== undefined) {
+      trainingDuration = query.trainingDuration.split(',')
+    }
+
+    const count = await this.prisma.training.count({
+      where: {
+        trainingCreatorId: id,
+        calories: query.minCalories !== undefined && query.maxCalories !== undefined ? {
+          lte: +query.maxCalories,
+          gte: +query.minCalories
+        } : {},
+        price: query.minPrice !== undefined && query.maxPrice !== undefined ? {
+          lte: +query.maxPrice,
+          gte: +query.minPrice
+        } : {},
+        rating: query.minRate !== undefined && query.maxRate !== undefined ? {
+          lte: +query.maxRate,
+          gte: +query.minRate
+        } : {},
+        trainingDuration: {
+          in: trainingDuration ? trainingDuration : undefined
+        }
+      },
+    });
+
+    return count;
   }
 
   public async findTrainingIdsByCreatorId(id: UUID): Promise<string[]> {
@@ -149,7 +180,7 @@ export class TrainingsRepository {
 
     const foundTrainings = await this.prisma.training.findMany({
       where: {
-        calories: query.minCalories && query.minCalories ? {
+        calories: query.minCalories !== undefined && query.maxCalories !== undefined ? {
           lte: +query.maxCalories,
           gte: +query.minCalories
         } : {},

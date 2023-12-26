@@ -63,7 +63,7 @@ export function QuestionnaireCoachPage(): JSX.Element {
   const resumeButtonClickHandler = (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
     const questionnaireFormData = new FormData(evt.currentTarget);
-    questionnaireFormData.set('id', authoriztionData.userId as string);
+    questionnaireFormData.set('id', authoriztionData?.userId as string);
     questionnaireFormData.delete(`specialization`);
     questionnaireFormData.set('isReadyForTraining', (state.isReadyForTraining as boolean) ? 'true' : 'false');
 
@@ -152,8 +152,8 @@ export function QuestionnaireCoachPage(): JSX.Element {
                           </div>
                           <div className="btn-checkbox">
                             <label>
-                              <input className="visually-hidden" type="checkbox" name="specialization" value="boxing"
-                                checked={state.specialization.includes('boxing')} onClick={specializationRadioButtonClickHandler} />
+                              <input className="visually-hidden" type="checkbox" name="specialization" value="box"
+                                checked={state.specialization.includes('box')} onClick={specializationRadioButtonClickHandler} />
                               <span className="btn-checkbox__btn">Бокс</span>
                             </label>
                           </div>

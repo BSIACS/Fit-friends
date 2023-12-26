@@ -170,14 +170,25 @@ export class UsersService {
     return updatedUser;
   }
 
-  public async updateTrainer(dto: UpdateTrainerDto, certificateFileName?: string): Promise<TrainerEntityInterface> {
+  public async updateTrainer(dto: UpdateTrainerDto, certificateFileName?: string, userAvatarFileName?: string): Promise<TrainerEntityInterface> {
     let updatedUser;
-    try {
-      updatedUser = await this.usersRepository.updateTrainer({...dto}, certificateFileName);
-    } catch (error) {
-      console.log(error);
 
+    try {
+      updatedUser = await this.usersRepository.updateTrainer({...dto}, certificateFileName, userAvatarFileName);
+    } catch (error) {
       throw new UserDoesNotExistsException(dto.id, 'id');
+    }
+
+    return updatedUser;
+  }
+
+  public async deleteTrainersCertificate(id: UUID, certificateFileName?: string, userAvatarFileName?: string): Promise<TrainerEntityInterface> {
+    let updatedUser;
+
+    try {
+      updatedUser = await this.usersRepository.deleteTrainersCertificate(id, certificateFileName);
+    } catch (error) {
+      throw new UserDoesNotExistsException(id, 'id');
     }
 
     return updatedUser;

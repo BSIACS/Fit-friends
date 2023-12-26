@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { UserData } from '../../../types/user-data'
 import { getLocation, getSex, getTrainingLevel } from '../../../utils/view-transform';
 import { TrainingLevelEnum } from '../../../types/training-level.enum';
@@ -15,6 +15,7 @@ type TrainerFormInfoComponentProps = {
 
 export function TrainerFormInfoComponent({ user }: TrainerFormInfoComponentProps): JSX.Element {
   const dispatch = useAppDispatch();
+  const descriptionRef = useRef<HTMLTextAreaElement | null>(null);
   const avatarImgElement: React.MutableRefObject<any> = useRef(null);
   const avatarInputElement: React.MutableRefObject<any> = useRef(null);
 
@@ -27,7 +28,6 @@ export function TrainerFormInfoComponent({ user }: TrainerFormInfoComponentProps
   const [descriptionError, setDescriptionError] = useState({ isError: false, message: 'Ограничение: от 10 до 140 символов' });
   const [trainingTypeError, setTrainingTypeError] = useState({ isError: false, message: 'Ограничение: не более 3 и не менее 1 специализации' });
 
-
   const editButtonClickHandler = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     evt.preventDefault();
     setIsEditable(true);
@@ -35,17 +35,27 @@ export function TrainerFormInfoComponent({ user }: TrainerFormInfoComponentProps
 
   const userInfoEditSubmitHandler = (evt: React.MouseEvent<HTMLFormElement, MouseEvent>) => {
     evt.preventDefault();
+    let errorFlag = false;
     const formData = new FormData(evt.currentTarget);
 
-    if(formData.getAll('trainingType').length > 3 || formData.getAll('trainingType').length < 0){
-      setTrainingTypeError({...trainingTypeError, isError: true});
-      return;
+    const descriptionCurrentLength = descriptionRef.current?.value?.length as number;
+    if (descriptionCurrentLength < 10 || descriptionCurrentLength > 140) {
+      setDescriptionError({ ...descriptionError, isError: true });
+      errorFlag = true;
     }
-    else{
-      setTrainingTypeError({...trainingTypeError, isError: false});
+    else {
+      setDescriptionError({ ...descriptionError, isError: false });
     }
 
-    if (nameError.isError || descriptionError.isError) {
+    if (formData.getAll('trainingType').length > 3 || formData.getAll('trainingType').length <= 0) {
+      setTrainingTypeError({ ...trainingTypeError, isError: true });
+      errorFlag = true;
+    }
+    else {
+      setTrainingTypeError({ ...trainingTypeError, isError: false });
+    }
+
+    if (nameError.isError || descriptionError.isError || errorFlag) {
       return;
     }
 
@@ -54,9 +64,14 @@ export function TrainerFormInfoComponent({ user }: TrainerFormInfoComponentProps
     formData.set('trainingLevel', user.trainingLevel as string);
     formData.set('location', user.location as string);
     formData.set('sex', user.sex as string);
+
     if (avatarInputElement.current.files[0]) {
       formData.set('userAvatar', avatarInputElement.current.files[0]);
     }
+
+    const trainingTypes = formData.getAll('trainingType');
+    formData.delete('trainingType');
+    trainingTypes.map((item) => formData.append('trainingType[]', item));
 
     dispatch(updateTrainerDataThunk({ formData: formData }));
     setIsEditable(false);
@@ -163,21 +178,21 @@ export function TrainerFormInfoComponent({ user }: TrainerFormInfoComponentProps
       <form className="user-info__form" action="#" method="post" onSubmit={userInfoEditSubmitHandler}>
         <button className="btn-flat btn-flat--underlined user-info-edit__save-button" style={{ visibility: isEditable ? 'hidden' : 'visible' }}
           aria-label="Редактировать" onClick={editButtonClickHandler}>
-          <svg width="12" height="12" aria-hidden="true" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.92156 3.08853C7.24415 5.08374 8.92461 6.60906 11.0102 6.81147M7.94934 2.04032L1.79017 8.32234C1.5576 8.5609 1.33254 9.03079 1.28753 9.35609L1.00995 11.6983C0.912428 12.5441 1.5426 13.1224 2.41284 12.9778L4.82849 12.5802C5.16609 12.5224 5.63871 12.2838 5.87128 12.0381L12.0305 5.75604C13.0957 4.67168 13.5759 3.43552 11.9179 1.92465C10.2675 0.428245 9.01463 0.955964 7.94934 2.04032Z" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          <svg width="12" height="12" aria-hidden="true" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.92156 3.08853C7.24415 5.08374 8.92461 6.60906 11.0102 6.81147M7.94934 2.04032L1.79017 8.32234C1.5576 8.5609 1.33254 9.03079 1.28753 9.35609L1.00995 11.6983C0.912428 12.5441 1.5426 13.1224 2.41284 12.9778L4.82849 12.5802C5.16609 12.5224 5.63871 12.2838 5.87128 12.0381L12.0305 5.75604C13.0957 4.67168 13.5759 3.43552 11.9179 1.92465C10.2675 0.428245 9.01463 0.955964 7.94934 2.04032Z" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>
           <span>Редактировать</span>
         </button>
         <button className="btn-flat btn-flat--underlined user-info-edit__save-button" type="submit" style={{ visibility: !isEditable ? 'hidden' : 'visible' }}
           aria-label="Сохранить">
-          <svg width="12" height="12" aria-hidden="true" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.92156 3.08853C7.24415 5.08374 8.92461 6.60906 11.0102 6.81147M7.94934 2.04032L1.79017 8.32234C1.5576 8.5609 1.33254 9.03079 1.28753 9.35609L1.00995 11.6983C0.912428 12.5441 1.5426 13.1224 2.41284 12.9778L4.82849 12.5802C5.16609 12.5224 5.63871 12.2838 5.87128 12.0381L12.0305 5.75604C13.0957 4.67168 13.5759 3.43552 11.9179 1.92465C10.2675 0.428245 9.01463 0.955964 7.94934 2.04032Z" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          <svg width="12" height="12" aria-hidden="true" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.92156 3.08853C7.24415 5.08374 8.92461 6.60906 11.0102 6.81147M7.94934 2.04032L1.79017 8.32234C1.5576 8.5609 1.33254 9.03079 1.28753 9.35609L1.00995 11.6983C0.912428 12.5441 1.5426 13.1224 2.41284 12.9778L4.82849 12.5802C5.16609 12.5224 5.63871 12.2838 5.87128 12.0381L12.0305 5.75604C13.0957 4.67168 13.5759 3.43552 11.9179 1.92465C10.2675 0.428245 9.01463 0.955964 7.94934 2.04032Z" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>
           <span>Сохранить</span>
         </button>
-        <div className="user-info__section" style={{ marginBottom: '10px' }}>
+        <div className="user-info__section" style={{ marginBottom: '0px' }}>
           <h2 className="user-info__title">Обо мне</h2>
           <div className={isEditable ? "custom-input user-info-edit__input" : 'custom-input custom-input--readonly user-info__input'} style={{ marginBottom: '10px' }}>
             <label>
               <span className="custom-input__label">Имя</span>
               <span className="custom-input__wrapper">
-                <input type="text" name="name" value={user.name} onChange={nameInputChangeHandler} disabled={!isEditable} />
+                <input type="text" name="name" value={user.name ? user.name : ''} onChange={nameInputChangeHandler} disabled={!isEditable} />
               </span>
             </label>
           </div>
@@ -189,9 +204,7 @@ export function TrainerFormInfoComponent({ user }: TrainerFormInfoComponentProps
           <div className="custom-textarea custom-textarea--readonly user-info__textarea" style={{ marginTop: '10px' }}>
             <label>
               <span className="custom-textarea__label">Описание</span>
-              <textarea name="description" value={user.description} onChange={descriptionInputChangeHandler} disabled={!isEditable} />
-              {/* {user.description}
-              </textarea> */}
+              <textarea ref={descriptionRef} name="description" value={user.description} onChange={descriptionInputChangeHandler} disabled={!isEditable} />
             </label>
           </div>
         </div>
@@ -204,7 +217,7 @@ export function TrainerFormInfoComponent({ user }: TrainerFormInfoComponentProps
           <h2 className="user-info-edit__title user-info-edit__title--status">Статус</h2>
           <div className="custom-toggle custom-toggle--switch user-info-edit__toggle">
             <label>
-              <input type="checkbox" name="isReadyForTraining" checked={user.isReadyForTraining} onChange={isReadyForTrainingChangeHandler}
+              <input type="checkbox" name="isReadyForTraining" checked={user.isReadyForTraining ? user.isReadyForTraining : false} onChange={isReadyForTrainingChangeHandler}
                 disabled={!isEditable} />
               <span className="custom-toggle__icon">
               </span>
@@ -216,7 +229,7 @@ export function TrainerFormInfoComponent({ user }: TrainerFormInfoComponentProps
           user.trainingType &&
           <div className="user-info-edit__section" style={{ marginBottom: '10px' }}>
             <h2 className="user-info-edit__title user-info-edit__title--specialization">Специализация</h2>
-            <div className="specialization-checkbox user-info-edit__specialization" style={{marginBottom: '10px'}}>
+            <div className="specialization-checkbox user-info-edit__specialization" style={{ marginBottom: '10px' }}>
               <div className="btn-checkbox">
                 <label>
                   <input className="visually-hidden" type="checkbox" name="trainingType" value="yoga" disabled={!isEditable} onChange={trainingTypeInputChangeHandler} checked={(user.trainingType as string[]).includes('yoga')} />
@@ -271,7 +284,7 @@ export function TrainerFormInfoComponent({ user }: TrainerFormInfoComponentProps
             aria-label="Выберите одну из опций" onBlur={buttonBlurHandler} onClick={selectLocationButtonClick} disabled={!isEditable}>
             <span className="custom-select__text"></span>
             <span className="custom-select__icon">
-              <svg width="15" height="6" aria-hidden="true" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <svg width="15" height="6" aria-hidden="true" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </span>
           </button>
           <ul className={`${isSelectLocationListVissible ? styles.appListVisible : styles.appListHidden} custom-select__list`} role="listbox">
@@ -289,7 +302,7 @@ export function TrainerFormInfoComponent({ user }: TrainerFormInfoComponentProps
             aria-label="Выберите одну из опций" onClick={chooseSexButtonClickHandler} onBlur={buttonBlurHandler} disabled={!isEditable}>
             <span className="custom-select__text"></span>
             <span className="custom-select__icon">
-              <svg width="15" height="6" aria-hidden="true" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <svg width="15" height="6" aria-hidden="true" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </span>
           </button>
           <ul className={`${isSelectSexListVissible ? styles.appListVisible : styles.appListHidden} custom-select__list`} role="listbox">
@@ -306,7 +319,7 @@ export function TrainerFormInfoComponent({ user }: TrainerFormInfoComponentProps
             <span className="custom-select__text"></span>
             <span className="custom-select__icon">
               <svg width="15" height="6" aria-hidden="true" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </span>
           </button>
           <ul className={`${isSelectTrainingLevelListVissible ? styles.appListVisible : styles.appListHidden} custom-select__list`} role="listbox">

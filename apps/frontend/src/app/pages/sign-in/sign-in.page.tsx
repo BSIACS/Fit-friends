@@ -8,23 +8,16 @@ import { AppRoutes } from '../../constants/app-routes.constants';
 
 
 export function SignInPage(): JSX.Element {
+  const dispatch = useAppDispatch();
   const emailAPIError = useAppSelector(state => state.authorization.emailAPIError);
   const passwordAPIError = useAppSelector(state => state.authorization.passwordAPIError);
   const [emailField, setEmailField] = useState<string>('');
   const [passwordField, setPasswordField] = useState<string>('');
   const [emailError, setEmailError] = useState({ isError: false, message: '' });
   const [passwordError, setPasswordError] = useState({ isError: false, message: '' });
-
-
-  const dispatch = useAppDispatch();
-
   const authoriztionStatus = useAppSelector((state) => state.authorization.authoriztionStatus);
   const userData = useAppSelector((state) => state.authorization.authoriztionData);
 
-  // useEffect(() => {
-  //   setEmailError({isError: false, message: ''});
-  //   setPasswordError({isError: false, message: ''});
-  // }, []);
 
   useEffect(() => {
     setEmailError(emailAPIError);
@@ -54,7 +47,7 @@ export function SignInPage(): JSX.Element {
   }
 
   if (authoriztionStatus === AuthorizationStatusEnum.AUTHORIZED) {
-    return userData.role === 'user' ? <Navigate to={AppRoutes.INDEX} /> : <Navigate to={AppRoutes.TRAINER_ACCOUNT} />
+    return userData?.role === 'user' ? <Navigate to={AppRoutes.INDEX} /> : <Navigate to={AppRoutes.TRAINER_ACCOUNT} />
   }
 
   return (

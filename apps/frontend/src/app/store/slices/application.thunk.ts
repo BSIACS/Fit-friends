@@ -7,6 +7,9 @@ import { RootState } from '../store';
 import { UpdateTrainerRequest } from '../../types/update-trainer-request.interface';
 import { UpdateUserRequest } from '../../types/update-user-request.interface';
 import { UUID } from '../../types/uuid.type';
+import { ApplicationState } from './application.slice';
+import { GetOrdersDTO } from '../../dto/get-orders.dto';
+import { DeleteTrainersCertificateRequest } from '../../types/delete-trainers-certificate-request.interface';
 
 
 const requestWithAccessTokenInterceptor = (config: InternalAxiosRequestConfig) => {
@@ -35,7 +38,7 @@ export const getTrainerDetailThunk = createAsyncThunk(
   async (payload, thunkApi) => {
     try {
       const state = thunkApi.getState();
-      const userId = (state as RootState).authorization.authoriztionData.userId;
+      const userId = (state as RootState).authorization.authoriztionData?.userId;
 
       const axiosInstance = axios.create();
       axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
@@ -61,8 +64,39 @@ export const updateTrainerDataThunk = createAsyncThunk(
 
       return response.data;
     } catch (error: any) {
-      console.log('updateTrainerDataThunk - rejected');
+      return thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
 
+export const updateTrainersCertificateDataThunk = createAsyncThunk(
+  'application/updateTrainersCertificateDataThunk',
+  async (payload: UpdateTrainerRequest, thunkApi) => {
+    try {
+      const axiosInstance = axios.create({
+        method: "post",
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
+      const response = await axiosInstance.patch<any>(`http://localhost:3042/api/users/update/certificate`, payload.formData);
+
+      return response.data;
+    } catch (error: any) {
+      return thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const deleteTrainersCertificateDataThunk = createAsyncThunk(
+  'application/deleteTrainersCertificateDataThunk',
+  async (payload: DeleteTrainersCertificateRequest, thunkApi) => {
+    try {
+      const axiosInstance = axios.create();
+      axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
+      const response = await axiosInstance.delete<any>(`http://localhost:3042/api/users/certificate`, {data: payload});
+
+      return response.data;
+    } catch (error: any) {
       return thunkApi.rejectWithValue(error.message);
     }
   }
@@ -132,6 +166,36 @@ export const getTrainingsDataThunk = createAsyncThunk(
       const axiosInstance = axios.create();
       axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
       const response = await axiosInstance.get<any>(`http://localhost:3042/api/trainings/catalogue${payload}`);
+
+      return response.data;
+    } catch (error: any) {
+      return thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const getTrainingsByTrainerIdDataThunk = createAsyncThunk(
+  'application/getTrainingsByTrainerIdDataThunk',
+  async (payload: string, thunkApi) => {
+    try {
+      const axiosInstance = axios.create();
+      axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
+      const response = await axiosInstance.get<any>(`http://localhost:3042/api/trainerAccount/getTrainingsList${payload}`);
+
+      return response.data;
+    } catch (error: any) {
+      return thunkApi.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const getOrdersByTrainerIdDataThunk = createAsyncThunk(
+  'application/getOrdersByTrainerIdDataThunk',
+  async (payload: string, thunkApi) => {
+    try {
+      const axiosInstance = axios.create();
+      axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
+      const response = await axiosInstance.get<GetOrdersDTO>(`http://localhost:3042/api/trainerAccount/getOrders${payload}`);
 
       return response.data;
     } catch (error: any) {

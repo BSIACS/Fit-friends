@@ -55,7 +55,7 @@ export function QuestionnaireUserPage(): JSX.Element {
   const resumeButtonClickHandler = (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
     const questionnaireFormData = new FormData(evt.currentTarget);
-    questionnaireFormData.set('id', authoriztionData.userId as string);
+    questionnaireFormData.set('id', authoriztionData?.userId as string);
     dispatch(updateUserWithQuestionnaireDataThunk({formData: questionnaireFormData}));
   }
 

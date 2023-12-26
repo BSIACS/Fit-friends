@@ -1,6 +1,8 @@
 import { PersonDTO } from '../../dto/person.dto';
-import { getLocationTag } from '../../utils/view-transform';
+import { getLocationTag, getTypeTrainingTag } from '../../utils/view-transform';
 import { LocationEnum } from '../../types/location.enum';
+import { TrainingTypeEnum } from '../../types/training-type.enum';
+import { getRandomItem } from '../../utils/random';
 
 type LookingForCompanyListItemComponentProps = {
   user: PersonDTO
@@ -8,7 +10,7 @@ type LookingForCompanyListItemComponentProps = {
 }
 
 export function LookingForCompanyListItemComponent({ user }: LookingForCompanyListItemComponentProps): JSX.Element {
-  const { id, name, location, avatarFileName } = user;
+  const { id, name, location, avatarFileName, trainingType } = user;
 
   return (
     <li className="look-for-company__item">
@@ -29,7 +31,7 @@ export function LookingForCompanyListItemComponent({ user }: LookingForCompanyLi
         </div>
         <ul className="thumbnail-user__hashtags-list">
           <li className="thumbnail-user__hashtags-item">
-            <div className="hashtag thumbnail-user__hashtag"><span>#пилатес</span></div>
+            <div className="hashtag thumbnail-user__hashtag"><span>{getTypeTrainingTag(getRandomItem(trainingType as string[]) as TrainingTypeEnum)}</span></div>
           </li>
         </ul>
         <a className="btn btn--outlined btn--dark-bg btn--medium thumbnail-user__button" href="#">Подробнее</a>

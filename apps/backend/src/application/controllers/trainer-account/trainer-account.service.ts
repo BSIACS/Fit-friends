@@ -10,6 +10,10 @@ import { UsersRepository } from '../../prisma/users.repository';
 import { UserDoesNotExistsException } from '../../../exceptions/user-does-not-exists.exception';
 import { UserEntityInterface } from '../../../entities/user-entity.interface';
 import { TrainerEntityInterface } from '../../../entities/trainer-entity.interface';
+import { GetOrdersQuery } from './query/get-orders-list.query';
+import { OrderEntityInterface } from '../../../entities/order-entity.interface';
+import { TrainingEntityInterface } from '../trainings/training-entity.interface';
+import { OrderRdo } from './rdo/order.rdo';
 
 @Injectable()
 export class TrainerAccountService {
@@ -20,7 +24,7 @@ export class TrainerAccountService {
     private newTrainingScheduledNotificationRepository: NewTrainingsScheduledNotificationsRepository,
     private usersRepository: UsersRepository,
 
-    ) { }
+  ) { }
 
   public async findTrainingById(id: UUID) {
     const foundTraining = await this.trainingsRepository.findTrainingById(id);
@@ -52,8 +56,9 @@ export class TrainerAccountService {
     return createdTraining;
   }
 
-  public async getTrainingList(id: UUID, filter: GetTrainingsListQuery) {
+  public async getTrainingsList(id: UUID, filter: GetTrainingsListQuery) {
     let trainingList;
+    let count;
 
     try {
       trainingList = await this.trainingsRepository.findTrainingsByCreatorId(id, filter);
@@ -61,7 +66,13 @@ export class TrainerAccountService {
       throw new HttpException('message', HttpStatus.BAD_REQUEST)
     }
 
-    return trainingList;
+    try {
+      count = await this.trainingsRepository.getTrainingsCountByCreatorId(id, filter);
+    } catch (error) {
+      throw new HttpException('message', HttpStatus.BAD_REQUEST)
+    }
+
+    return { trainingList, count };
   }
 
   public async getTrainingIds(id: UUID) {
@@ -75,25 +86,86 @@ export class TrainerAccountService {
 
     return trainingIds;
   }
-
-  public async getPurchasesByTrainerId(id: UUID) {
-    let trainingIds;
-    let foundPurchases;
+/**
+ * Возвращает агрегированную коллекцию проданных тренировок включая данные о тренировке,
+ * количестве купленных тренировок и общую сумму,
+ * на которые данная тренировка была продана
+ */
+  public async getOdersByTrainerId(id: UUID, query: GetOrdersQuery) {
+    let trainings: TrainingEntityInterface[];
+    let foundOrders: OrderEntityInterface[];
+    let ordersCount: number;
 
 
     try {
-      trainingIds = await this.trainingsRepository.findTrainingIdsByCreatorId(id);
+      trainings = await this.trainingsRepository.findTrainingsByCreatorId(id);
     } catch (error) {
-      throw new HttpException('message', HttpStatus.BAD_REQUEST)
+      throw new HttpException('message 1', HttpStatus.BAD_REQUEST);
+    }
+
+    const trainingsIds: string[] = trainings.map((training) => training.id);
+
+    try {
+      foundOrders = await this.purchasesRepository.getOrdersByTrainingsIds(trainingsIds, query);
+    } catch (error) {
+      throw new HttpException('message 2', HttpStatus.BAD_REQUEST);
     }
 
     try {
-      foundPurchases = await this.purchasesRepository.getPurchasesByTrainingIds(trainingIds);
+      ordersCount = await this.purchasesRepository.getOrdersCountByTrainingsIds(trainingsIds);
     } catch (error) {
-      throw new HttpException('message', HttpStatus.BAD_REQUEST)
+      throw new HttpException('message', HttpStatus.BAD_REQUEST);
     }
 
-    return foundPurchases;
+    let ordersRdo = [];
+
+    trainings.forEach((item) => {
+      let totalPurchased = 0;
+      let totalPaid = 0;
+
+      foundOrders.forEach((order) => {
+        if(order.trainingId === item.id){
+          totalPurchased += order.quantity;
+          totalPaid += order.totalPrice;
+        }
+      });
+
+      if(totalPurchased > 0){
+        ordersRdo.push(
+          {
+            id: item.id,
+            totalPurchased: totalPurchased,
+            totalPaid: totalPaid,
+            training: item,
+          }
+        );
+      }
+    });
+
+    ordersRdo = this.sortOrders(ordersRdo, query.sortBy, query.sortDirection);
+
+    return {
+      ordersRdo,
+      ordersCount};
+  }
+
+  private sortOrders(orders: OrderRdo[], sortBy: string, sortDirection): OrderRdo[]{
+    if(sortBy === 'SUM'){
+      if(sortDirection === 'asc'){
+        return orders.sort((order_1, order_2) => order_1.totalPaid - order_2.totalPaid);
+      }
+      else{
+        return orders.sort((order_1, order_2) => order_2.totalPaid - order_1.totalPaid);
+      }
+    }
+    else if(sortBy === 'QUANTITY'){
+      if(sortDirection === 'asc'){
+        return orders.sort((order_1, order_2) => order_1.totalPurchased - order_2.totalPurchased);
+      }
+      else{
+        return orders.sort((order_1, order_2) => order_2.totalPurchased - order_1.totalPurchased);
+      }
+    }
   }
 
   public async createNewTrainingScheduledNotification(trainerId: UUID, trainingId: UUID) {
@@ -101,7 +173,7 @@ export class TrainerAccountService {
 
     const subscribers = await this.usersRepository.findSubscribersIds(trainerId);
 
-    if(!subscribers || subscribers.length === 0){
+    if (!subscribers || subscribers.length === 0) {
       return undefined;
     }
 
@@ -124,7 +196,7 @@ export class TrainerAccountService {
     return;
   }
 
-  public async getSubscribersIdsForNotifications(trainerId: UUID, trainingId: UUID): Promise<string[]>{
+  public async getSubscribersIdsForNotifications(trainerId: UUID, trainingId: UUID): Promise<string[]> {
     let subscribersIds;
 
     try {

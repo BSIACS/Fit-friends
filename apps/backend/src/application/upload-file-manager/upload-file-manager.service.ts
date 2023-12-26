@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { error } from 'console';
-import { existsSync, mkdirSync, writeFile } from 'fs';
+import { existsSync, mkdirSync, rm, writeFile } from 'fs';
 import { getImageType } from '../../utils/string';
 
 const UPLOADS_FILES_PATH = 'dist/apps/backend/assets';
@@ -26,6 +26,8 @@ export class UploadFileManagerService {
       mkdirSync(`${UPLOADS_FILES_PATH}/users-data/${userId}`);
     }
 
+    console.log('file --- ', file);
+
     if (file.buffer) {
       writeFile(`${UPLOADS_FILES_PATH}/users-data/${userId}/${file.originalname}`, file.buffer, 'ascii', (error) => {
         if (error) {
@@ -50,17 +52,41 @@ export class UploadFileManagerService {
   }
 
   public saveCertificate(userId: string, file: Express.Multer.File) {
-    if (!existsSync(`${UPLOADS_FILES_PATH}/users-data/${userId}`)) {
-      mkdirSync(`${UPLOADS_FILES_PATH}/users-data/${userId}`);
+    if (!existsSync(`${UPLOADS_FILES_PATH}/users-data/${userId}/certificates`)) {
+      mkdirSync(`${UPLOADS_FILES_PATH}/users-data/${userId}/certificates`);
     }
     if (file.buffer) {
-      writeFile(`${UPLOADS_FILES_PATH}/users-data/${userId}/${file.originalname}.pdf`, file.buffer, 'ascii', (error) => {
+      writeFile(`${UPLOADS_FILES_PATH}/users-data/${userId}/certificates/${file.originalname}`, file.buffer, 'ascii', (error) => {
         if (error) {
           throw error;
         };
       });
     }
+  }
 
-    console.log(file);
+  public updateCertificate(userId: string, file: Express.Multer.File) {
+    if (!existsSync(`${UPLOADS_FILES_PATH}/users-data/${userId}/certificates`)) {
+      mkdirSync(`${UPLOADS_FILES_PATH}/users-data/${userId}/certificates`);
+    }
+    if (file.buffer) {
+      writeFile(`${UPLOADS_FILES_PATH}/users-data/${userId}/certificates/${file.originalname}`, file.buffer, {encoding: 'ascii', flag: 'w'}, (error) => {
+        if (error) {
+          throw error;
+        };
+      });
+    }
+  }
+
+  public deleteCertificate(userId: string, fileName: string) {
+    if (!existsSync(`${UPLOADS_FILES_PATH}/users-data/${userId}/certificates`)) {
+      mkdirSync(`${UPLOADS_FILES_PATH}/users-data/${userId}/certificates`);
+    }
+    if (fileName) {
+      rm(`${UPLOADS_FILES_PATH}/users-data/${userId}/certificates/${fileName}`, {}, (error) => {
+        if (error) {
+          throw error;
+        };
+      });
+    }
   }
 }

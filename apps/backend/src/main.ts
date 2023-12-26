@@ -8,12 +8,21 @@ import { join } from 'path';
 import * as express from 'express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(ApplicationModule, {cors: true});
+  const app = await NestFactory.create(ApplicationModule, {cors: {
+    origin: 'http://localhost:4200',
+  }});
+
+  app.use(function(req, res, next) {
+    res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type, Accept,Authorization,Origin");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
+    res.setHeader("Access-Control-Allow-Credentials", true);
+    next();
+  });
 
   const configService = app.get(ConfigService);
 
-  app.use('/assets', express.static(join(__dirname, '..', 'backend/assets'))); ///http://localhost:3042/static/img/content/photo-1.png
-
+  app.use('/assets', express.static(join(__dirname, '..', 'backend/assets')));
   const globalPrefix = configService.get('application.globalPrefix');
   app.setGlobalPrefix(globalPrefix);
 

@@ -24,8 +24,8 @@ export class CreateTrainerDto {
     description: 'User password',
     example: 'testpass'
   })
-  @MinLength(6)
-  @MaxLength(12)
+  @MinLength(6, {message: '[password] Длинна пароля не менее 6 символов'})
+  @MaxLength(12, {message: '[password] Длинна пароля не более 12 символов'})
   password: string;
 
   @ApiProperty({

@@ -21,6 +21,7 @@ import { GetFriendsListQuery } from './query/get-friends-list.query';
 import { GetFriendsListRdo } from './rdo/get-friends-list.rdo';
 import { fromEntitiesToUsersAndTrainersRdos } from '../users/mappers/users.mappers';
 import { UploadFileManagerService } from '../../upload-file-manager/upload-file-manager.service';
+import { GetOrdersQuery } from './query/get-orders-list.query';
 
 
 interface GetTrainingByIdParamsInterface {
@@ -105,18 +106,18 @@ export class TrainerAccountController {
   @UsePipes(new ValidationPipe({ transform: true }))
   public async getTrainingsList(@Req() request: RequestWithTokenPayload, @Query() query: GetTrainingsListQuery) {
     const payload: TokenPayload = request.user;
-    const foundTrainings = await this.trainerAccountService.getTrainingList(payload.userId, query);
+    const foundTrainingsWithCount = await this.trainerAccountService.getTrainingsList(payload.userId, query);
 
-    return fromEntitiesToTrainingsRdos(foundTrainings);
+    return {trainings: fromEntitiesToTrainingsRdos(foundTrainingsWithCount.trainingList), count: foundTrainingsWithCount.count};
   }
 
   @UseGuards(IsTrainerRoleGuard)
-  @Get('getPurchases')
-  public async getPurchases(@Req() request: RequestWithTokenPayload) {
+  @Get('getOrders')
+  public async getOrders(@Req() request: RequestWithTokenPayload, @Query() query: GetOrdersQuery) {
     const payload: TokenPayload = request.user;
-    const foundTrainingIds = await this.trainerAccountService.getPurchasesByTrainerId(payload.userId);
+    const foundOrders = await this.trainerAccountService.getOdersByTrainerId(payload.userId, query);
 
-    return foundTrainingIds;
+    return {orders: foundOrders.ordersRdo, count: foundOrders.ordersCount};
   }
 
   @Get('friends/:id')

@@ -4,10 +4,11 @@ import { getLocation, getSex, getTrainingLevel } from '../../../utils/view-trans
 import { TrainingLevelEnum } from '../../../types/training-level.enum';
 import styles from './user-info-form.component.module.css'
 import { useAppDispatch } from '../../../hooks/useAppDispatch';
-import { changeEditUserFormData } from '../../../store/slices/application.slice';
+import { changeEditUserFormData, setIsUserFormEditable } from '../../../store/slices/application.slice';
 import { SexEnum } from '../../../types/sex.enum';
 import { LocationEnum } from '../../../types/location.enum';
 import { updateUserDataThunk } from '../../../store/slices/application.thunk';
+import { useAppSelector } from '../../../hooks/useAppSelector';
 
 type UserFormInfoComponentProps = {
   user: UserData
@@ -15,42 +16,56 @@ type UserFormInfoComponentProps = {
 
 export function UserFormInfoComponent({ user }: UserFormInfoComponentProps): JSX.Element {
   const dispatch = useAppDispatch();
+  const isEditable = useAppSelector(state => state.application.isUserFormEditable);
   const avatarImgElement: React.MutableRefObject<any> = useRef(null);
   const avatarInputElement: React.MutableRefObject<any> = useRef(null);
 
-  const [isEditable, setIsEditable] = useState<boolean>(false);
   const [isSelectLocationListVissible, setIsSelectLocationListVissible] = useState<boolean>(false);
   const [isSelectSexListVissible, setIsSelectSexListVissible] = useState<boolean>(false);
   const [isSelectTrainingLevelListVissible, setIsSelectTrainingLevelListVissible] = useState<boolean>(false);
 
-  const [nameError, setNameError] = useState({ isError: false, message: 'Минимальная длина: 1 символов\nМаксимальная длина: 15 символов' });
-  const [descriptionError, setDescriptionError] = useState({ isError: false, message: 'Минимальная длина: 10 символов\nМаксимальная длина: 140 символов' });
-
+  const [nameError, setNameError] = useState({ isError: false, message: 'Ограничение: от 1 до 15 символов' });
+  const [descriptionError, setDescriptionError] = useState({ isError: false, message: 'Ограничение: от 10 до 140 символов' });
+  const [trainingTypeError, setTrainingTypeError] = useState({ isError: false, message: 'Ограничение: не более 3 и не менее 1 специализации' });
 
   const editButtonClickHandler = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     evt.preventDefault();
-    setIsEditable(true);
+    dispatch(setIsUserFormEditable(true));
   }
 
   const userInfoEditSubmitHandler = (evt: React.MouseEvent<HTMLFormElement, MouseEvent>) => {
     evt.preventDefault();
-    if(nameError.isError || descriptionError.isError){
+    const formData = new FormData(evt.currentTarget);
 
+    if(formData.getAll('trainingType').length > 3 || formData.getAll('trainingType').length <= 0){
+      setTrainingTypeError({...trainingTypeError, isError: true});
+      return;
+    }
+    else{
+      setTrainingTypeError({...trainingTypeError, isError: false});
+    }
+
+    if (nameError.isError || descriptionError.isError || Number(user.calories) > 5000 || Number(user.calories) < 1000) {
       return;
     }
 
-    const formData = new FormData(evt.currentTarget);
     formData.set('id', user.id as string);
     formData.set('isReadyForTraining', (user.isReadyForTraining as boolean) ? 'true' : 'false');
     formData.set('trainingLevel', user.trainingLevel as string);
     formData.set('location', user.location as string);
     formData.set('sex', user.sex as string);
+    formData.set('calories', user.calories as string);
+
     if (avatarInputElement.current.files[0]) {
       formData.set('userAvatar', avatarInputElement.current.files[0]);
     }
 
+    const trainingTypes = formData.getAll('trainingType');
+    formData.delete('trainingType');
+    trainingTypes.map((item) => formData.append('trainingType[]', item));
+
     dispatch(updateUserDataThunk({ formData: formData }));
-    setIsEditable(false);
+    dispatch(setIsUserFormEditable(false));
   }
 
   const loadAvatarInputChangeHandler = (evt: React.ChangeEvent<any>) => {
@@ -154,17 +169,17 @@ export function UserFormInfoComponent({ user }: UserFormInfoComponentProps): JSX
       <form className="user-info__form" action="#" method="post" onSubmit={userInfoEditSubmitHandler}>
         <button className="btn-flat btn-flat--underlined user-info-edit__save-button" style={{ visibility: isEditable ? 'hidden' : 'visible' }}
           aria-label="Редактировать" onClick={editButtonClickHandler}>
-          <svg width="12" height="12" aria-hidden="true" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.92156 3.08853C7.24415 5.08374 8.92461 6.60906 11.0102 6.81147M7.94934 2.04032L1.79017 8.32234C1.5576 8.5609 1.33254 9.03079 1.28753 9.35609L1.00995 11.6983C0.912428 12.5441 1.5426 13.1224 2.41284 12.9778L4.82849 12.5802C5.16609 12.5224 5.63871 12.2838 5.87128 12.0381L12.0305 5.75604C13.0957 4.67168 13.5759 3.43552 11.9179 1.92465C10.2675 0.428245 9.01463 0.955964 7.94934 2.04032Z" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          <svg width="12" height="12" aria-hidden="true" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.92156 3.08853C7.24415 5.08374 8.92461 6.60906 11.0102 6.81147M7.94934 2.04032L1.79017 8.32234C1.5576 8.5609 1.33254 9.03079 1.28753 9.35609L1.00995 11.6983C0.912428 12.5441 1.5426 13.1224 2.41284 12.9778L4.82849 12.5802C5.16609 12.5224 5.63871 12.2838 5.87128 12.0381L12.0305 5.75604C13.0957 4.67168 13.5759 3.43552 11.9179 1.92465C10.2675 0.428245 9.01463 0.955964 7.94934 2.04032Z" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>
           <span>Редактировать</span>
         </button>
         <button className="btn-flat btn-flat--underlined user-info-edit__save-button" type="submit" style={{ visibility: !isEditable ? 'hidden' : 'visible' }}
           aria-label="Сохранить">
-          <svg width="12" height="12" aria-hidden="true" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.92156 3.08853C7.24415 5.08374 8.92461 6.60906 11.0102 6.81147M7.94934 2.04032L1.79017 8.32234C1.5576 8.5609 1.33254 9.03079 1.28753 9.35609L1.00995 11.6983C0.912428 12.5441 1.5426 13.1224 2.41284 12.9778L4.82849 12.5802C5.16609 12.5224 5.63871 12.2838 5.87128 12.0381L12.0305 5.75604C13.0957 4.67168 13.5759 3.43552 11.9179 1.92465C10.2675 0.428245 9.01463 0.955964 7.94934 2.04032Z" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          <svg width="12" height="12" aria-hidden="true" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.92156 3.08853C7.24415 5.08374 8.92461 6.60906 11.0102 6.81147M7.94934 2.04032L1.79017 8.32234C1.5576 8.5609 1.33254 9.03079 1.28753 9.35609L1.00995 11.6983C0.912428 12.5441 1.5426 13.1224 2.41284 12.9778L4.82849 12.5802C5.16609 12.5224 5.63871 12.2838 5.87128 12.0381L12.0305 5.75604C13.0957 4.67168 13.5759 3.43552 11.9179 1.92465C10.2675 0.428245 9.01463 0.955964 7.94934 2.04032Z" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>
           <span>Сохранить</span>
         </button>
         <div className="user-info__section" style={{ marginBottom: 0 }}>
           <h2 className="user-info__title">Обо мне</h2>
-          <div className={isEditable ? "custom-input user-info-edit__input" : 'custom-input custom-input--readonly user-info__input'}>
+          <div className={isEditable ? "custom-input user-info-edit__input" : 'custom-input custom-input--readonly user-info__input'} style={{ marginBottom: '10px' }}>
             <label>
               <span className="custom-input__label">Имя</span>
               <span className="custom-input__wrapper">
@@ -177,7 +192,7 @@ export function UserFormInfoComponent({ user }: UserFormInfoComponentProps): JSX
               {nameError.message}&nbsp;
             </span>
           </div>
-          <div className="custom-textarea custom-textarea--readonly user-info__textarea">
+          <div className="custom-textarea custom-textarea--readonly user-info__textarea" style={{ marginTop: '10px', marginBottom: '10px' }}>
             <label>
               <span className="custom-textarea__label">Описание</span>
               <textarea name="description" value={user.description} onChange={descriptionInputChangeHandler} disabled={!isEditable} />
@@ -191,7 +206,7 @@ export function UserFormInfoComponent({ user }: UserFormInfoComponentProps): JSX
             {descriptionError.message}&nbsp;
           </span>
         </div>
-        <div className="user-info-edit__section user-info-edit__section--status" style={{ marginTop: '20px' }}>
+        <div className="user-info-edit__section user-info-edit__section--status" style={{ marginTop: '10px' }}>
           <h2 className="user-info-edit__title user-info-edit__title--status">Статус</h2>
           <div className="custom-toggle custom-toggle--switch user-info-edit__toggle">
             <label>
@@ -205,9 +220,9 @@ export function UserFormInfoComponent({ user }: UserFormInfoComponentProps): JSX
         </div>
         {
           user.trainingType &&
-          <div className="user-info-edit__section">
+          <div className="user-info-edit__section" style={{ marginBottom: '10px' }}>
             <h2 className="user-info-edit__title user-info-edit__title--specialization">Специализация</h2>
-            <div className="specialization-checkbox user-info-edit__specialization">
+            <div className="specialization-checkbox user-info-edit__specialization" style={{ marginBottom: '10px' }}>
               <div className="btn-checkbox">
                 <label>
                   <input className="visually-hidden" type="checkbox" name="trainingType" value="yoga" disabled={!isEditable} onChange={trainingTypeInputChangeHandler} checked={(user.trainingType as string[]).includes('yoga')} />
@@ -251,6 +266,9 @@ export function UserFormInfoComponent({ user }: UserFormInfoComponentProps): JSX
                 </label>
               </div>
             </div>
+            <span className="custom-input__error" style={trainingTypeError.isError ? { opacity: '10' } : { opacity: '0', fontSize: '3px' }}>
+              {trainingTypeError.message}&nbsp;
+            </span>
           </div>
         }
         <div className={`custom-select ${!isEditable ? 'custom-select--readonly' : ''} user-info-edit__select`}><span className="custom-select__label">Локация</span>
@@ -259,7 +277,7 @@ export function UserFormInfoComponent({ user }: UserFormInfoComponentProps): JSX
             aria-label="Выберите одну из опций" onBlur={buttonBlurHandler} onClick={selectLocationButtonClick} disabled={!isEditable}>
             <span className="custom-select__text"></span>
             <span className="custom-select__icon">
-              <svg width="15" height="6" aria-hidden="true" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <svg width="15" height="6" aria-hidden="true" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </span>
           </button>
           <ul className={`${isSelectLocationListVissible ? styles.appListVisible : styles.appListHidden} custom-select__list`} role="listbox">
@@ -277,7 +295,7 @@ export function UserFormInfoComponent({ user }: UserFormInfoComponentProps): JSX
             aria-label="Выберите одну из опций" onClick={chooseSexButtonClickHandler} onBlur={buttonBlurHandler} disabled={!isEditable}>
             <span className="custom-select__text"></span>
             <span className="custom-select__icon">
-              <svg width="15" height="6" aria-hidden="true" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <svg width="15" height="6" aria-hidden="true" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </span>
           </button>
           <ul className={`${isSelectSexListVissible ? styles.appListVisible : styles.appListHidden} custom-select__list`} role="listbox">
@@ -294,7 +312,7 @@ export function UserFormInfoComponent({ user }: UserFormInfoComponentProps): JSX
             <span className="custom-select__text"></span>
             <span className="custom-select__icon">
               <svg width="15" height="6" aria-hidden="true" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </span>
           </button>
           <ul className={`${isSelectTrainingLevelListVissible ? styles.appListVisible : styles.appListHidden} custom-select__list`} role="listbox">

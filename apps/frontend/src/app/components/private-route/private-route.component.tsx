@@ -1,10 +1,11 @@
 import { Navigate } from 'react-router-dom';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { AuthorizationStatusEnum } from '../../types/authorization-status.enum';
-import { getAccessToken } from '../../services/token';
-import { AccessDeniedPage } from '../../pages/access-denied/access-denied.page';
 import { LoaderComponent } from '../loader/loader.component';
+import { BadRequestPage } from '../../pages/bad-request/bad-request.page';
+import { useState } from 'react';
+import { AppRoutes } from '../../constants/app-routes.constants';
+
 
 
 type PrivateRouteComponentProps = {
@@ -18,25 +19,26 @@ type PrivateRouteComponentProps = {
  * @returns JSX element, if authorization status is 'authorized'. Or redirect to login screen otherwise.
  */
 export function PrivateRouteComponent({ validRole, children }: PrivateRouteComponentProps): JSX.Element {
-  const status = useAppSelector((state) => state.authorization.authoriztionStatus);
-  const currentUserRole = useAppSelector((state) => state.authorization.authoriztionData.role);
-  const isLoading = useAppSelector((state) => state.authorization.isLoading);
+  const authoriztionStatus = useAppSelector((state) => state.authorization.authoriztionStatus);
+  const authoriztionData = useAppSelector((state) => state.authorization.authoriztionData);
+  const [isAuthorizationDataLoaded, setIsAuthorizationDataLoaded] = useState<boolean>(false);
 
-  if(isLoading){
-    return <LoaderComponent isHidden={false}/>;
+
+  if(authoriztionStatus === AuthorizationStatusEnum.UNAUTHORIZED){
+    return <Navigate to={AppRoutes.SIGN_IN}/>
   }
 
-  // if(validRole !== currentUserRole){
-  //   return <AccessDeniedPage/>
-  // }
+  if(authoriztionStatus === AuthorizationStatusEnum.AUTHORIZED){
+    if(authoriztionData?.role === validRole){
+      return children
+    }
+    else{
+      return <BadRequestPage/>
+    }
+  }
 
-  if(status === AuthorizationStatusEnum.AUTHORIZED){
-    return children;
-  }
-  else if(status === AuthorizationStatusEnum.UNAUTHORIZED || getAccessToken() === ''){
-    return <Navigate to={'/signIn'} />;
-  }
-  else{
-    return <LoaderComponent isHidden={false}/>;
-  }
+
+  return (
+    <LoaderComponent isHidden={false} />
+  )
 }

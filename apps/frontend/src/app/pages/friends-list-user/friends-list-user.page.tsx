@@ -55,7 +55,7 @@ export function FriendsListUserPage(): JSX.Element {
   }, []);
 
   useEffect(() => {
-    if (authoriztionData.role) {
+    if (authoriztionData?.role) {
       getFriendsData();
     }
   }, [authoriztionData]);
@@ -66,7 +66,7 @@ export function FriendsListUserPage(): JSX.Element {
     try {
       setIsFriendsDataLoaded(false);
       const response = await axiosInstance.
-        get<FriendsListDTO>(`http://localhost:3042/api/userAccount/friends/${authoriztionData.userId}?friendsPerPage=${6}&pageNumber=${currentPageNumber}`);
+        get<FriendsListDTO>(`http://localhost:3042/api/userAccount/friends/${authoriztionData?.userId}?friendsPerPage=${6}&pageNumber=${currentPageNumber}`);
       if (friends === undefined) {
         setFriends(response.data.friends);
       }

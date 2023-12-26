@@ -9,6 +9,8 @@ import { RefreshTokenRequest } from '../../types/refresh-token-request.interface
 import { AuthorizationHeader, AxiosFactory } from '../../services/axios';
 import { CreateTrainerRequest } from '../../types/create-trainer-request.interface';
 import { setAPIError } from './authorization.slice';
+import { ApplicationState } from './application.slice';
+import { RootState } from '../store';
 
 
 export const signInThunk = createAsyncThunk(
@@ -51,7 +53,7 @@ export const refreshTokensPairThunk = createAsyncThunk(
   }
 );
 
-export const registerTrainerThunk = createAsyncThunk(
+export const registerTrainerThunk = createAsyncThunk(//////////
   'authorization/registerTrainerThunk',
   async (payload: CreateTrainerRequest, thunkApi) => {
     try {
@@ -63,6 +65,20 @@ export const registerTrainerThunk = createAsyncThunk(
 
       return response.data;
     } catch (error: any) {
+      let isErrorDetected = false;
+
+      if(Array.isArray(error.response.data.message)){
+        isErrorDetected = true;
+        console.log('error', error.response.data.message);
+
+        thunkApi.dispatch(setAPIError(error.response.data.message[0]));
+      }
+      if(error.response.data.message && !isErrorDetected){
+        console.log('error', error.response.data.message);
+
+        thunkApi.dispatch(setAPIError(error.response.data.message));
+      }
+
       return thunkApi.rejectWithValue(error.message);
     }
   }
@@ -89,7 +105,6 @@ export const signOutThunk = createAsyncThunk(
   'authorization/signOutThunk',
   async (payload, thunkApi) => {
     try {
-
 
       return;
     } catch (error: any) {

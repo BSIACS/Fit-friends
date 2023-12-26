@@ -13,6 +13,8 @@ import { UUID } from '../../types/uuid.type';
 import { PersonalTrainingRequestStatusEnum } from '../../types/personal-training-request-status.enum';
 import { BadRequestPage } from '../bad-request/bad-request.page';
 import { FriendsListDTO } from '../../dto/friends-list.dto';
+import { Link } from 'react-router-dom';
+import { AppRoutes } from '../../constants/app-routes.constants';
 
 
 const requestWithAccessTokenInterceptor = (config: InternalAxiosRequestConfig) => {
@@ -42,7 +44,7 @@ export function FriendsListTrainerPage(): JSX.Element {
   }, []);
 
   useEffect(() => {
-    if (authoriztionData.role) {
+    if (authoriztionData?.role) {
       getFriendsData();
     }
   }, [authoriztionData]);
@@ -53,7 +55,7 @@ export function FriendsListTrainerPage(): JSX.Element {
     try {
       setIsFriendsDataLoaded(false);
       const response = await axiosInstance.
-        get<FriendsListDTO>(`http://localhost:3042/api/trainerAccount/friends/${authoriztionData.userId}?friendsPerPage=${3}&pageNumber=${currentPageNumber}`);
+        get<FriendsListDTO>(`http://localhost:3042/api/trainerAccount/friends/${authoriztionData?.userId}?friendsPerPage=${3}&pageNumber=${currentPageNumber}`);
       if (friends === undefined) {
         setFriends(response.data.friends);
       }
@@ -154,10 +156,10 @@ export function FriendsListTrainerPage(): JSX.Element {
         <section className="friends-list">
           <div className="container">
             <div className="friends-list__wrapper">
-              <button className="btn-flat friends-list__back" type="button">
+              <Link className="btn-flat friends-list__back" to={AppRoutes.TRAINER_ACCOUNT}>
                 <svg width="14" height="10" aria-hidden="true" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.99882 1L1 6L5.99882 11M15 6H1.14" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 <span>Назад</span>
-              </button>
+              </Link>
               <div className="friends-list__title-wrapper">
                 <h1 className="friends-list__title">Мои друзья</h1>
               </div>
@@ -178,7 +180,7 @@ export function FriendsListTrainerPage(): JSX.Element {
               <div className="show-more friends-list__show-more">
                 {
                   friends && !((friends as (UserDTO | TrainerDTO)[]).length >= friendsNumber) &&
-                  <button className="btn show-more__button show-more__button--more" //disabled={(friends as (UserDTO | TrainerDTO)[]).length >= friendsNumber}
+                  <button className="btn show-more__button show-more__button--more"
                     onClick={showMoreButtonClick} type="button">Показать еще</button>
                 }
               </div>

@@ -10,6 +10,7 @@ import { UUID } from '../../types/uuid.type';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { UserFormInfoComponent } from './user-info-form/user-info-form.component';
 import { BadRequestPage } from '../bad-request/bad-request.page';
+import { CaloriesScheduleComponent } from './calories-schedule/calories-schedule.component';
 
 
 export function PersonalAccountUserPage(): JSX.Element {
@@ -24,7 +25,7 @@ export function PersonalAccountUserPage(): JSX.Element {
   }, []);
 
   useEffect(() => {
-    dispatch(getUserDetailThunk({ id: authoriztionData.userId as UUID }));
+    dispatch(getUserDetailThunk({ id: authoriztionData?.userId as UUID }));
   }, [isAuthoriztionDataLoading]);
 
   if (isBadRequest) {
@@ -46,23 +47,10 @@ export function PersonalAccountUserPage(): JSX.Element {
               }
               <div className="inner-page__content">
                 <div className="personal-account-user">
-                  <div className="personal-account-user__schedule">
-                    <form action="#" method="get">
-                      <div className="personal-account-user__form">
-                        <div className="personal-account-user__input">
-                          <label>
-                            <span className="personal-account-user__label">План на день, ккал</span>
-                            <input type="text" name="schedule-for-the-day" value="3 300" />
-                          </label>
-                        </div>
-                        <div className="personal-account-user__input">
-                          <label><span className="personal-account-user__label">План на неделю, ккал</span>
-                            <input type="text" name="schedule-for-the-week" value="23 100" />
-                          </label>
-                        </div>
-                      </div>
-                    </form>
-                  </div>
+                  {
+                    user &&
+                    <CaloriesScheduleComponent user={user} />
+                  }
                   <div className="personal-account-user__additional-info">
                     <Link className="thumbnail-link thumbnail-link--theme-light" to={AppRoutes.FRIEND_LIST_USER}>
                       <div className="thumbnail-link__icon thumbnail-link__icon--theme-light">

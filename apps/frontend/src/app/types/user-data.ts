@@ -8,7 +8,7 @@ export class UserData {
   role?: string;
   sex?: string;
   location?: string;
-
+  calories?: string
   trainingLevel?: string;
   trainingType?: string[];
 

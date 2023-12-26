@@ -1,5 +1,5 @@
 import styles from './sign-up.page.module.css';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { QuestionnaireCoachPage } from '../questionnaire-coach/questionnaire-coach.page';
 import { QuestionnaireUserPage } from '../questionnaire-user/questionnaire-user.page';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
@@ -34,6 +34,7 @@ const signUpPageInitialState: SignUpPageState = {
 }
 
 export function SignUpPage(): JSX.Element {
+  const dispatch = useAppDispatch();
   const [state, setState] = useState<SignUpPageState>(signUpPageInitialState);
   const [isLocationListVissible, setIsLocationListVissible] = useState<boolean>(false);
   const [isAvataImageVissible, setIsAvataImageVissible] = useState<boolean>(false);
@@ -41,13 +42,24 @@ export function SignUpPage(): JSX.Element {
   const [emailError, setEmailError] = useState({ isError: false, message: '' });
   const [passwordError, setPasswordError] = useState({ isError: false, message: '' });
   const [birthDateError, setBirthDateError] = useState({ isError: false, message: '' });
-
-  const dispatch = useAppDispatch();
-
+  const emailAPIError = useAppSelector(state => state.authorization.emailAPIError);
+  const passwordAPIError = useAppSelector(state => state.authorization.passwordAPIError);
   const isRegistrationComplete = useAppSelector((state) => state.authorization.isRegistrationComplete);
   const authoriztionData = useAppSelector((state) => state.authorization.authoriztionData);
-
   const avatarImgElement: React.MutableRefObject<any> = useRef(null);
+
+  useEffect(() => {
+    setEmailError({ isError: false, message: '' });
+    setPasswordError({ isError: false, message: '' });
+  }, []);
+
+  useEffect(() => {
+    setEmailError(emailAPIError);
+  }, [emailAPIError]);
+
+  useEffect(() => {
+    setPasswordError(passwordAPIError);
+  }, [passwordAPIError]);
 
   const loadAvatarInputChangeHandler = (evt: React.ChangeEvent<any>) => {
     if (evt.target.files[0]) {
@@ -68,15 +80,13 @@ export function SignUpPage(): JSX.Element {
     !formData.get('birthDate') ? setBirthDateError({ isError: true, message: 'Поле обязательно для заполнения' }) : setBirthDateError({ isError: false, message: '' });
 
     if (!formData.get('name') || !formData.get('email') || !formData.get('password') || !formData.get('birthDate')) {
-      console.log('return');
-
       return;
     }
 
-    if(formData.get('role') === 'user'){
+    if (formData.get('role') === 'user') {
       dispatch(registerUserThunk({ formData: formData }));
     }
-    else{
+    else {
       dispatch(registerTrainerThunk({ formData: formData }));
     }
   }
@@ -124,11 +134,11 @@ export function SignUpPage(): JSX.Element {
     setIsLocationListVissible(!isLocationListVissible);
   }
 
-  if (isRegistrationComplete && authoriztionData.role === 'trainer') {
+  if (isRegistrationComplete && authoriztionData?.role === 'trainer') {
     return <Navigate to={AppRoutes.QUESTIONNAIRE_COACH} />;
   }
 
-  if (isRegistrationComplete && authoriztionData.role === 'user') {
+  if (isRegistrationComplete && authoriztionData?.role === 'user') {
     return <Navigate to={AppRoutes.QUESTIONNAIRE_USER} />;
   }
 
@@ -164,7 +174,7 @@ export function SignUpPage(): JSX.Element {
                           оптимальный размер 100&times;100&nbsp;px</span>
                       </div>
                     </div>
-                    <div className="sign-up__data" style={{rowGap: '8px'}}>
+                    <div className="sign-up__data" style={{ rowGap: '8px' }}>
                       <div className="custom-input">
                         <label>
                           <span className="custom-input__label">Имя</span>
@@ -185,15 +195,15 @@ export function SignUpPage(): JSX.Element {
                       </div>
                       <div className="custom-input">
                         <label><span className="custom-input__label">Дата рождения</span>
-                        <span className="custom-input__wrapper">
-                          <input type="date" name="birthDate" max="2099-12-31" onChange={birthDateFieldChangeHandler} value={state.birthDate} />
-                        </span>
+                          <span className="custom-input__wrapper">
+                            <input type="date" name="birthDate" max="2099-12-31" onChange={birthDateFieldChangeHandler} value={state.birthDate} />
+                          </span>
                           <span className="custom-input__error" style={birthDateError.isError ? { opacity: '10' } : { opacity: '0' }}>{birthDateError.message}&nbsp;</span>
                         </label>
                       </div>
                       <div className="custom-select custom-select--not-selected">
                         <span className="custom-select__label">Ваша локация</span>
-                        <div className="custom-select__placeholder" style={{bottom: '42px'}}>{getLocation(state.location)}</div>
+                        <div className="custom-select__placeholder" style={{ bottom: '42px' }}>{getLocation(state.location)}</div>
                         <button className={`${isLocationListVissible ? styles.appButtonNoBottomBorderRounds : ''} custom-select__button`} type="button"
                           aria-label="Выберите одну из опций" onBlur={selectLocationBlurHandler} onClick={selectLocationButtonClick}>
                           <span className="custom-select__text"></span>
@@ -201,7 +211,7 @@ export function SignUpPage(): JSX.Element {
                             <svg width="15" height="6" aria-hidden="true" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>
                           </span>
                         </button>
-                        <ul className={`${isLocationListVissible ? styles.appListVisible : styles.appListHidden} custom-select__list`} role="listbox"  style={{bottom: '24px'}}>
+                        <ul className={`${isLocationListVissible ? styles.appListVisible : styles.appListHidden} custom-select__list`} role="listbox" style={{ bottom: '24px' }}>
                           <li className={`custom-select__item`} data-value={LocationEnum.PETROGRADSKAYA} onClick={locationListItemClickHandler}>ст. м. Петроградская</li>
                           <li className={`custom-select__item`} data-value={LocationEnum.PIONERSKAYA} onClick={locationListItemClickHandler}>ст. м. Пионерская</li>
                           <li className={`custom-select__item`} data-value={LocationEnum.SPORTIVNAYA} onClick={locationListItemClickHandler}>ст. м. Спортивная</li>

@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { CreatePurchaseDto } from './create-purchase.dto';
 import { UUID } from '../../types/uuid.type';
+import { GetOrdersQuery } from '../controllers/trainer-account/query/get-orders-list.query';
+import { OrderEntityInterface } from '../../entities/order-entity.interface';
 
 
 
@@ -28,8 +30,9 @@ export class PurchasesRepository {
     return createdPurchase;
   }
 
-  public async getPurchasesByTrainingIds(ids: UUID[]) {
-    const foundPurchases = await this.prisma.purchase.findMany({
+  public async getOrdersByTrainingsIds(ids: UUID[], query: GetOrdersQuery): Promise<OrderEntityInterface[]> {
+    const foundOrders = await this.prisma.purchase.findMany({
+      take: query.ordersPerPage * query.pageNumber,
       where: {
         trainingId: {
           in: ids
@@ -37,6 +40,18 @@ export class PurchasesRepository {
       }
     });
 
-    return foundPurchases;
+    return foundOrders;
+  }
+
+  public async getOrdersCountByTrainingsIds(ids: UUID[]) {
+    const count = await this.prisma.purchase.count({
+      where: {
+        trainingId: {
+          in: ids
+        }
+      }
+    });
+
+    return count;
   }
 }

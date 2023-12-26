@@ -1,4 +1,4 @@
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsEmail, IsEnum, IsOptional, IsUUID, Matches, MaxLength, MinLength, Validate } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsEmail, IsEnum, IsOptional, IsString, IsUUID, Matches, MaxLength, MinLength, Validate } from 'class-validator';
 import { LocationEnum } from '../../../../types/location.enum';
 import { SexEnum } from '../../../../types/sex.enum';
 import { TrainingLevelEnum } from '../../../../types/training-level.enum';
@@ -82,9 +82,7 @@ export class UpdateTrainerDto {
   @ApiProperty({
     description: 'Training types',
     example: ['box', 'yoga'],
-    required: false,
-    isArray: true,
-    enum: TrainingTypeEnum
+    required: false
   })
   @IsArray({ message: 'Field trainingType must be an array' })
   @ArrayMinSize(0)

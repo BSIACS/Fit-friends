@@ -4,32 +4,51 @@ import { Transform } from 'class-transformer';
 
 
 export class GetTrainingsListQuery{
-  @IsArray()
-  @ArrayMinSize(2)
-  @ArrayMaxSize(2)
-  @IsNumber({},{each: true})
-  @Transform(({value}) => [Number(+value[0]), Number(value[1])])
+  @IsNumber()
+  @Transform(({value}) => Number(value))
   @IsOptional()
-  public priceRange: number[];
-
-  @IsArray()
-  @ArrayMinSize(2)
-  @ArrayMaxSize(2)
-  @IsNumber({},{each: true})
-  @Transform(({value}) => [Number(+value[0]), Number(value[1])])
-  @IsOptional()
-  public caloriesRange: number[];
+  public minPrice: number;
 
   @IsNumber()
-  @Min(1)
-  @Max(5)
+  @Transform(({value}) => Number(value))
+  @IsOptional()
+  public maxPrice: number;
+
+
+  @IsNumber()
+  @Transform(({value}) => Number(value))
+  @IsOptional()
+  public minCalories: number;
+
+  @IsNumber()
+  @Transform(({value}) => Number(value))
+  @IsOptional()
+  public maxCalories: number;
+
+  @IsNumber()
+  @Transform(({value}) => Number(value))
+  @IsOptional()
+  public minRate: number;
+
+  @IsNumber({})
+  @Transform(({value}) => Number(value))
+  @IsOptional()
+  public maxRate: number;
+
+  @IsOptional()
+  public trainingDuration: string;
+
+  @IsNumber()
   @Transform(({ value }) => {
     return Number(value);
   })
   @IsOptional()
-  public rate: number;
+  public trainingsPerPage: number;
 
-  @IsEnum(TrainingDurationEnum)
+  @IsNumber()
+  @Transform(({ value }) => {
+    return Number(value);
+  })
   @IsOptional()
-  public duration: string;
+  public pageNumber: number;
 }
