@@ -10,7 +10,7 @@ type PopupFeedbackComponentProps = {
   imageName: string;
   isActive: boolean;
   setIsPopupActive: React.Dispatch<React.SetStateAction<boolean>>;
-  handleBuyButtonClick: (quantity: number) => Promise<void>;
+  handleBuyButtonClick: (paymentMethod: string, quantity: number) => Promise<void>;
 }
 
 export function PopupBuyComponent({ trainingId, name, price, imageName, isActive, setIsPopupActive, handleBuyButtonClick }: PopupFeedbackComponentProps): JSX.Element {
@@ -38,7 +38,7 @@ export function PopupBuyComponent({ trainingId, name, price, imageName, isActive
   }
 
   const buyButtonClickHandler = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    handleBuyButtonClick(purchaseNumber);
+    handleBuyButtonClick(paymentMethod, purchaseNumber);
   }
 
   return (

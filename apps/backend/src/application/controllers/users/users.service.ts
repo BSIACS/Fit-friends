@@ -211,7 +211,7 @@ export class UsersService {
     return foundTrainer.role === UserRoleEnum.TRAINER;
   }
 
-  public async getUsersList(query: GetUsersListQuery): Promise<(UserEntityInterface | TrainerEntityInterface)[]>{
+  public async getUsersList(query: GetUsersListQuery){
     let foundUsers;
     let foundTrainers;
 
@@ -231,7 +231,14 @@ export class UsersService {
       [...foundTrainers, ...foundUsers] :
       [...foundUsers, ...foundTrainers];
 
-    return result;
+    const usersCount = result.length;
+
+    if(query && query.usersPerPage && query.pageNumber){
+      const index = query.pageNumber * query.usersPerPage;
+      result.splice(index, result.length - 1);
+    }
+
+    return {users: result, count: usersCount};
   }
 
   public async addToSubscribers(id, newSubscriberId): Promise<void> {

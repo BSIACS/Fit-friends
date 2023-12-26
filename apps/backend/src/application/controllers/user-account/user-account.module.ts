@@ -5,11 +5,17 @@ import { UsersModule } from '../users/users.module';
 import { UsersRepository } from '../../prisma/users.repository';
 import { UserBalanceRepository } from '../../prisma/user-balance.repository';
 import { TrainingsRepository } from '../../prisma/trainings.repository';
+import { PurchasesRepository } from '../../prisma/purchases.repository';
 
 
 @Module({
   imports: [UsersModule],
   controllers: [UserAccountController],
-  providers: [UserAccountService, UsersRepository, UserBalanceRepository, TrainingsRepository],
+  providers: [UserAccountService,
+    UsersRepository,
+    UserBalanceRepository,
+    TrainingsRepository,
+    PurchasesRepository
+  ],
 })
 export class UserAccountModule { }

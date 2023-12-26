@@ -12,12 +12,12 @@ export class PurchasesRepository {
 
   constructor(private readonly prisma: PrismaService) { }
 
-  public async createPurchase(dto: CreatePurchaseDto) {
+  public async createPurchase(userId: UUID, dto: CreatePurchaseDto) {
 
     const createdPurchase = await this.prisma.purchase.create({
       data: {
-        userId: dto.userId,
-        purchaseType: dto.purchaseType,
+        userId: userId,
+        purchaseType: 'season_ticket',
         trainingId: dto.trainingId,
         price: dto.price,
         quantity: dto.quantity,

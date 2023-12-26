@@ -192,8 +192,6 @@ export class UsersRepository {
   }
 
   public async updateUser(dto: UpdateUserDto, avatarFileName: string | undefined = undefined): Promise<UserEntityInterface> {
-    console.log(dto);
-
     const updatedUser: UserEntityInterface = await this.prisma.user.update({
       where: {
         id: dto.id
@@ -225,9 +223,6 @@ export class UsersRepository {
   }
 
   public async findUsers(filterParams: GetUsersFilterParams, sortParams: GetUsersSortParams): Promise<UserEntityInterface[]> {
-    console.log('filterParams.trainingLevel -- ', filterParams.trainingLevel);
-
-
     const foundUsers = await this.prisma.user.findMany({
       where: {
         location: {

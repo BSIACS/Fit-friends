@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { UserDTO } from '../../dto/user.dto';
 import { getAccessToken } from '../../services/token';
 import axios from 'axios';
 import { InternalAxiosRequestConfig } from 'axios';
@@ -17,10 +16,8 @@ import { GEOCODES, Geocode } from '../../constants/geocodes';
 import { AppRoutes } from '../../constants/app-routes.constants';
 import { TrainerDTO } from '../../dto/trainer.dto';
 import { TrainingDTO } from '../../dto/training.dto';
-import { TrainingListItemComponent } from '../../components/training-list-item/training-list-item.component';
 import { UserCardTrainingListItemComponent } from '../../components/user-card-training-list-item/user-card-training-list-item.component';
 import { PersonalTrainingInvitationDTO } from '../../dto/personal-training-suggestion.dto';
-import { PersonalTrainingRequestStatusEnum } from '../../types/personal-training-request-status.enum';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider, { Settings } from "react-slick";

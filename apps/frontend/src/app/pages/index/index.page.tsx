@@ -68,9 +68,9 @@ export function IndexPage(): JSX.Element {
     axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsUsersDataLoaded(false);
-      const response = await axiosInstance.get<PersonDTO[]>(`http://localhost:3042/api/users/usersList?${queryString}`);
+      const response = await axiosInstance.get<{users: PersonDTO[]}>(`http://localhost:3042/api/users/usersList?${queryString}`);
 
-      setUsers(response.data.filter((user) => user.role === UserRoleEnum.USER && user.isReadyForTraining === true));
+      setUsers(response.data.users.filter((user) => user.role === UserRoleEnum.USER && user.isReadyForTraining === true));
       setIsUsersDataLoaded(true);
     }
     catch (error) {

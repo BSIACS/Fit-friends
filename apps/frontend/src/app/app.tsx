@@ -62,7 +62,8 @@ export function App() {
       <Route path={AppRoutes.USERS_CATALOG} element={<PrivateRouteComponent validRole='user'><UsersCatalogPage /></PrivateRouteComponent>} />
       <Route path={`${AppRoutes.USER_CARD}/:id`} element={<PrivateRouteComponent validRole='user'><UserCardPage /></PrivateRouteComponent>} />
 
-      <Route path={`${AppRoutes.TRAINER_CARD}/:id`} element={<PrivateRouteComponent validRole='trainer'><UserCardTrainerPage /></PrivateRouteComponent>} />
+      <Route path={`${AppRoutes.TRAINER_CARD}/:id`} element={<PrivateRouteComponent validRole='user'><UserCardTrainerPage /></PrivateRouteComponent>} />
+
       <Route path={AppRoutes.FRIEND_LIST_USER} element={<PrivateRouteComponent validRole='user'><FriendsListUserPage /></PrivateRouteComponent>} />
       <Route path={AppRoutes.FRIEND_LIST_TRAINER} element={<PrivateRouteComponent validRole='trainer'><FriendsListTrainerPage /></PrivateRouteComponent>} />
       <Route path={'/notFound'} element={<NotFoundPage />} />

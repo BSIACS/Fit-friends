@@ -1,12 +1,9 @@
 import { IsEnum, IsInt, IsUUID, Max, Min } from 'class-validator';
 import { PurchaseTypeEnum } from '../../types/purchase-type.enum';
 import { UUID } from '../../types/uuid.type';
-import { PaymentMethodEnum } from '../../types/payment-method.enum';
 
 
 export class CreatePurchaseDto {
-  @IsUUID()
-  userId: UUID;
 
   @IsEnum(PurchaseTypeEnum)
   purchaseType: PurchaseTypeEnum;
@@ -23,6 +20,5 @@ export class CreatePurchaseDto {
   @Max(50)
   quantity: number;
 
-  @IsEnum(PaymentMethodEnum)
-  paymentMethod: PaymentMethodEnum;
+  paymentMethod: string;
 }

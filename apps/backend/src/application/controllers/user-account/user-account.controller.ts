@@ -16,6 +16,7 @@ import { UnsubscribeFromTrainingsNotificationsDto } from './dto/unsubscribe-from
 import { GetFriendsListQuery } from './query/get-friends-list.query';
 import { GetFriendsListRdo } from './rdo/get-friends-list.rdo';
 import { UserBalanceEntityInterface } from '../../../entities/user-balance-entity.interface';
+import { CreatePurchaseDto } from '../../prisma/create-purchase.dto';
 
 @ApiTags('userAccount')
 @UseGuards(JwtGuard)
@@ -53,6 +54,12 @@ export class UserAccountController {
   public async removeFromFriends(@Req() request: RequestWithTokenPayload, @Body() dto: RemoveFrindDto): Promise<void> {
     const payload: TokenPayload = request.user;
     await this.userAccountService.removeFromFriendsList(payload.userId, dto.friendId);
+  }
+  @ApiBody({ type: RemoveFrindDto })
+  @Post('purchase/add')
+  public async addPurchase(@Req() request: RequestWithTokenPayload, @Body() dto: CreatePurchaseDto){
+    const payload: TokenPayload = request.user;
+    await this.userAccountService.addPurchase(payload.userId, dto);
   }
 
   @Get('balance')

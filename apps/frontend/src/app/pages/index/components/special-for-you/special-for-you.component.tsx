@@ -15,6 +15,7 @@ export function SpecialForYouComponent(): JSX.Element {
     variableWidth: true,
     adaptiveHeight: true,
     arrows: false,
+    draggable: false,
   };
 
   const leftArrowButtonClickHandler = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {

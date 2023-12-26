@@ -1,9 +1,10 @@
-import { IsArray, IsBoolean, IsEnum, IsIn, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsEnum, IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
 import { LocationEnum } from '../../../../types/location.enum';
 import { TrainingLevelEnum } from '../../../../types/training-level.enum';
 import { TrainingTypeEnum } from '../../../../types/training-type.enum';
 import { UserRoleEnum } from '../../../../types/user-role.enum';
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 
 
 export class GetUsersListQuery{
@@ -52,4 +53,18 @@ export class GetUsersListQuery{
   @IsIn(['false', 'true'])
   @IsOptional()
   public isReadyForTraining: string;
+
+  @IsNumber()
+  @Transform(({ value }) => {
+    return Number(value);
+  })
+  @IsOptional()
+  public usersPerPage: number;
+
+  @IsNumber()
+  @Transform(({ value }) => {
+    return Number(value);
+  })
+  @IsOptional()
+  public pageNumber: number;
 }

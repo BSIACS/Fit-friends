@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersRepository } from '../../prisma/users.repository';
 import { UUID } from '../../../types/uuid.type';
 import { UserEntityInterface } from '../../../entities/user-entity.interface';
@@ -12,6 +12,8 @@ import { TrainingDoesNotExistsException } from '../../../exceptions/training-doe
 import { BalanceNotFoundException } from '../../../exceptions/balance-not-found.exception';
 import { TrainerEntityInterface } from '../../../entities/trainer-entity.interface';
 import { UserRoleEnum } from '../../../types/user-role.enum';
+import { PurchasesRepository } from '../../prisma/purchases.repository';
+import { CreatePurchaseDto } from '../../prisma/create-purchase.dto';
 
 @Injectable()
 export class UserAccountService {
@@ -20,6 +22,7 @@ export class UserAccountService {
     private readonly usersRepository: UsersRepository,
     private readonly userBalanceRepository: UserBalanceRepository,
     private readonly trainingsRepository: TrainingsRepository,
+    private purchasesRepository: PurchasesRepository,
   ) { }
 
   public async getFriendList(id: UUID, friendsPerPage: number | undefined, pageNumber: number | undefined): Promise<(UserEntityInterface | TrainerEntityInterface)[]> {
@@ -163,5 +166,13 @@ export class UserAccountService {
     }
 
     await this.userBalanceRepository.updateInUserBalance(id, trainingId, foundBalance.remained - quantity)
+  }
+
+  public async addPurchase(userId: UUID, dto: CreatePurchaseDto): Promise<void> {
+    try {
+      this.purchasesRepository.createPurchase(userId, dto);
+    } catch (error) {
+      throw new BadRequestException();
+    }
   }
 }

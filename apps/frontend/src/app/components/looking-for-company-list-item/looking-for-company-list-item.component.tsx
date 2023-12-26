@@ -3,6 +3,8 @@ import { getLocationTag, getTypeTrainingTag } from '../../utils/view-transform';
 import { LocationEnum } from '../../types/location.enum';
 import { TrainingTypeEnum } from '../../types/training-type.enum';
 import { getRandomItem } from '../../utils/random';
+import { Link } from 'react-router-dom';
+import { AppRoutes } from '../../constants/app-routes.constants';
 
 type LookingForCompanyListItemComponentProps = {
   user: PersonDTO
@@ -34,7 +36,7 @@ export function LookingForCompanyListItemComponent({ user }: LookingForCompanyLi
             <div className="hashtag thumbnail-user__hashtag"><span>{getTypeTrainingTag(getRandomItem(trainingType as string[]) as TrainingTypeEnum)}</span></div>
           </li>
         </ul>
-        <a className="btn btn--outlined btn--dark-bg btn--medium thumbnail-user__button" href="#">Подробнее</a>
+        <Link className="btn btn--outlined btn--dark-bg btn--medium thumbnail-user__button" to={`${AppRoutes.USER_CARD}/${id}`}>Подробнее</Link>
       </div>
     </li>
   )

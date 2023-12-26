@@ -15,7 +15,6 @@ import { GetUsersListQuery } from './query/get-users-list.query';
 import { IsUserRoleGuard } from '../../../guards/is-user-role.guard';
 import { ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
-import { multerUploadUserFileOptions } from './multer.utils';
 import { LogoutDto } from './dto/loginout.dto';
 import { UserRdo } from './rdo/user.rdo';
 import { fromEntityToTrainerRdo, fromEntityToUserRdo } from './mappers/users.mappers';
@@ -51,15 +50,12 @@ export class UsersController {
   @UseGuards(JwtGuard)
   @UseGuards(IsUserRoleGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  public async usersList(@Query() query: GetUsersListQuery): Promise<(UserRdo | TrainerRdo)[]> {
-
-    console.log(query);
-
+  public async usersList(@Query() query: GetUsersListQuery) {
     const foundUsers = await this.usersService.getUsersList(query);
 
-    const mappedResult = foundUsers.map((entity) => entity.role === UserRoleEnum.TRAINER ? fromEntityToTrainerRdo(entity as TrainerEntityInterface) : fromEntityToUserRdo(entity as UserEntityInterface));
+    const mappedResult = foundUsers.users.map((entity) => entity.role === UserRoleEnum.TRAINER ? fromEntityToTrainerRdo(entity as TrainerEntityInterface) : fromEntityToUserRdo(entity as UserEntityInterface));
 
-    return mappedResult;
+    return {users: mappedResult, count: foundUsers.count};
   }
 
   @Post('register/user')

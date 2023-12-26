@@ -83,13 +83,20 @@ export function TrainingCardUserPage(): JSX.Element {
     }
   }
 
-  const buyTraining = async (quantity: number): Promise<void> => {
+  const buyTraining = async (paymentMethod: string, quantity: number): Promise<void> => {
     const axiosInstance = axios.create();
     axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       await axiosInstance.post(`http://localhost:3042/api/userAccount/balance/add`, {
         trainingId: id,
         quantity: quantity,
+      });
+
+      await axiosInstance.post(`http://localhost:3042/api/userAccount/purchase/add`, {
+        trainingId: id,
+        price: training.price,
+        quantity: quantity,
+        paymentMethod: paymentMethod,
       });
 
       if (currentTrainingBalance) {

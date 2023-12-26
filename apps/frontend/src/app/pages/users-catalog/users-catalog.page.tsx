@@ -13,6 +13,7 @@ import { UUID } from '../../types/uuid.type';
 import { TrainingLevelEnum } from '../../types/training-level.enum';
 import { UserRoleEnum } from '../../types/user-role.enum';
 import { AppRoutes } from '../../constants/app-routes.constants';
+import { UserDTO } from '../../dto/user.dto';
 
 
 const DEFAULT_TRAINING_LEVEL = TrainingLevelEnum.AMATEUR;
@@ -35,10 +36,11 @@ export function UsersCatalogPage(): JSX.Element {
   const [isRequestError, setIsRequestError] = useState<boolean>(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [actualQueryString, setActualQueryString] = useState<string>(`trainingLevel=${DEFAULT_TRAINING_LEVEL}&sortPriority=${DEFAULT_SORT_BY_ROLE_VALUE}`);
-
+  const [usersCount, setUsersCount] = useState<number | undefined>(undefined);
+  const [currentPageNumber, setCurrentPageNumber] = useState(1);
 
   useEffect(() => {
-    getUsersData(actualQueryString);
+    getUsersData(actualQueryString, 1);
   }, []);
 
   useEffect(() => {
@@ -46,16 +48,19 @@ export function UsersCatalogPage(): JSX.Element {
   }, [trainingLevel, sortPriority]);
 
   useEffect(() => {
-    getUsersData(actualQueryString);
+    setCurrentPageNumber(1);
+    getUsersData(actualQueryString, 1);
   }, [actualQueryString]);
 
-  const getUsersData = async (queryString: string) => {
+  const getUsersData = async (queryString: string, pageNumber: number) => {
     const axiosInstance = axios.create();
     axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsUsersDataLoaded(false);
-      const response = await axiosInstance.get(`http://localhost:3042/api/users/usersList?${queryString}`);
-      setUsers(response.data);
+      const response = await axiosInstance.get(`http://localhost:3042/api/users/usersList?usersPerPage=${3}&pageNumber=${pageNumber}&${queryString}`);
+      setUsers(response.data.users);
+      setUsersCount(response.data.count);
+
       setIsUsersDataLoaded(true);
     }
     catch (error) {
@@ -131,6 +136,11 @@ export function UsersCatalogPage(): JSX.Element {
     locationsArray.forEach((item, index) => {
       searchParams.delete(`locations[${index}]`);
     })
+  }
+
+  const showMoreButtonClick = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setCurrentPageNumber(currentPageNumber + 1)
+    getUsersData(actualQueryString, currentPageNumber + 1);
   }
 
   return (
@@ -352,12 +362,14 @@ export function UsersCatalogPage(): JSX.Element {
                 <div className="users-catalog">
                   <ul className="users-catalog__list">
                     {users.map((user) => <UsersListItemComponent id={user.id as UUID} name={user.name as string}
-                    role={user.role as string} avatarFileName={user.avatarFileName as string} trainingType={user.trainingType as string[]} location={user.location as string}/>)}
+                      role={user.role as string} avatarFileName={user.avatarFileName as string} trainingType={user.trainingType as string[]} location={user.location as string} />)}
                   </ul>
                   <div className="show-more users-catalog__show-more">
-                    <button className="btn show-more__button show-more__button--more" type="button">Показать еще</button>
-                    <button className="btn show-more__button show-more__button--to-top" type="button">Вернуться в
-                      начало</button>
+                    {
+                      users && usersCount && ((users as UserDTO[]).length < usersCount) &&
+                      <button className="btn show-more__button show-more__button--more"
+                        onClick={showMoreButtonClick} type="button">Показать еще</button>
+                    }
                   </div>
                 </div>
               </div>
