@@ -139,7 +139,8 @@ export const applicationSlice = createSlice({
         state.isTrainingDataLoading = true;
       })
       .addCase(getTrainingsDataThunk.fulfilled, (state, action: PayloadAction<any>,) => {
-        state.actualTrainingsData = action.payload;
+        state.actualTrainingsData = action.payload.trainings;
+        state.actualTrainingsDataCount = action.payload.count;
         state.isTrainingDataLoading = false;
       })
 

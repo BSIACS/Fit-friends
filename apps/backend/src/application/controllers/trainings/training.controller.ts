@@ -25,7 +25,7 @@ export class TrainingsController {
   public async trainingsCatalogue(@Body() data: any, @Query() query: GetTrainingsCatalogueQuery) {
     const foundTrainings = await this.trainingsService.findTrainings(query);
 
-    return fromEntitiesToTrainingsRdos(foundTrainings);
+    return {trainings: fromEntitiesToTrainingsRdos(foundTrainings.trainings), count: foundTrainings.count};
   }
 
   @ApiHeader({

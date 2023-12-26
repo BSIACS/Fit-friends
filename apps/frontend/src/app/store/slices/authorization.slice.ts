@@ -9,6 +9,9 @@ import { AuthorizationStatusEnum } from '../../types/authorization-status.enum';
 import { RegisterTrainerDTO } from '../../dto/register-trainer.dto';
 import { RegisterUserDTO } from '../../dto/register-user.dto';
 
+const EMAIL__MESSAGE_MARKER = '[email] ';
+const PASSWORD__MESSAGE_MARKER = '[password] ';
+
 
 export interface AuthorizationState {
   isLoading: boolean;
@@ -45,16 +48,16 @@ export const authorizationSlice = createSlice({
     },
     setAPIError: (state, action: PayloadAction<string>) => {
       let errorMessage = action.payload;
-      if (errorMessage.includes('[email] ')) {
-        errorMessage = errorMessage.replace('[email] ', '');
+      if (errorMessage.includes(EMAIL__MESSAGE_MARKER)) {
+        errorMessage = errorMessage.replace(EMAIL__MESSAGE_MARKER, '');
         state.emailAPIError = { isError: true, message: errorMessage };
       }
       else{
         state.emailAPIError = { isError: false, message: '' };
       }
 
-      if (errorMessage.includes('[password] ')) {
-        errorMessage = errorMessage.replace('[password] ', '');
+      if (errorMessage.includes(PASSWORD__MESSAGE_MARKER)) {
+        errorMessage = errorMessage.replace(PASSWORD__MESSAGE_MARKER, '');
         state.passwordAPIError = { isError: true, message: errorMessage };
       }
       else{

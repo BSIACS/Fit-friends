@@ -29,14 +29,16 @@ export class TrainingsService {
     return foundTrainings;
   }
 
-  public async findTrainings(query: GetTrainingsCatalogueQuery): Promise<TrainingEntityInterface[]> {
+  public async findTrainings(query: GetTrainingsCatalogueQuery) {
     const foundTrainings = await this.trainingsRepository.findTrainings(query);
+    const foundTrainingsCount = await this.trainingsRepository.getTrainingsCount(query);
+
 
     if (!foundTrainings) {
       throw new NotFoundException();
     }
 
-    return foundTrainings;
+    return {trainings: foundTrainings, count: foundTrainingsCount};
   }
 
 }

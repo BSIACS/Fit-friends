@@ -23,7 +23,7 @@ export function TrainingListItemComponent({ training }: TrainingListItemComponen
                 alt="" />
             </picture>
           </div>
-          <p className="thumbnail-training__price">{Number(price as string) === 0 ? 'Бесплатно' : price}
+          <p className="thumbnail-training__price">{Number(price as string) === 0 ? 'Бесплатно' : `${price} ₽`}
           </p>
           <h3 className="thumbnail-training__title">{name}</h3>
           <div className="thumbnail-training__info">

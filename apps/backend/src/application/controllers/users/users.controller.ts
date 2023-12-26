@@ -96,9 +96,6 @@ export class UsersController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseInterceptors(FileInterceptor('certificate'))
   public async questionnaireTrainer(@UploadedFile() file, @Body() dto: TrainerQuestionnaireDto) {
-
-    console.log(dto);
-
     const certificateFileName: string = uuidv4();
     file.originalname = certificateFileName;
 
@@ -170,9 +167,6 @@ export class UsersController {
       this.uploadFileManagerService.updateCertificate(dto.id, file);
     }
     const foundTrainer = await this.usersService.getTrainerDetail(dto.id);
-
-    console.log(foundTrainer);
-
 
     return fromEntityToTrainerRdo(foundTrainer);
   }

@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+import { AppRoutes } from '../../constants/app-routes.constants';
 import { TrainingDTO } from '../../dto/training.dto'
 import { TrainingTypeEnum } from '../../types/training-type.enum';
 import { getTypeTrainingTag } from '../../utils/view-transform';
@@ -11,7 +13,7 @@ export function UserCardTrainingListItemComponent({ training }: TrainingListItem
   const { id, name, description, calories, rating, price, backgroundImgFileName, trainingType } = training;
 
   return (
-    <div className="thumbnail-training" style={{margin: '0 21px 0 0', paddingBottom: '30px'}}>
+    <div className="thumbnail-training" style={{ margin: '0 21px 0 0', paddingBottom: '30px' }}>
       <div className="thumbnail-training__inner">
         <div className="thumbnail-training__image">
           <picture>
@@ -20,7 +22,7 @@ export function UserCardTrainingListItemComponent({ training }: TrainingListItem
               alt="" />
           </picture>
         </div>
-        <p className="thumbnail-training__price">{Number(price as string) === 0 ? 'Бесплатно' : price}
+        <p className="thumbnail-training__price">{Number(price as string) === 0 ? 'Бесплатно' : `${price} ₽`}
         </p>
         <h3 className="thumbnail-training__title">{name}</h3>
         <div className="thumbnail-training__info">
@@ -42,8 +44,8 @@ export function UserCardTrainingListItemComponent({ training }: TrainingListItem
           <p className="thumbnail-training__text">{description}</p>
         </div>
         <div className="thumbnail-training__button-wrapper">
-          <a className="btn btn--small thumbnail-training__button-catalog" href="#">Подробнее</a>
-          <a className="btn btn--small btn--outlined thumbnail-training__button-catalog" href="#">Отзывы</a>
+          <Link className="btn btn--small thumbnail-training__button-catalog" to={`${AppRoutes.TRAINING_CARD_USER}/${id}`}>Подробнее</Link>
+          <Link className="btn btn--small btn--outlined thumbnail-training__button-catalog" to={`${AppRoutes.TRAINING_CARD_USER}/${id}`}>Отзывы</Link>
         </div>
       </div>
     </div>

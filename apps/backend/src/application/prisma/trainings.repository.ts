@@ -174,23 +174,30 @@ export class TrainingsRepository {
 
   public async findTrainings(query: GetTrainingsCatalogueQuery): Promise<TrainingEntityInterface[] | null> {
     let trainingTypes = undefined;
+
     if (query.trainingType !== undefined) {
       trainingTypes = query.trainingType.split(',')
     }
 
+    if(!query || !query.trainingsPerPage || !query.pageNumber){
+      query.trainingsPerPage = 50;
+      query.pageNumber = 1;
+    }
+
     const foundTrainings = await this.prisma.training.findMany({
+      take: query ? query.trainingsPerPage * query.pageNumber : undefined,
       where: {
-        calories: query.minCalories !== undefined && query.maxCalories !== undefined ? {
-          lte: +query.maxCalories,
-          gte: +query.minCalories
+        calories: query?.minCalories !== undefined && query?.maxCalories !== undefined ? {
+          lte: +query?.maxCalories,
+          gte: +query?.minCalories
         } : {},
-        price: query.minPrice !== undefined && query.maxPrice !== undefined ? {
-          lte: +query.maxPrice,
-          gte: +query.minPrice
+        price: query?.minPrice !== undefined && query?.maxPrice !== undefined ? {
+          lte: +query?.maxPrice,
+          gte: +query?.minPrice
         } : {},
-        rating: query.minRate !== undefined && query.maxRate !== undefined ? {
-          lte: +query.maxRate,
-          gte: +query.minRate
+        rating: query?.minRate !== undefined && query?.maxRate !== undefined ? {
+          lte: +query?.maxRate,
+          gte: +query?.minRate
         } : {},
         trainingType: {
           in: trainingTypes ? trainingTypes : undefined
@@ -202,5 +209,38 @@ export class TrainingsRepository {
     });
 
     return foundTrainings;
+  }
+
+  public async getTrainingsCount(query: GetTrainingsCatalogueQuery): Promise<number> {
+    let trainingTypes = undefined;
+
+    if (query.trainingType !== undefined) {
+      trainingTypes = query.trainingType.split(',')
+    }
+
+    const foundTrainingsCount = await this.prisma.training.count({
+      where: {
+        calories: query?.minCalories !== undefined && query?.maxCalories !== undefined ? {
+          lte: +query?.maxCalories,
+          gte: +query?.minCalories
+        } : {},
+        price: query?.minPrice !== undefined && query?.maxPrice !== undefined ? {
+          lte: +query?.maxPrice,
+          gte: +query?.minPrice
+        } : {},
+        rating: query?.minRate !== undefined && query?.maxRate !== undefined ? {
+          lte: +query?.maxRate,
+          gte: +query?.minRate
+        } : {},
+        trainingType: {
+          in: trainingTypes ? trainingTypes : undefined
+        }
+      },
+      orderBy: {
+        price: query.sortDirection
+      }
+    });
+
+    return foundTrainingsCount;
   }
 }

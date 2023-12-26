@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { HeaderComponent } from '../../components/header/header.component';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
@@ -9,7 +9,9 @@ import ReactSlider from "react-slider";
 import { TrainingTypeEnum } from '../../types/training-type.enum';
 import { SortEnum } from '../../types/sort.enum';
 import { LoaderComponent } from '../../components/loader/loader.component';
+import { TrainingDTO } from '../../dto/training.dto';
 
+const TRAININGS_PER_PAGE = '6';
 
 const queryParamsInitialValue = {
   priceRange: [100, 5000],
@@ -26,16 +28,22 @@ const queryParamsInitialValue = {
     TrainingTypeEnum.YOGA,
   ].join(','),
   sortDirection: SortEnum.ASC,
+  trainingsPerPage: TRAININGS_PER_PAGE,
 }
 
 export function TrainingCatalogPage(): JSX.Element {
   const dispatch = useAppDispatch();
   const isTrainingDataLoading = useAppSelector(state => state.application.isTrainingDataLoading);
   const trainings: any[] = useAppSelector(state => state.application.actualTrainingsData);
+  const trainingsCount: number = useAppSelector(state => state.application.actualTrainingsDataCount);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [currentPageNumber, setCurrentPageNumber] = useState<number>(1);
+  const priceSliderRef = useRef<any>();
+  const caloriesSliderRef = useRef<any>();
+
 
   useEffect(() => {
-    dispatch(getTrainingsDataThunk(`?${searchParams.toString()}`));
+    dispatch(getTrainingsDataThunk(`?trainingsPerPage=${TRAININGS_PER_PAGE}&pageNumber=${currentPageNumber}&${searchParams.toString()}`));
   }, [searchParams]);
 
   const priceRangeChangedHandler = (price: number[]) => {
@@ -45,11 +53,13 @@ export function TrainingCatalogPage(): JSX.Element {
   }
 
   const minPriceInputChangeHandler = (evt: React.FormEvent<HTMLInputElement>) => {
+    priceSliderRef.current.state.value[0] = Number(evt.currentTarget.value);
     searchParams.set('minPrice', evt.currentTarget.value);
     setSearchParams([...searchParams]);
   }
 
   const maxPriceInputChangeHandler = (evt: React.FormEvent<HTMLInputElement>) => {
+    priceSliderRef.current.state.value[1] = Number(evt.currentTarget.value);
     searchParams.set('maxPrice', evt.currentTarget.value);
     setSearchParams([...searchParams]);
   }
@@ -67,11 +77,13 @@ export function TrainingCatalogPage(): JSX.Element {
   }
 
   const minCaloriesInputChangeHandler = (evt: React.FormEvent<HTMLInputElement>) => {
+    caloriesSliderRef.current.state.value[0] = Number(evt.currentTarget.value);
     searchParams.set('minCalories', evt.currentTarget.value);
     setSearchParams([...searchParams]);
   }
 
   const maxCaloriesInputChangeHandler = (evt: React.FormEvent<HTMLInputElement>) => {
+    caloriesSliderRef.current.state.value[1] = Number(evt.currentTarget.value);
     searchParams.set('maxCalories', evt.currentTarget.value);
     setSearchParams([...searchParams]);
   }
@@ -104,11 +116,15 @@ export function TrainingCatalogPage(): JSX.Element {
     setSearchParams([...searchParams]);
   }
 
+  const showMoreButtonClick = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    dispatch(getTrainingsDataThunk(`?trainingsPerPage=${TRAININGS_PER_PAGE}&pageNumber=${currentPageNumber + 1}&${searchParams.toString()}`));
+    setCurrentPageNumber(currentPageNumber + 1);
+  }
 
   return (
     <div className="wrapper">
       <HeaderComponent />
-      <LoaderComponent isHidden={!isTrainingDataLoading}/>
+      <LoaderComponent isHidden={!isTrainingDataLoading} />
       <main>
         <section className="inner-page">
           <div className="container">
@@ -141,6 +157,7 @@ export function TrainingCatalogPage(): JSX.Element {
                         </div>
                       </div>
                       <ReactSlider
+                        ref={priceSliderRef}
                         className="horizontal-slider"
                         thumbClassName="example-thumb"
                         defaultValue={[
@@ -172,6 +189,7 @@ export function TrainingCatalogPage(): JSX.Element {
                         </div>
                       </div>
                       <ReactSlider
+                        ref={caloriesSliderRef}
                         className="horizontal-slider"
                         thumbClassName="example-thumb"
                         defaultValue={[
@@ -333,12 +351,13 @@ export function TrainingCatalogPage(): JSX.Element {
                 <ul className="training-catalog__list">
                   {trainings.map(training => <TrainingListItemComponent training={training} />)}
                 </ul>
-                {/* <div className="show-more training-catalog__show-more">
-                  <button className="btn show-more__button show-more__button--more" type="button">Показать еще</button>
-                  <button className="btn show-more__button show-more__button--to-top" type="button">Вернуться в
-                    начало
-                  </button>
-                </div> */}
+                <div className="show-more training-catalog__show-more">
+                  {
+                    trainings && ((trainings as TrainingDTO[]).length < trainingsCount) &&
+                    <button className="btn show-more__button show-more__button--more"
+                      onClick={showMoreButtonClick} type="button">Показать еще</button>
+                  }
+                </div>
               </div>
             </div>
           </div>
