@@ -34,6 +34,9 @@ export function App() {
   const dispatch = useAppDispatch();
   const refreshToken = getRefreshToken();
 
+  console.log('getRefreshToken() - ', refreshToken);
+
+
   useEffect(() => {
     setIsLoading(true);
     dispatch(refreshTokensPairThunk({ refreshToken: refreshToken }));

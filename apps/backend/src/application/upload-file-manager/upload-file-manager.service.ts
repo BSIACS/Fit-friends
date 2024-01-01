@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { error } from 'console';
 import { existsSync, mkdirSync, rm, writeFile } from 'fs';
-import { getImageType } from '../../utils/string';
 
 const UPLOADS_FILES_PATH = 'dist/apps/backend/assets';
 
@@ -12,10 +10,6 @@ export class UploadFileManagerService {
   constructor() {
     this.logger = new Logger(UploadFileManagerService.name);
 
-    // if (!existsSync('apps/backend/src/public/')) {
-    //   mkdirSync('apps/backend/src/public/');
-    // }
-
     if (!existsSync(`${UPLOADS_FILES_PATH}/users-data`)) {
       mkdirSync(`${UPLOADS_FILES_PATH}/users-data`);
     }
@@ -25,8 +19,6 @@ export class UploadFileManagerService {
     if (!existsSync(`${UPLOADS_FILES_PATH}/users-data/${userId}`)) {
       mkdirSync(`${UPLOADS_FILES_PATH}/users-data/${userId}`);
     }
-
-    console.log('file --- ', file);
 
     if (file.buffer) {
       writeFile(`${UPLOADS_FILES_PATH}/users-data/${userId}/${file.originalname}`, file.buffer, 'ascii', (error) => {

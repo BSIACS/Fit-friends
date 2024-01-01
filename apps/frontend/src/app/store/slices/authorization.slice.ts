@@ -15,7 +15,7 @@ const PASSWORD__MESSAGE_MARKER = '[password] ';
 
 export interface AuthorizationState {
   isLoading: boolean;
-  isRefreshRejected: boolean;
+  //isRefreshRejected: boolean;
   authoriztionData: AuthoriztionData | undefined;
   isRegistrationComplete: boolean;
   authoriztionStatus: AuthorizationStatusEnum;
@@ -25,7 +25,7 @@ export interface AuthorizationState {
 
 const initialState: AuthorizationState = {
   isLoading: false,
-  isRefreshRejected: false,
+  //isRefreshRejected: false,
   authoriztionData: undefined,
   isRegistrationComplete: false,
   authoriztionStatus: AuthorizationStatusEnum.UNDEFINED,
@@ -52,7 +52,7 @@ export const authorizationSlice = createSlice({
         errorMessage = errorMessage.replace(EMAIL__MESSAGE_MARKER, '');
         state.emailAPIError = { isError: true, message: errorMessage };
       }
-      else{
+      else {
         state.emailAPIError = { isError: false, message: '' };
       }
 
@@ -60,7 +60,7 @@ export const authorizationSlice = createSlice({
         errorMessage = errorMessage.replace(PASSWORD__MESSAGE_MARKER, '');
         state.passwordAPIError = { isError: true, message: errorMessage };
       }
-      else{
+      else {
         state.passwordAPIError = { isError: false, message: '' };
       }
     },
@@ -81,12 +81,12 @@ export const authorizationSlice = createSlice({
         }
       })
       .addCase(refreshTokensPairThunk.pending, (state) => {
-        state.isRefreshRejected = false;
+        //state.isRefreshRejected = false;
         state.authoriztionData = {};
         state.isLoading = true;
       })
       .addCase(refreshTokensPairThunk.fulfilled, (state, action: PayloadAction<RefreshTokensPairDTO>) => {
-        if (action.payload.accessToken && action.payload.refreshToken) {
+        if (action.payload && action.payload.accessToken && action.payload.refreshToken) { /// Вот здесь была ошибка Добавил action.payload &&
           setAccessToken(action.payload.accessToken);
           setRefreshToken(action.payload.refreshToken);
           state.authoriztionStatus = AuthorizationStatusEnum.AUTHORIZED;
@@ -107,14 +107,14 @@ export const authorizationSlice = createSlice({
         const { trainer, tokensPair } = action.payload;
         state.authoriztionData = { email: trainer?.email, name: trainer?.name, role: trainer?.role, userId: trainer?.id }
         state.isRegistrationComplete = true;
-        if (tokensPair) {
+        if (tokensPair && tokensPair.accessToken && tokensPair.refreshToken) {
           setAccessToken(tokensPair.accessToken);
           setRefreshToken(tokensPair.refreshToken);
         }
         state.authoriztionStatus = AuthorizationStatusEnum.AUTHORIZED;
         state.isLoading = false;
-        state.emailAPIError = {isError: false, message: ''};
-        state.passwordAPIError = {isError: false, message: ''};
+        state.emailAPIError = { isError: false, message: '' };
+        state.passwordAPIError = { isError: false, message: '' };
       })
       .addCase(registerUserThunk.pending, (state) => {
         state.isLoading = true;
@@ -123,7 +123,7 @@ export const authorizationSlice = createSlice({
         const { user, tokensPair } = action.payload;
         state.authoriztionData = { email: user?.email, name: user?.name, role: user?.role, userId: user?.id }
         state.isRegistrationComplete = true;
-        if (tokensPair) {
+        if (tokensPair && tokensPair.accessToken && tokensPair.refreshToken) {
           setAccessToken(tokensPair.accessToken);
           setRefreshToken(tokensPair.refreshToken);
         }

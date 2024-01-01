@@ -10,6 +10,7 @@ import { UUID } from '../../types/uuid.type';
 import { ApplicationState } from './application.slice';
 import { GetOrdersDTO } from '../../dto/get-orders.dto';
 import { DeleteTrainersCertificateRequest } from '../../types/delete-trainers-certificate-request.interface';
+import { refreshTokensPairInterceptor } from '../../services/interceptors';
 
 
 const requestWithAccessTokenInterceptor = (config: InternalAxiosRequestConfig) => {

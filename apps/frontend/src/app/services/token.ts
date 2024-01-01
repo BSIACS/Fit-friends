@@ -14,7 +14,13 @@ export const setRefreshToken = (token: Token) => {
 };
 
 export const getAccessToken = (): Token => {
-  const token = localStorage.getItem(ACCESS_TOKEN_KEY_NAME);
+  let token: string | null = null;
+  try {
+    token = localStorage.getItem(ACCESS_TOKEN_KEY_NAME);
+  } catch (error) {
+    console.log(`[getAccessToken] error. Detail: ${error}`);
+  }
+
   return token ?? '';
 };
 

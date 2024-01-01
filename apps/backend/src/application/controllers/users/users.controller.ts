@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UploadedFile, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UploadedFile, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { CreateTrainerDto } from './dto/create-trainer.dto';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -224,5 +224,12 @@ export class UsersController {
     const foundTrainer = await this.usersService.getTrainerDetail(id);
 
     return fromEntityToTrainerRdo(foundTrainer);
+  }
+
+
+  @Get('test')
+  public async test() {
+
+    return {someValue: 42}
   }
 }

@@ -4,8 +4,6 @@ import { SpecialForYouComponent } from './components/special-for-you/special-for
 import { AppRoutes } from '../../constants/app-routes.constants';
 import { useEffect, useRef, useState } from 'react';
 import { PersonDTO } from '../../dto/person.dto';
-import { requestWithAccessTokenInterceptor } from '../../services/interceptors';
-import axios from 'axios';
 import { BadRequestPage } from '../bad-request/bad-request.page';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { UserRoleEnum } from '../../types/user-role.enum';
@@ -14,8 +12,12 @@ import Slider, { Settings } from "react-slick";
 import { TrainingDTO } from '../../dto/training.dto';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { UserCardTrainingListItemComponent } from '../../components/user-card-training-list-item/user-card-training-list-item.component';
+import { AuthorizationHeader, AxiosFactory } from '../../services/axios';
+import { APIRoutes } from '../../constants/api-routes.constants';
 
-
+/**
+ * Главная страница для роли "user"
+ */
 export function IndexPage(): JSX.Element {
   const authoriztionData = useAppSelector(state => state.authorization.authoriztionData);
   const isAuthoriztionDataLoading = useAppSelector(state => state.authorization.isLoading);
@@ -31,7 +33,7 @@ export function IndexPage(): JSX.Element {
   const lokkingForCompanySliderRef = useRef<any>();
 
 
-  const settings: Settings = {
+  const sliderSettings: Settings = {
     dots: false,
     infinite: true,
     speed: 500,
@@ -64,11 +66,11 @@ export function IndexPage(): JSX.Element {
   }, [authoriztionData]);
 
   const getUsersData = async (queryString: string) => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
+    const axiosInstance = AxiosFactory.createAxiosInstance({authorizationHeader: AuthorizationHeader.ACCESS});
+
     try {
       setIsUsersDataLoaded(false);
-      const response = await axiosInstance.get<{users: PersonDTO[]}>(`http://localhost:3042/api/users/usersList?${queryString}`);
+      const response = await axiosInstance.get<{users: PersonDTO[]}>(`${APIRoutes.USERS_LIST}?${queryString}`);
 
       setUsers(response.data.users.filter((user) => user.role === UserRoleEnum.USER && user.isReadyForTraining === true));
       setIsUsersDataLoaded(true);
@@ -80,11 +82,9 @@ export function IndexPage(): JSX.Element {
   }
 
   const getTrainingData = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
+    const axiosInstance = AxiosFactory.createAxiosInstance({authorizationHeader: AuthorizationHeader.ACCESS});
     try {
-      const response = await axiosInstance.get<{ count: number, trainings: TrainingDTO[] }>(`http://localhost:3042/api/trainings/catalogue?trainingsPerPage=${50}&pageNumber=${1}`);
-      console.log(response.data);
+      const response = await axiosInstance.get<{ count: number, trainings: TrainingDTO[] }>(`${APIRoutes.TRAININGS_CATALOG}?trainingsPerPage=${50}&pageNumber=${1}`);
 
       const sortedTrainings = response.data.trainings.sort((item_1, item_2) => Number(item_2.rating) - Number(item_1.rating));
       setTrainings(sortedTrainings);
@@ -283,7 +283,7 @@ export function IndexPage(): JSX.Element {
               <ul className="popular-trainings__list">
                 {
                   trainings &&
-                  <Slider ref={popularTrainingsSliderRef} {...settings}>
+                  <Slider ref={popularTrainingsSliderRef} {...sliderSettings}>
                     {
                       trainings.map((item) =>
                         <UserCardTrainingListItemComponent key={item.id} training={item} />)
@@ -314,7 +314,7 @@ export function IndexPage(): JSX.Element {
               </div>
               <ul className="look-for-company__list">
                 {
-                  <Slider ref={lokkingForCompanySliderRef} {...settings}>
+                  <Slider ref={lokkingForCompanySliderRef} {...sliderSettings}>
                     {
                       users.map((user) =>
                         <LookingForCompanyListItemComponent key={user.id} user={user} />

@@ -16,6 +16,7 @@ import { PopupMapComponent } from '../../components/popup-map/popup-map.componen
 import { GEOCODES, Geocode } from '../../constants/geocodes';
 import { AppRoutes } from '../../constants/app-routes.constants';
 import { FriendsListDTO } from '../../dto/friends-list.dto';
+import { AuthorizationHeader, AxiosFactory } from '../../services/axios';
 
 const requestWithAccessTokenInterceptor = (config: InternalAxiosRequestConfig) => {
   config.headers.Authorization = `Bearer ${getAccessToken()}`;
@@ -51,61 +52,62 @@ export function UserCardPage(): JSX.Element {
   //#region API
 
   const getUserData = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
-      const response = await axiosInstance.get(`http://localhost:3042/api/users/detail/${id}`);
+      const response = await AxiosFactory.createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS }).get(`/users/detail/${id}`);
       setUser(response.data);
       setIsUserDataLoaded(true);
     }
     catch (error) {
+      console.log('getUserData +++++++ ', error);
+
       setIsUserDataLoaded(true);
       setIsRequestError(true);
     }
   }
 
   const getFriendsData = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
+
     try {
-      const response = await axiosInstance.get<FriendsListDTO>(`http://localhost:3042/api/userAccount/friends/${authoriztionData?.userId}`);
+      const response = await AxiosFactory.createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS }).get<FriendsListDTO>(`/userAccount/friends/${authoriztionData?.userId}`);
       const friends = response.data.friends?.map((item) => item.id);
       setFriends(friends as string[]);
       setIsFriendsDataLoaded(true);
     }
     catch (error) {
+      console.log('getFriendsData +++++++ ', error);
+
       setIsFriendsDataLoaded(true);
       setIsRequestError(true);
     }
   }
 
   const addToFriends = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsFriendsDataLoaded(false);
-      await axiosInstance.post(`http://localhost:3042/api/userAccount/friends`, {
-        newFriendId: id
-      });
+      await AxiosFactory.createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .post(`http://localhost:3042/api/userAccount/friends`, {
+          newFriendId: id
+        });
       if (friends && id) {
         setFriends([...friends, id]);
       }
       setIsFriendsDataLoaded(true);
     }
     catch (error) {
+      console.log('addToFriends +++++++ ', error);
+
       setIsFriendsDataLoaded(true);
       setIsRequestError(true);
     }
   }
 
   const removeFromFriends = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsFriendsDataLoaded(false);
-      await axiosInstance.post(`http://localhost:3042/api/userAccount/friends/remove`, {
-        friendId: id
-      });
+      await AxiosFactory.createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .post(`http://localhost:3042/api/userAccount/friends/remove`, {
+          friendId: id
+        });
 
       if (friends && id) {
         const indexToDelete = friends.indexOf(id);
@@ -116,6 +118,8 @@ export function UserCardPage(): JSX.Element {
       setIsFriendsDataLoaded(true);
     }
     catch (error) {
+      console.log('removeFromFriends +++++++ ', error);
+
       setIsFriendsDataLoaded(true);
       setIsRequestError(true);
     }

@@ -9,8 +9,6 @@ import { RefreshTokenRequest } from '../../types/refresh-token-request.interface
 import { AuthorizationHeader, AxiosFactory } from '../../services/axios';
 import { CreateTrainerRequest } from '../../types/create-trainer-request.interface';
 import { setAPIError } from './authorization.slice';
-import { ApplicationState } from './application.slice';
-import { RootState } from '../store';
 
 
 export const signInThunk = createAsyncThunk(
@@ -18,7 +16,7 @@ export const signInThunk = createAsyncThunk(
   async (payload: AuthorizationRequest, thunkApi) => {
     try {
       thunkApi.dispatch(setAPIError(''))
-      const response = await AxiosFactory.createAxiosInstance(AuthorizationHeader.UNDEFINED).post<SignInDTO>('/users/login', {
+      const response = await AxiosFactory.createAxiosInstance({authorizationHeader: AuthorizationHeader.NO_TOKEN}).post<SignInDTO>('/users/login', {
         email: payload.email,
         password: payload.password
       });
@@ -44,7 +42,7 @@ export const refreshTokensPairThunk = createAsyncThunk(
   'authorization/refreshTokensPairThunk',
   async (payload: RefreshTokenRequest, thunkApi) => {
     try {
-      const response = await AxiosFactory.createAxiosInstance(AuthorizationHeader.REFRESH).post<RefreshTokensPairDTO>('/users/refresh');
+      const response = await AxiosFactory.createAxiosInstance({authorizationHeader: AuthorizationHeader.REFRESH}).post<RefreshTokensPairDTO>('/users/refresh');
 
       return response.data;
     } catch (error: any) {
@@ -53,7 +51,7 @@ export const refreshTokensPairThunk = createAsyncThunk(
   }
 );
 
-export const registerTrainerThunk = createAsyncThunk(//////////
+export const registerTrainerThunk = createAsyncThunk(
   'authorization/registerTrainerThunk',
   async (payload: CreateTrainerRequest, thunkApi) => {
     try {
@@ -69,13 +67,9 @@ export const registerTrainerThunk = createAsyncThunk(//////////
 
       if(Array.isArray(error.response.data.message)){
         isErrorDetected = true;
-        console.log('error', error.response.data.message);
-
         thunkApi.dispatch(setAPIError(error.response.data.message[0]));
       }
       if(error.response.data.message && !isErrorDetected){
-        console.log('error', error.response.data.message);
-
         thunkApi.dispatch(setAPIError(error.response.data.message));
       }
 

@@ -14,6 +14,7 @@ import { TrainingLevelEnum } from '../../types/training-level.enum';
 import { UserRoleEnum } from '../../types/user-role.enum';
 import { AppRoutes } from '../../constants/app-routes.constants';
 import { UserDTO } from '../../dto/user.dto';
+import { AuthorizationHeader, AxiosFactory } from '../../services/axios';
 
 
 const DEFAULT_TRAINING_LEVEL = TrainingLevelEnum.AMATEUR;
@@ -57,7 +58,7 @@ export function UsersCatalogPage(): JSX.Element {
     axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsUsersDataLoaded(false);
-      const response = await axiosInstance.get(`http://localhost:3042/api/users/usersList?usersPerPage=${3}&pageNumber=${pageNumber}&${queryString}`);
+      const response = await AxiosFactory.createAxiosInstance({authorizationHeader: AuthorizationHeader.ACCESS}).get(`/users/usersList?usersPerPage=${3}&pageNumber=${pageNumber}&${queryString}`)
       setUsers(response.data.users);
       setUsersCount(response.data.count);
 
