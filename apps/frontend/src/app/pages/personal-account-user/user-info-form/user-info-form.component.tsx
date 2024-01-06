@@ -28,6 +28,8 @@ export function UserFormInfoComponent({ user }: UserFormInfoComponentProps): JSX
   const [descriptionError, setDescriptionError] = useState({ isError: false, message: 'Ограничение: от 10 до 140 символов' });
   const [trainingTypeError, setTrainingTypeError] = useState({ isError: false, message: 'Ограничение: не более 3 и не менее 1 специализации' });
 
+  //#region HANDLERS
+
   const editButtonClickHandler = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     evt.preventDefault();
     dispatch(setIsUserFormEditable(true));
@@ -116,7 +118,7 @@ export function UserFormInfoComponent({ user }: UserFormInfoComponentProps): JSX
     dispatch(changeEditUserFormData({ ...user, isReadyForTraining: !user.isReadyForTraining }));
   }
 
-  const selectLocationButtonClick = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const selectLocationButtonClickHandler = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     evt.preventDefault();
     setIsSelectLocationListVissible(!isSelectLocationListVissible);
   }
@@ -151,6 +153,8 @@ export function UserFormInfoComponent({ user }: UserFormInfoComponentProps): JSX
     setIsSelectTrainingLevelListVissible(false);
     setIsSelectSexListVissible(false);
   }
+
+  //#endregion
 
   return (
     <section className="user-info">
@@ -196,8 +200,6 @@ export function UserFormInfoComponent({ user }: UserFormInfoComponentProps): JSX
             <label>
               <span className="custom-textarea__label">Описание</span>
               <textarea name="description" value={user.description} onChange={descriptionInputChangeHandler} disabled={!isEditable} />
-              {/* {user.description}
-              </textarea> */}
             </label>
           </div>
         </div>
@@ -274,7 +276,7 @@ export function UserFormInfoComponent({ user }: UserFormInfoComponentProps): JSX
         <div className={`custom-select ${!isEditable ? 'custom-select--readonly' : ''} user-info-edit__select`}><span className="custom-select__label">Локация</span>
           <div className="custom-select__placeholder">{getLocation(user.location as LocationEnum)}</div>
           <button className={`${isSelectLocationListVissible ? styles.appButtonNoBottomBorderRounds : ''} custom-select__button`} type="button"
-            aria-label="Выберите одну из опций" onBlur={buttonBlurHandler} onClick={selectLocationButtonClick} disabled={!isEditable}>
+            aria-label="Выберите одну из опций" onBlur={buttonBlurHandler} onClick={selectLocationButtonClickHandler} disabled={!isEditable}>
             <span className="custom-select__text"></span>
             <span className="custom-select__icon">
               <svg width="15" height="6" aria-hidden="true" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>

@@ -6,11 +6,11 @@ import { InternalAxiosRequestConfig } from 'axios';
 import { RootState } from '../store';
 import { UpdateTrainerRequest } from '../../types/update-trainer-request.interface';
 import { UpdateUserRequest } from '../../types/update-user-request.interface';
-import { UUID } from '../../types/uuid.type';
-import { ApplicationState } from './application.slice';
 import { GetOrdersDTO } from '../../dto/get-orders.dto';
 import { DeleteTrainersCertificateRequest } from '../../types/delete-trainers-certificate-request.interface';
-import { refreshTokensPairInterceptor } from '../../services/interceptors';
+import { AuthorizationHeader, AxiosFactory } from '../../services/axios';
+import { TrainerDTO } from '../../dto/trainer.dto';
+import { UserDTO } from '../../dto/user.dto';
 
 
 const requestWithAccessTokenInterceptor = (config: InternalAxiosRequestConfig) => {
@@ -23,9 +23,9 @@ export const getUserDetailThunk = createAsyncThunk(
   'application/getUserDetailThunk',
   async (payload: GetUserDetailRequest, thunkApi) => {
     try {
-      const axiosInstance = axios.create();
-      axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
-      const response = await axiosInstance.get<any>(`http://localhost:3042/api/users/detail/${payload.id}`);
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .get<UserDTO>(`/users/detail/${payload.id}`);
 
       return response.data;
     } catch (error: any) {
@@ -40,10 +40,9 @@ export const getTrainerDetailThunk = createAsyncThunk(
     try {
       const state = thunkApi.getState();
       const userId = (state as RootState).authorization.authoriztionData?.userId;
-
-      const axiosInstance = axios.create();
-      axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
-      const response = await axiosInstance.get<any>(`http://localhost:3042/api/users/detail/trainer/${userId}`);
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .get<TrainerDTO>(`/users/detail/trainer/${userId}`);
 
       return response.data;
     } catch (error: any) {
@@ -94,7 +93,7 @@ export const deleteTrainersCertificateDataThunk = createAsyncThunk(
     try {
       const axiosInstance = axios.create();
       axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
-      const response = await axiosInstance.delete<any>(`http://localhost:3042/api/users/certificate`, {data: payload});
+      const response = await axiosInstance.delete<any>(`http://localhost:3042/api/users/certificate`, { data: payload });
 
       return response.data;
     } catch (error: any) {

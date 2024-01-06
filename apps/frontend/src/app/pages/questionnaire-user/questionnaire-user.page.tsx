@@ -20,9 +20,6 @@ export function QuestionnaireUserPage(): JSX.Element {
   const actualUserData = useAppSelector((state) => state.application.actualUserData);
   const dispatch = useAppDispatch();
 
-  console.log(actualUserData);
-
-
   const timeRadioButtonClickHandler = (evt: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
     setState({ ...state, trainingDuration: evt.currentTarget.value });
   }
@@ -59,7 +56,7 @@ export function QuestionnaireUserPage(): JSX.Element {
     dispatch(updateUserWithQuestionnaireDataThunk({formData: questionnaireFormData}));
   }
 
-  if(actualUserData.trainingLevel){
+  if(actualUserData && actualUserData.trainingLevel){
     return <Navigate to={AppRoutes.INDEX}/>
   }
 

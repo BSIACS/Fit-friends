@@ -8,17 +8,15 @@ import { BadRequestPage } from '../bad-request/bad-request.page';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { UserRoleEnum } from '../../types/user-role.enum';
 import { LookingForCompanyListItemComponent } from '../../components/looking-for-company-list-item/looking-for-company-list-item.component';
-import Slider from "react-slick";
+import Slider, { Settings } from "react-slick";
 import { TrainingDTO } from '../../dto/training.dto';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { UserCardTrainingListItemComponent } from '../../components/user-card-training-list-item/user-card-training-list-item.component';
 import { AuthorizationHeader, AxiosFactory } from '../../services/axios';
 import { APIRoutes } from '../../constants/api-routes.constants';
-import { sliderSettings } from './components-settings/slider.settings';
-import { singleSliderSettings } from './components-settings/single-slider.settings';
 
 /**
- * Главная страница пользователя с ролью "user"
+ * Главная страница для роли "user"
  */
 export function IndexPage(): JSX.Element {
   const authoriztionData = useAppSelector(state => state.authorization.authoriztionData);
@@ -34,6 +32,32 @@ export function IndexPage(): JSX.Element {
   const popularTrainingsSliderRef = useRef<any>();
   const lokkingForCompanySliderRef = useRef<any>();
 
+
+  const sliderSettings: Settings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    variableWidth: true,
+    adaptiveHeight: true,
+    arrows: false,
+    draggable: false,
+  };
+
+  const singleSliderSettings: Settings = {
+    dots: false,
+    arrows: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    pauseOnFocus: true,
+    autoplay: true,
+    draggable: false,
+    autoplaySpeed: 5000,
+  };
+
   useEffect(() => {
     if (authoriztionData) {
       getUsersData('isReadyForTraining=true&limit=8');
@@ -41,10 +65,6 @@ export function IndexPage(): JSX.Element {
     }
   }, [authoriztionData]);
 
-  /**
-   * Функция для получения списка пользователей
-   * @param queryString Параметры строки запроса
-   */
   const getUsersData = async (queryString: string) => {
     const axiosInstance = AxiosFactory.createAxiosInstance({authorizationHeader: AuthorizationHeader.ACCESS});
 
@@ -61,9 +81,6 @@ export function IndexPage(): JSX.Element {
     }
   }
 
-    /**
-   * Функция для получения списка данных о тренировках
-   */
   const getTrainingData = async () => {
     const axiosInstance = AxiosFactory.createAxiosInstance({authorizationHeader: AuthorizationHeader.ACCESS});
     try {
@@ -78,8 +95,6 @@ export function IndexPage(): JSX.Element {
       setIsRequestError(true);
     }
   }
-
-  //#region Handlers
 
   const popularTrainingsLeftArrowButtonClickHandler = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     popularTrainingsSliderRef.current.slickPrev();
@@ -111,8 +126,6 @@ export function IndexPage(): JSX.Element {
     specialOffersSliderRef.current.slickGoTo(2);
   }
 
-  //#endregion
-
   if (isRequestError) {
     return <BadRequestPage />;
   }
@@ -131,6 +144,7 @@ export function IndexPage(): JSX.Element {
               <ul className="special-offers__list">
                 {
                   <Slider ref={specialOffersSliderRef} {...singleSliderSettings}>
+
                     <li id='1' className="special-offers__item is-active">
                       <aside className="promo-slider">
                         <div className="promo-slider__overlay"></div>
@@ -228,6 +242,7 @@ export function IndexPage(): JSX.Element {
                         </div>
                       </aside>
                     </li>
+
                   </Slider>
                 }
               </ul>

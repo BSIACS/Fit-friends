@@ -23,7 +23,7 @@ export type AxiosFactoryOptions = {
 export class AxiosFactory {
   /**
    * Создаёт экземпляр axios с заранее опредлёнными параметрами
-   * @param options конфигурационные параметры запроса
+   * @param options конфигурационные параметры экземпляра axios
    */
   public static createAxiosInstance(options: AxiosFactoryOptions) {
     const axiosInstance = axios.create({
@@ -60,7 +60,7 @@ export class AxiosFactory {
   }
 
   /**
-   * Интерсептор предоставляющий функционал совершения повторного запроса при получении кода 401 от сервера
+   * Интерсептор предоставляющий функционал совершения повторного запроса для обновления пары токенов, при получении кода 401 от сервера
    */
   private static refreshTokensPairOn401StatusInterceptor = async (error: any) => {
     const originalRequest = error.config;

@@ -12,7 +12,9 @@ import { UserFormInfoComponent } from './user-info-form/user-info-form.component
 import { BadRequestPage } from '../bad-request/bad-request.page';
 import { CaloriesScheduleComponent } from './calories-schedule/calories-schedule.component';
 
-
+/**
+ * Страница персонального аккаунта пользователя с ролью "user"
+ */
 export function PersonalAccountUserPage(): JSX.Element {
   const authoriztionData = useAppSelector(state => state.authorization.authoriztionData);
   const isAuthoriztionDataLoading = useAppSelector(state => state.authorization.isLoading);

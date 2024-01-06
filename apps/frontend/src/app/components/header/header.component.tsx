@@ -4,7 +4,7 @@ import { signOutThunk } from '../../store/slices/authorization.thunk';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { UserRoleEnum } from '../../types/user-role.enum';
 import { AppRoutes } from '../../constants/app-routes.constants';
-import { clearAppliactionState } from '../../store/slices/application.slice';
+import { clearUserData } from '../../store/slices/application.slice';
 
 
 export function HeaderComponent(): JSX.Element {
@@ -14,7 +14,7 @@ export function HeaderComponent(): JSX.Element {
   const location = useLocation();
 
   const logoutClickHandler = (evt: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    dispatch(clearAppliactionState())
+    dispatch(clearUserData())
     dispatch(signOutThunk());
   }
 

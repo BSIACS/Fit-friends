@@ -58,8 +58,6 @@ export function UserCardPage(): JSX.Element {
       setIsUserDataLoaded(true);
     }
     catch (error) {
-      console.log('getUserData +++++++ ', error);
-
       setIsUserDataLoaded(true);
       setIsRequestError(true);
     }
@@ -74,8 +72,6 @@ export function UserCardPage(): JSX.Element {
       setIsFriendsDataLoaded(true);
     }
     catch (error) {
-      console.log('getFriendsData +++++++ ', error);
-
       setIsFriendsDataLoaded(true);
       setIsRequestError(true);
     }
@@ -94,8 +90,6 @@ export function UserCardPage(): JSX.Element {
       setIsFriendsDataLoaded(true);
     }
     catch (error) {
-      console.log('addToFriends +++++++ ', error);
-
       setIsFriendsDataLoaded(true);
       setIsRequestError(true);
     }

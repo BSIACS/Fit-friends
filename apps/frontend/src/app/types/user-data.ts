@@ -11,6 +11,5 @@ export class UserData {
   calories?: string
   trainingLevel?: string;
   trainingType?: string[];
-
   isReadyForTraining?: boolean;
 }

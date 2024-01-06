@@ -10,6 +10,10 @@ import { Navigate } from 'react-router-dom';
 import { getLocation } from '../../utils/view-transform';
 import { LocationEnum } from '../../types/location.enum';
 import { AppRoutes } from '../../constants/app-routes.constants';
+import { UserRoleEnum } from '../../types/user-role.enum';
+import { SexEnum } from '../../types/sex.enum';
+
+const EMPTY_FIELD = '';
 
 interface SignUpPageState {
   name: string;
@@ -23,13 +27,13 @@ interface SignUpPageState {
 }
 
 const signUpPageInitialState: SignUpPageState = {
-  name: '',
-  email: '',
-  birthDate: '',
+  name: EMPTY_FIELD,
+  email: EMPTY_FIELD,
+  birthDate: EMPTY_FIELD,
   location: LocationEnum.PETROGRADSKAYA,
-  password: '',
-  sex: 'not_stated',
-  role: 'user',
+  password: EMPTY_FIELD,
+  sex: SexEnum.NOT_STATED,
+  role: UserRoleEnum.USER,
   isAgree: false,
 }
 
@@ -61,6 +65,8 @@ export function SignUpPage(): JSX.Element {
     setPasswordError(passwordAPIError);
   }, [passwordAPIError]);
 
+  //#region HANDLERS
+
   const loadAvatarInputChangeHandler = (evt: React.ChangeEvent<any>) => {
     if (evt.target.files[0]) {
       avatarImgElement.current.src = URL.createObjectURL(evt.target.files[0]);
@@ -79,11 +85,16 @@ export function SignUpPage(): JSX.Element {
     !formData.get('password') ? setPasswordError({ isError: true, message: 'Поле обязательно для заполнения' }) : setPasswordError({ isError: false, message: '' });
     !formData.get('birthDate') ? setBirthDateError({ isError: true, message: 'Поле обязательно для заполнения' }) : setBirthDateError({ isError: false, message: '' });
 
-    if (!formData.get('name') || !formData.get('email') || !formData.get('password') || !formData.get('birthDate')) {
+    if (
+      !formData.get('name') ||
+      !formData.get('email') ||
+      !formData.get('password') ||
+      !formData.get('birthDate')
+    ) {
       return;
     }
 
-    if (formData.get('role') === 'user') {
+    if (formData.get('role') === UserRoleEnum.USER) {
       dispatch(registerUserThunk({ formData: formData }));
     }
     else {
@@ -124,7 +135,7 @@ export function SignUpPage(): JSX.Element {
     setIsLocationListVissible(false);
   }
 
-  const selectLocationButtonClick = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const selectLocationButtonClickHandler = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     evt.stopPropagation();
     evt.preventDefault();
     setIsLocationListVissible(!isLocationListVissible);
@@ -134,11 +145,13 @@ export function SignUpPage(): JSX.Element {
     setIsLocationListVissible(!isLocationListVissible);
   }
 
-  if (isRegistrationComplete && authoriztionData?.role === 'trainer') {
+  //#endregion
+
+  if (isRegistrationComplete && authoriztionData?.role === UserRoleEnum.TRAINER) {
     return <Navigate to={AppRoutes.QUESTIONNAIRE_COACH} />;
   }
 
-  if (isRegistrationComplete && authoriztionData?.role === 'user') {
+  if (isRegistrationComplete && authoriztionData?.role === UserRoleEnum.USER) {
     return <Navigate to={AppRoutes.QUESTIONNAIRE_USER} />;
   }
 
@@ -205,7 +218,7 @@ export function SignUpPage(): JSX.Element {
                         <span className="custom-select__label">Ваша локация</span>
                         <div className="custom-select__placeholder" style={{ bottom: '42px' }}>{getLocation(state.location)}</div>
                         <button className={`${isLocationListVissible ? styles.appButtonNoBottomBorderRounds : ''} custom-select__button`} type="button"
-                          aria-label="Выберите одну из опций" onBlur={selectLocationBlurHandler} onClick={selectLocationButtonClick}>
+                          aria-label="Выберите одну из опций" onBlur={selectLocationBlurHandler} onClick={selectLocationButtonClickHandler}>
                           <span className="custom-select__text"></span>
                           <span className="custom-select__icon">
                             <svg width="15" height="6" aria-hidden="true" viewBox="0 0 17 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 1L9.82576 6.5118C9.09659 7.16273 7.90341 7.16273 7.17424 6.5118L1 1" stroke="currentColor" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -232,21 +245,21 @@ export function SignUpPage(): JSX.Element {
                         <div className="custom-toggle-radio custom-toggle-radio--big">
                           <div className="custom-toggle-radio__block">
                             <label>
-                              <input type="radio" name="sex" value='male' checked={state.sex === 'male' ?? true} onChange={sexRadioButtonClickHandler} />
+                              <input type="radio" name="sex" value='male' checked={state.sex === SexEnum.MALE ?? true} onChange={sexRadioButtonClickHandler} />
                               <span className="custom-toggle-radio__icon"></span>
                               <span className="custom-toggle-radio__label">Мужской</span>
                             </label>
                           </div>
                           <div className="custom-toggle-radio__block">
                             <label>
-                              <input type="radio" name="sex" value='female' checked={state.sex === 'female' ?? true} onChange={sexRadioButtonClickHandler} />
+                              <input type="radio" name="sex" value='female' checked={state.sex === SexEnum.FEMALE ?? true} onChange={sexRadioButtonClickHandler} />
                               <span className="custom-toggle-radio__icon"></span>
                               <span className="custom-toggle-radio__label">Женский</span>
                             </label>
                           </div>
                           <div className="custom-toggle-radio__block">
                             <label>
-                              <input type="radio" name="sex" value='not_stated' checked={state.sex === 'not_stated' ?? true} onChange={sexRadioButtonClickHandler} />
+                              <input type="radio" name="sex" value='not_stated' checked={state.sex === SexEnum.NOT_STATED ?? true} onChange={sexRadioButtonClickHandler} />
                               <span className="custom-toggle-radio__icon"></span>
                               <span className="custom-toggle-radio__label">Неважно</span>
                             </label>

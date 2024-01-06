@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Document, Page } from 'react-pdf';
 import { pdfjs } from 'react-pdf';
-import { TrainerDTO } from '../../../dto/trainer.dto';
 import { UUID } from '../../../types/uuid.type';
 import Slider, { Settings } from 'react-slick';
 import { CertificateComponent } from '../certificate/certificate.component';
@@ -29,7 +27,7 @@ const settings: Settings = {
 export function CertificatesComponent({ trainerId }: CertificatesComponentProps): JSX.Element {
   const dispatch = useAppDispatch();
   const certificatesSliderRef = useRef<any>();
-  const certificates = useAppSelector((state) => state.application.actualTrainerData.certificateFilesNames);
+  const certificates = useAppSelector((state) =>  state.application.actualTrainerData ? state.application.actualTrainerData.certificateFilesNames : []);
   const loadFileInputRef = useRef<HTMLInputElement | null>(null);
 
   pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;

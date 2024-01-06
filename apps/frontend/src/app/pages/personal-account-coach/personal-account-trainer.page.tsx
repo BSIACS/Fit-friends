@@ -5,7 +5,7 @@ import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { getTrainerDetailThunk } from '../../store/slices/application.thunk';
 import { setIsLoading } from '../../store/slices/application.slice';
-import { Link, Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { AppRoutes } from '../../constants/app-routes.constants';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { CertificatesComponent } from './certificates/certificates.component';
@@ -18,7 +18,6 @@ export function PersonalAccountTrainerPage(): JSX.Element {
   const dispatch = useAppDispatch();
   const trainer = useAppSelector(state => state.application.editTrainerFormData);
   const isBadRequest = useAppSelector(state => state.application.isBadRequest);
-  const isPersonalAccountCoachPageDataLoading = useAppSelector(state => state.application.isPersonalAccountCoachPageDataLoading);
 
   useEffect(() => {
     dispatch(setIsLoading(true));
@@ -26,13 +25,13 @@ export function PersonalAccountTrainerPage(): JSX.Element {
   }, []);
 
   if (isBadRequest) {
-    return <BadRequestPage/>;
+    return <BadRequestPage />;
   }
 
   return (
     <div className="wrapper">
       <HeaderComponent />
-      <LoaderComponent isHidden={!isPersonalAccountCoachPageDataLoading} />
+      <LoaderComponent isHidden={trainer !== null} />
       <main>
         <section className="inner-page" >
           <div className="container">
@@ -84,7 +83,10 @@ export function PersonalAccountTrainerPage(): JSX.Element {
                       </div>
                     </div>
                   </div>
-                  <CertificatesComponent trainerId={trainer.id as UUID} certificateFilesNames={trainer.certificateFilesNames as string[]}/>
+                  {
+                    trainer &&
+                    <CertificatesComponent trainerId={trainer.id as UUID} certificateFilesNames={trainer.certificateFilesNames as string[]} />
+                  }
                 </div>
               </div>
             </div>

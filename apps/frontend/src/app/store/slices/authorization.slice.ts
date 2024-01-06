@@ -8,6 +8,7 @@ import { RefreshTokensPairDTO } from '../../dto/refresh-tokens-pair.dto';
 import { AuthorizationStatusEnum } from '../../types/authorization-status.enum';
 import { RegisterTrainerDTO } from '../../dto/register-trainer.dto';
 import { RegisterUserDTO } from '../../dto/register-user.dto';
+import { TokenPayloadInterface } from '../../types/token-payload.interface';
 
 const EMAIL__MESSAGE_MARKER = '[email] ';
 const PASSWORD__MESSAGE_MARKER = '[password] ';
@@ -15,7 +16,6 @@ const PASSWORD__MESSAGE_MARKER = '[password] ';
 
 export interface AuthorizationState {
   isLoading: boolean;
-  //isRefreshRejected: boolean;
   authoriztionData: AuthoriztionData | undefined;
   isRegistrationComplete: boolean;
   authoriztionStatus: AuthorizationStatusEnum;
@@ -25,7 +25,6 @@ export interface AuthorizationState {
 
 const initialState: AuthorizationState = {
   isLoading: false,
-  //isRefreshRejected: false,
   authoriztionData: undefined,
   isRegistrationComplete: false,
   authoriztionStatus: AuthorizationStatusEnum.UNDEFINED,
@@ -76,12 +75,11 @@ export const authorizationSlice = createSlice({
           setAccessToken(action.payload.accessToken);
           setRefreshToken(action.payload.refreshToken);
           state.authoriztionStatus = AuthorizationStatusEnum.AUTHORIZED;
-          const decodedToken: any = decodeToken<any>(action.payload.accessToken);
+          const decodedToken: TokenPayloadInterface = decodeToken<TokenPayloadInterface>(action.payload.accessToken) as TokenPayloadInterface;
           state.authoriztionData = { userId: decodedToken.userId, role: decodedToken.role };
         }
       })
       .addCase(refreshTokensPairThunk.pending, (state) => {
-        //state.isRefreshRejected = false;
         state.authoriztionData = {};
         state.isLoading = true;
       })
@@ -90,7 +88,7 @@ export const authorizationSlice = createSlice({
           setAccessToken(action.payload.accessToken);
           setRefreshToken(action.payload.refreshToken);
           state.authoriztionStatus = AuthorizationStatusEnum.AUTHORIZED;
-          const decodedToken: any = decodeToken<any>(action.payload.accessToken);
+          const decodedToken: TokenPayloadInterface = decodeToken<TokenPayloadInterface>(action.payload.accessToken) as TokenPayloadInterface;
           state.authoriztionData = { userId: decodedToken.userId, role: decodedToken.role };
         }
         state.authoriztionStatus = AuthorizationStatusEnum.AUTHORIZED;
@@ -139,5 +137,5 @@ export const authorizationSlice = createSlice({
   }
 });
 
-export const { setIsRegistrationComplete, setIsLoading, setAPIError } = authorizationSlice.actions;
+export const { setIsRegistrationComplete, setIsLoading, setAuthorizationStatus, setAPIError } = authorizationSlice.actions;
 export const authorizationReducer = authorizationSlice.reducer;

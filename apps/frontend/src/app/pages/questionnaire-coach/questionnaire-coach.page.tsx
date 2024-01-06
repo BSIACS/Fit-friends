@@ -100,7 +100,7 @@ export function QuestionnaireCoachPage(): JSX.Element {
     dispatch(updateTrainerWithQuestionnaireDataThunk({ formData: questionnaireFormData }));
   }
 
-  if (actualTrainerData.trainingLevel) {
+  if (actualTrainerData && actualTrainerData.trainingLevel) {
     return <Navigate to={AppRoutes.TRAINER_ACCOUNT} />
   }
 
