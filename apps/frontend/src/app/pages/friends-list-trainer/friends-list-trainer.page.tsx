@@ -2,9 +2,6 @@ import { useEffect, useState } from 'react';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { HeaderComponent } from '../../components/header/header.component';
 import { LoaderComponent } from '../../components/loader/loader.component';
-import axios from 'axios';
-import { InternalAxiosRequestConfig } from 'axios';
-import { getAccessToken } from '../../services/token';
 import { UserDTO } from '../../dto/user.dto';
 import { FriendsListItemUserComponent } from '../../components/friends-list-item-user/friends-list-item-user.component';
 import { TrainerDTO } from '../../dto/trainer.dto';
@@ -15,13 +12,8 @@ import { BadRequestPage } from '../bad-request/bad-request.page';
 import { FriendsListDTO } from '../../dto/friends-list.dto';
 import { Link } from 'react-router-dom';
 import { AppRoutes } from '../../constants/app-routes.constants';
+import { AuthorizationHeader, AxiosFactory } from '../../services/axios';
 
-
-const requestWithAccessTokenInterceptor = (config: InternalAxiosRequestConfig) => {
-  config.headers.Authorization = `Bearer ${getAccessToken()}`;
-
-  return config;
-}
 
 export function FriendsListTrainerPage(): JSX.Element {
   const authoriztionData = useAppSelector(state => state.authorization.authoriztionData);
@@ -33,7 +25,6 @@ export function FriendsListTrainerPage(): JSX.Element {
 
   const [friendsNumber, setFriendsNumber] = useState<number>(0);
   const [currentPageNumber, setCurrentPageNumber] = useState<number>(1);
-
 
   const [isFriendsDataLoaded, setIsFriendsDataLoaded] = useState<boolean>(false);
   const [isPersonalTrainingRequestsDataLoaded, setIsPersonalTrainingRequestsDataLoaded] = useState<boolean>(false);
@@ -50,12 +41,13 @@ export function FriendsListTrainerPage(): JSX.Element {
   }, [authoriztionData]);
 
   const getFriendsData = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsFriendsDataLoaded(false);
-      const response = await axiosInstance.
-        get<FriendsListDTO>(`http://localhost:3042/api/trainerAccount/friends/${authoriztionData?.userId}?friendsPerPage=${3}&pageNumber=${currentPageNumber}`);
+
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .get<FriendsListDTO>(`/trainerAccount/friends/${authoriztionData?.userId}?friendsPerPage=${3}&pageNumber=${currentPageNumber}`);
+
       if (friends === undefined) {
         setFriends(response.data.friends);
       }
@@ -75,12 +67,12 @@ export function FriendsListTrainerPage(): JSX.Element {
 
   //Запросы на персональную тренировку от пользователей
   const getPersonalTrainingRequests = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsPersonalTrainingRequestsDataLoaded(false);
-      const response = await axiosInstance.
-        post<PersonalTrainingInvitationDTO[]>(`http://localhost:3042/api/trainingRequest/getPersonalTrainingsByResponserId`, {});
+
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .post<PersonalTrainingInvitationDTO[]>(`/trainingRequest/getPersonalTrainingsByResponserId`, {});
 
       setPersonalTrainingRequests(response.data);
       setIsPersonalTrainingRequestsDataLoaded(true);
@@ -92,14 +84,16 @@ export function FriendsListTrainerPage(): JSX.Element {
   }
 
   const acceptPersonalTrainingRequest = async (id: UUID) => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsPersonalTrainingRequestsDataLoaded(false);
-      const response = await axiosInstance.patch<PersonalTrainingInvitationDTO>(`http://localhost:3042/api/trainingRequest/personalTraining`, {
-        id: id,
-        status: PersonalTrainingRequestStatusEnum.ACCEPTED
-      });
+
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .patch<PersonalTrainingInvitationDTO>(`/trainingRequest/personalTraining`, {
+          id: id,
+          status: PersonalTrainingRequestStatusEnum.ACCEPTED
+        });
+
       setIsPersonalTrainingRequestsDataLoaded(true);
 
       return response.data;
@@ -111,14 +105,16 @@ export function FriendsListTrainerPage(): JSX.Element {
   }
 
   const rejectPersonalTrainingRequest = async (id: UUID) => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsPersonalTrainingRequestsDataLoaded(false);
-      const response = await axiosInstance.patch<PersonalTrainingInvitationDTO>(`http://localhost:3042/api/trainingRequest/personalTraining`, {
-        id: id,
-        status: PersonalTrainingRequestStatusEnum.REJECTED
-      });
+
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .patch<PersonalTrainingInvitationDTO>(`/trainingRequest/personalTraining`, {
+          id: id,
+          status: PersonalTrainingRequestStatusEnum.REJECTED
+        });
+
       setIsPersonalTrainingRequestsDataLoaded(true);
 
       return response.data;

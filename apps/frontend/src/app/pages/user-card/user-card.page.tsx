@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { UserDTO } from '../../dto/user.dto';
-import { getAccessToken } from '../../services/token';
-import axios from 'axios';
-import { InternalAxiosRequestConfig } from 'axios';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import { getLocation, getTypeTrainingTag } from '../../utils/view-transform';
@@ -18,11 +15,6 @@ import { AppRoutes } from '../../constants/app-routes.constants';
 import { FriendsListDTO } from '../../dto/friends-list.dto';
 import { AuthorizationHeader, AxiosFactory } from '../../services/axios';
 
-const requestWithAccessTokenInterceptor = (config: InternalAxiosRequestConfig) => {
-  config.headers.Authorization = `Bearer ${getAccessToken()}`;
-
-  return config;
-}
 
 export function UserCardPage(): JSX.Element {
   const authoriztionData = useAppSelector(state => state.authorization.authoriztionData);
@@ -53,7 +45,8 @@ export function UserCardPage(): JSX.Element {
 
   const getUserData = async () => {
     try {
-      const response = await AxiosFactory.createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS }).get(`/users/detail/${id}`);
+      const response = await AxiosFactory.createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .get(`/users/detail/${id}`);
       setUser(response.data);
       setIsUserDataLoaded(true);
     }
@@ -66,7 +59,8 @@ export function UserCardPage(): JSX.Element {
   const getFriendsData = async () => {
 
     try {
-      const response = await AxiosFactory.createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS }).get<FriendsListDTO>(`/userAccount/friends/${authoriztionData?.userId}`);
+      const response = await AxiosFactory.createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .get<FriendsListDTO>(`/userAccount/friends/${authoriztionData?.userId}`);
       const friends = response.data.friends?.map((item) => item.id);
       setFriends(friends as string[]);
       setIsFriendsDataLoaded(true);
@@ -112,8 +106,6 @@ export function UserCardPage(): JSX.Element {
       setIsFriendsDataLoaded(true);
     }
     catch (error) {
-      console.log('removeFromFriends +++++++ ', error);
-
       setIsFriendsDataLoaded(true);
       setIsRequestError(true);
     }

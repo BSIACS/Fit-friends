@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react';
 import { HeaderComponent } from '../../components/header/header.component';
-import { requestWithAccessTokenInterceptor } from '../../services/interceptors';
 import { BadRequestPage } from '../bad-request/bad-request.page';
 import { useAppSelector } from '../../hooks/useAppSelector';
-import axios from 'axios';
 import { UserBalance } from '../../dto/user-balance.dto';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { TrainingListItemComponent } from '../../components/training-list-item/training-list-item.component';
 import { TrainingDTO } from '../../dto/training.dto';
 import { Link } from 'react-router-dom';
 import { AppRoutes } from '../../constants/app-routes.constants';
+import { AuthorizationHeader, AxiosFactory } from '../../services/axios';
 
 
 export function MyPurchasesPage(): JSX.Element {
@@ -24,13 +23,13 @@ export function MyPurchasesPage(): JSX.Element {
     getUserBalanceData();
   }, [authoriztionData]);
 
-
   const getUserBalanceData = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsBalanceDataLoaded(false);
-      const response = await axiosInstance.get<UserBalance[]>(`http://localhost:3042/api/userAccount/balance`);
+
+      const response = await AxiosFactory.createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .get<UserBalance[]>(`/userAccount/balance`);
+
       setUserBalance(response.data);
       setUserBalanceToShow(response.data);
       setIsBalanceDataLoaded(true);

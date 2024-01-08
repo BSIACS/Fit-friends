@@ -16,12 +16,12 @@ class EnvironmentsConfig {
   })
   public DB_HOST: string;
 
-  @IsNumber({}, {
-    message: EnvValidationMessage.DBPortRequired
-  })
-  @Min(MIN_PORT)
-  @Max(MAX_PORT)
-  public DB_PORT: number;
+  // @IsNumber({}, {
+  //   message: EnvValidationMessage.DBPortRequired
+  // })
+  // @Min(MIN_PORT)
+  // @Max(MAX_PORT)
+  public DB_PORT: string;
 
   @IsString({
     message: EnvValidationMessage.DBUserRequired
@@ -39,12 +39,12 @@ class EnvironmentsConfig {
   })
   public MAIL_SMTP_HOST: string;
 
-  @IsNumber({}, {
-    message: EnvValidationMessage.MailServerPortRequired
-  })
-  @Min(MIN_PORT)
-  @Max(MAX_PORT)
-  public MAIL_SMTP_PORT: number;
+  // @IsNumber({}, {
+  //   message: EnvValidationMessage.MailServerPortRequired
+  // })
+  // @Min(MIN_PORT)
+  // @Max(MAX_PORT)
+  public MAIL_SMTP_PORT: string;
 
   @IsString({
     message: EnvValidationMessage.MailServerUserNameRequired

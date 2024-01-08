@@ -1,0 +1,189 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                      String                    @id @unique @default(uuid()) @db.Uuid
+  name                    String                    @db.VarChar(64)
+  email                   String                    @unique @db.VarChar(64)
+  avatarFileName          String                    @map("avatar_file_name") @db.VarChar(256)
+  passwordHash            String                    @map("password_hash") @db.VarChar(64)
+  sex                     String                    @db.VarChar(64)
+  birthDate               DateTime                  @map("birth_date") @db.Timestamptz()
+  role                    String                    @db.VarChar(64)
+  description             String                    @db.VarChar(256)
+  location                String                    @db.VarChar(64)
+  backgroundImgFileName   String                    @map("background_image_file_name") @db.VarChar(256)
+  createdAt               DateTime                  @map("created_at") @db.Timestamptz()
+  trainingLevel           String                    @map("training_level") @db.VarChar(64)
+  trainingType            String[]                  @map("training_type") @db.VarChar(64)
+  trainingDuration        String                    @map("training_duration") @db.VarChar(64)
+  calories                Int
+  caloriesPerDay          Int                       @map("calories_per_day")
+  isReadyForTraining      Boolean                   @default(false) @map("is_ready_for_training") @db.Boolean
+  friends                 String[]                  @db.Uuid
+  Review                  Review[]
+  Purchase                Purchase[]
+  PersonalTrainingRequest PersonalTrainingRequest[]
+  Notification            Notification[]
+  UserBalance             UserBalance[]
+
+  @@map("users")
+}
+
+model Trainer {
+  id                        String                               @id @unique @default(uuid()) @db.Uuid
+  name                      String                               @db.VarChar(64)
+  email                     String                               @unique @db.VarChar(64)
+  avatarFileName            String                               @map("avatar_file_name") @db.VarChar(256)
+  passwordHash              String                               @map("password_hash") @db.VarChar(64)
+  sex                       String                               @db.VarChar(64)
+  birthDate                 DateTime                             @map("birth_date") @db.Timestamptz()
+  role                      String                               @db.VarChar(64)
+  description               String                               @db.VarChar(256)
+  location                  String                               @db.VarChar(64)
+  backgroundImgFileName     String                               @map("background_image_file_name") @db.VarChar(256)
+  createdAt                 DateTime                             @map("created_at") @db.Timestamptz()
+  trainingLevel             String                               @map("training_level") @db.VarChar(64)
+  trainingType              String[]                             @map("training_type") @db.VarChar(64)
+  certificateFilesNames     String[]                             @map("certificate_files_names") @db.VarChar(256)
+  merits                    String                               @db.VarChar(256)
+  isReadyForTraining        Boolean                              @default(false) @map("is_ready_for_training") @db.Boolean
+  subscribers               String[]                             @db.Uuid
+  friends                   String[]                             @db.Uuid
+  Training                  Training[]
+  PersonalTrainingRequest   PersonalTrainingRequest[]
+  newTrainingsNotifications NewTrainingsScheduledNotifications[]
+
+  @@map("trainers")
+}
+
+model Training {
+  id                        String                               @id @unique @default(uuid()) @db.Uuid
+  name                      String                               @db.VarChar(64)
+  backgroundImgFileName     String                               @map("background_img_file_name") @db.VarChar(256)
+  trainingLevel             String                               @map("training_level") @db.VarChar(64)
+  trainingType              String                               @map("training_type") @db.VarChar(64)
+  trainingDuration          String                               @map("training_duration") @db.VarChar(64)
+  price                     Int
+  calories                  Int
+  description               String                               @db.VarChar(256)
+  sex                       String                               @db.VarChar(64)
+  videoDemoFileName         String                               @map("video_demo_file_name") @db.VarChar(256)
+  rating                    Int
+  votesNumber               Int                                  @map("votes_number")
+  pointsSum                 Int                                  @map("points_sum")
+  trainer                   Trainer                              @relation(fields: [trainingCreatorId], references: [id])
+  trainingCreatorId         String                               @map("training_creator_id") @db.Uuid
+  isSpecial                 Boolean                              @default(false) @map("is_special") @db.Boolean
+  Review                    Review[]
+  Purchase                  Purchase[]
+  UserBalance               UserBalance[]
+  newTrainingsNotifications NewTrainingsScheduledNotifications[]
+
+  @@map("trainings")
+}
+
+model Review {
+  id         String   @id @unique @default(uuid()) @db.Uuid
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String   @map("user_id") @db.Uuid
+  training   Training @relation(fields: [trainingId], references: [id])
+  trainingId String   @map("training_id") @db.Uuid
+  rating     Int
+  text       String   @db.VarChar(1024)
+  createdAt  DateTime @map("created_at") @db.Timestamptz()
+
+  @@map("reviews")
+}
+
+model Purchase {
+  id            String   @id @unique @default(uuid()) @db.Uuid
+  user          User     @relation(fields: [userId], references: [id])
+  userId        String   @map("user_id") @db.Uuid
+  purchaseType  String   @map("purchase_type") @db.VarChar(64)
+  training      Training @relation(fields: [trainingId], references: [id])
+  trainingId    String   @map("training_id") @db.Uuid
+  price         Int
+  quantity      Int
+  totalPrice    Int
+  paymentMethod String   @map("payment_method") @db.VarChar()
+  createdAt     DateTime @map("created_at")
+
+  @@map("purchases")
+}
+
+model PersonalTrainingRequest {
+  id              String   @id @unique @default(uuid()) @db.Uuid
+  user            User     @relation(fields: [requestorId], references: [id])
+  requestorId     String   @map("requestor_id") @db.Uuid
+  trainer         Trainer  @relation(fields: [responserId], references: [id])
+  responserId     String   @map("responser_id") @db.Uuid
+  createdAt       DateTime @map("created_at") @db.Timestamptz()
+  statusChangedAt DateTime @map("status_changed_at") @db.Timestamptz()
+  status          String   @db.VarChar(64)
+
+  @@map("personal_training_requests")
+}
+
+model CooperativeTrainingRequest {
+  id              String   @id @unique @default(uuid()) @db.Uuid
+  requesterId     String   @map("requester_id") @db.Uuid
+  responserId     String   @map("responser_id") @db.Uuid
+  createdAt       DateTime @map("created_at") @db.Timestamptz()
+  statusChangedAt DateTime @map("status_changed_at") @db.Timestamptz()
+  status          String   @db.VarChar(64)
+
+  @@map("cooperative_training_requests")
+}
+
+model Notification {
+  id        String   @id @unique @default(uuid()) @db.Uuid
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @map("user_id") @db.Uuid
+  createdAt DateTime @map("created_at") @db.Timestamptz()
+  text      String   @db.VarChar(256)
+
+  @@map("notifications")
+}
+
+model UserBalance {
+  id         String   @id @unique @default(uuid()) @db.Uuid
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String   @map("user_id") @db.Uuid
+  training   Training @relation(fields: [trainingId], references: [id])
+  trainingId String   @map("training_id") @db.Uuid
+  remained   Int
+
+  @@map("user_balances")
+}
+
+model RefreshToken {
+  id           String   @id @unique @default(uuid()) @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  refreshToken String   @map("refresh_token")
+  createdAt    DateTime @map("created_at") @db.Timestamptz()
+  expiresIn    DateTime @map("expires_in") @db.Timestamptz()
+
+  @@map("refresh_tokens")
+}
+
+model NewTrainingsScheduledNotifications {
+  id          String   @id @unique @default(uuid()) @db.Uuid
+  trainer     Trainer  @relation(fields: [trainerId], references: [id])
+  trainerId   String   @map("trainer_id") @db.Uuid
+  training    Training @relation(fields: [trainingId], references: [id])
+  trainingId  String   @map("training_id") @db.Uuid
+  subscribers String[] @db.Uuid
+
+  @@map("new_trainings_scheduled_notifications")
+}

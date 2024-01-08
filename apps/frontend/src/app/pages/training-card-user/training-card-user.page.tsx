@@ -2,7 +2,6 @@ import { Link, useParams } from 'react-router-dom';
 import { HeaderComponent } from '../../components/header/header.component';
 import { useEffect, useState } from 'react';
 import { UUID } from '../../types/uuid.type';
-import axios from 'axios';
 import { ReviewDTO } from '../../dto/review.dto';
 import { TrainingDTO } from '../../dto/training.dto';
 import { ReviewSideBarItemComponent } from '../../components/review-side-bar-item/review-side-bar-item';
@@ -14,9 +13,9 @@ import { TrainingTypeEnum } from '../../types/training-type.enum';
 import { TrainingDurationEnum } from '../../types/training-duration.enum';
 import { UserBalance } from '../../dto/user-balance.dto';
 import { BadRequestPage } from '../bad-request/bad-request.page';
-import { requestWithAccessTokenInterceptor } from '../../services/interceptors';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { AppRoutes } from '../../constants/app-routes.constants';
+import { AuthorizationHeader, AxiosFactory } from '../../services/axios';
 
 export function TrainingCardUserPage(): JSX.Element {
   const [reviews, setReviews] = useState<ReviewDTO[]>([]);
@@ -40,10 +39,11 @@ export function TrainingCardUserPage(): JSX.Element {
 
 
   const getTrainingData = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
-      const response = await axiosInstance.post<TrainingDTO>(`http://localhost:3042/api/trainings/detail`, { id: id });
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .post<TrainingDTO>(`/trainings/detail`, { id: id });
+
       setTraining(response.data);
       setIsTrainingDataLoaded(true);
 
@@ -55,10 +55,11 @@ export function TrainingCardUserPage(): JSX.Element {
   }
 
   const getReviewsData = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
-      const response = await axiosInstance.get<ReviewDTO[]>(`http://localhost:3042/api/reviews/${id}`);
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .get<ReviewDTO[]>(`/reviews/${id}`);
+
       setReviews(response.data.sort((item_1, item_2) => ((new Date(item_2.createdAt as string)).getTime() / 1000) - ((new Date(item_1.createdAt as string)).getTime() / 1000)));
       setIsReviewsLoaded(true);
     }
@@ -69,10 +70,10 @@ export function TrainingCardUserPage(): JSX.Element {
   }
 
   const getUserBalance = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
-      const response = await axiosInstance.get<UserBalance[]>(`http://localhost:3042/api/userAccount/balance`);
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .get<UserBalance[]>(`/userAccount/balance`);
 
       response.data.forEach((item) => item.trainingId === id && setCurrentTrainingBalance(item))
       setIsUserBalanceLoaded(true);
@@ -84,20 +85,22 @@ export function TrainingCardUserPage(): JSX.Element {
   }
 
   const buyTraining = async (paymentMethod: string, quantity: number): Promise<void> => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
-      await axiosInstance.post(`http://localhost:3042/api/userAccount/balance/add`, {
-        trainingId: id,
-        quantity: quantity,
-      });
+      await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .post(`/userAccount/balance/add`, {
+          trainingId: id,
+          quantity: quantity,
+        });
 
-      await axiosInstance.post(`http://localhost:3042/api/userAccount/purchase/add`, {
-        trainingId: id,
-        price: training.price,
-        quantity: quantity,
-        paymentMethod: paymentMethod,
-      });
+      await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .post(`/userAccount/purchase/add`, {
+          trainingId: id,
+          price: training.price,
+          quantity: quantity,
+          paymentMethod: paymentMethod,
+        });
 
       if (currentTrainingBalance) {
         setCurrentTrainingBalance({ ...currentTrainingBalance, remained: quantity })
@@ -113,14 +116,15 @@ export function TrainingCardUserPage(): JSX.Element {
   }
 
   const decrementUserBalance = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
+
     try {
       setIsUserBalanceLoaded(false);
-      await axiosInstance.post(`http://localhost:3042/api/userAccount/balance/remove`, {
-        trainingId: id,
-        quantity: 1,
-      });
+      await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .post(`/userAccount/balance/remove`, {
+          trainingId: id,
+          quantity: 1,
+        });
       currentTrainingBalance && setCurrentTrainingBalance({ ...currentTrainingBalance, remained: currentTrainingBalance.remained - 1 });
       setIsUserBalanceLoaded(true);
     }
@@ -131,15 +135,15 @@ export function TrainingCardUserPage(): JSX.Element {
   }
 
   const addReview = async (rating: number, text: string) => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsReviewsLoaded(false);
-      const response = await axiosInstance.post<ReviewDTO>(`http://localhost:3042/api/reviews`, {
-        trainingId: id,
-        rating: rating,
-        text: text,
-      });
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .post<ReviewDTO>(`/reviews`, {
+          trainingId: id,
+          rating: rating,
+          text: text,
+        });
       const modifiedReviews: ReviewDTO[] = [response.data, ...reviews]
       setReviews(modifiedReviews);
       setIsReviewsLoaded(true);

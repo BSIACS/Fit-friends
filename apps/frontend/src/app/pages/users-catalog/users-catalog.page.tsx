@@ -1,13 +1,9 @@
 import { useEffect, useState } from 'react';
 import { HeaderComponent } from '../../components/header/header.component';
-import { getAccessToken } from '../../services/token';
-import axios from 'axios';
-import { InternalAxiosRequestConfig } from 'axios';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { PersonDTO } from '../../dto/person.dto';
 import { UsersListItemComponent } from '../../components/users-list-item/users-list-item.component';
 import { Link, useSearchParams } from 'react-router-dom';
-import { LocationEnum } from '../../types/location.enum';
 import { TrainingTypeEnum } from '../../types/training-type.enum';
 import { UUID } from '../../types/uuid.type';
 import { TrainingLevelEnum } from '../../types/training-level.enum';
@@ -16,16 +12,8 @@ import { AppRoutes } from '../../constants/app-routes.constants';
 import { UserDTO } from '../../dto/user.dto';
 import { AuthorizationHeader, AxiosFactory } from '../../services/axios';
 
-
 const DEFAULT_TRAINING_LEVEL = TrainingLevelEnum.AMATEUR;
 const DEFAULT_SORT_BY_ROLE_VALUE = UserRoleEnum.TRAINER;
-
-
-const requestWithAccessTokenInterceptor = (config: InternalAxiosRequestConfig) => {
-  config.headers.Authorization = `Bearer ${getAccessToken()}`;
-
-  return config;
-}
 
 export function UsersCatalogPage(): JSX.Element {
   const [users, setUsers] = useState<PersonDTO[]>([]);
@@ -54,11 +42,12 @@ export function UsersCatalogPage(): JSX.Element {
   }, [actualQueryString]);
 
   const getUsersData = async (queryString: string, pageNumber: number) => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsUsersDataLoaded(false);
-      const response = await AxiosFactory.createAxiosInstance({authorizationHeader: AuthorizationHeader.ACCESS}).get(`/users/usersList?usersPerPage=${3}&pageNumber=${pageNumber}&${queryString}`)
+
+      const response = await AxiosFactory.createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .get(`/users/usersList?usersPerPage=${3}&pageNumber=${pageNumber}&${queryString}`);
+
       setUsers(response.data.users);
       setUsersCount(response.data.count);
 

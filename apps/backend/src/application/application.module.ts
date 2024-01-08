@@ -13,8 +13,7 @@ import { ReviewsModule } from './controllers/reviews/reviews.module';
 import { NotitficationsModule } from './controllers/notifications/notifications.module';
 import { TrainingRequestModule } from './controllers/training-request/training-request.module';
 import { PrismaModule } from './prisma/prisma.module';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
+
 
 @Module({
   imports: [
@@ -25,9 +24,6 @@ import { join } from 'path';
       load: [applicationConfig, jwtOptions, mailOptions],
       validate: validateEnvironments,
     }),
-    // ServeStaticModule.forRoot({
-    //   rootPath: join(__dirname, '..', 'backend/assets'),
-    // }),
     UsersModule,
     TrainerAccountModule,
     UserAccountModule,

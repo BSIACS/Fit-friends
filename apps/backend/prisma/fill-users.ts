@@ -16,7 +16,7 @@ export async function fillUsers(prisma: PrismaClient) {
     update: {},
     create: {
       id: '2bd0ea5f-7e5e-452f-8c7a-d83c00ca5442',
-      name: 'Маша',
+      name: 'Мария',
       email: 'masha@somemail.com',
       avatarFileName: 'friend-02.jpg',
       passwordHash: passwordHash,

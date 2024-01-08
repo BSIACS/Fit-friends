@@ -5,14 +5,13 @@ import { getTrainingLevel, getTypeTraining } from '../../utils/view-transform';
 import { TrainingDurationEnum } from '../../types/training-duration.enum';
 import { TrainingTypeEnum } from '../../types/training-type.enum';
 import { SexEnum } from '../../types/sex.enum';
-import axios from 'axios';
-import { requestWithAccessTokenInterceptor } from '../../services/interceptors';
 import { TrainingDTO } from '../../dto/training.dto';
 import { BadRequestPage } from '../bad-request/bad-request.page';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { Navigate } from 'react-router-dom';
 import { AppRoutes } from '../../constants/app-routes.constants';
+import { AuthorizationHeader, AxiosFactory, RequestBodyType } from '../../services/axios';
 
 const DEFAULT_SEX = SexEnum.NOT_STATED;
 const NAME_MIN_LENGTH = 1;
@@ -60,14 +59,10 @@ export function CreateTrainingPage(): JSX.Element {
   const createTraining = async (formData: FormData) => {
     setIsTrainingCreated(false);
 
-    const axiosInstance = axios.create({
-      method: "post",
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
-
     try {
-      await axiosInstance.post<TrainingDTO>(`http://localhost:3042/api/trainerAccount/createTraining`, formData);
+      await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS, requestBodyType: RequestBodyType.FORM_DATA })
+        .post<TrainingDTO>(`/trainerAccount/createTraining`, formData);
 
       setIsTrainingCreated(true);
     }
@@ -192,8 +187,8 @@ export function CreateTrainingPage(): JSX.Element {
 
   //#endregion
 
-  if(isTrainingCreated){
-    return <Navigate to={AppRoutes.TRAINER_ACCOUNT}/>
+  if (isTrainingCreated) {
+    return <Navigate to={AppRoutes.TRAINER_ACCOUNT} />
   }
 
   if (isRequestError) {
@@ -202,7 +197,7 @@ export function CreateTrainingPage(): JSX.Element {
 
   return (
     <div className="wrapper">
-      <LoaderComponent isHidden={!isAuthoriztionDataLoading}/>
+      <LoaderComponent isHidden={!isAuthoriztionDataLoading} />
       <main>
         <div className="popup-form popup-form--create-training">
           <div className="popup-form__wrapper">
@@ -215,7 +210,7 @@ export function CreateTrainingPage(): JSX.Element {
                   <div className="create-training">
                     <div className="create-training__wrapper">
                       <div className="create-training__block">
-                        <input name='trainingCreatorId' value={authoriztionData?.userId} hidden={true}/>
+                        <input name='trainingCreatorId' value={authoriztionData?.userId} hidden={true} />
                         <h2 className="create-training__legend">Название тренировки</h2>
                         <div className="custom-input create-training__input">
                           <label>
@@ -233,7 +228,7 @@ export function CreateTrainingPage(): JSX.Element {
                         <div className={`create-training__info ${styles.createTrainingInfoAdjustment}`}>
                           <div className="custom-select custom-select--not-selected"><span
                             className="custom-select__label">Выберите тип тренировки</span>
-                            <input hidden={true} name='trainingType' value={trainingType}/>
+                            <input hidden={true} name='trainingType' value={trainingType} />
                             <div className={`custom-select__placeholder ${styles.customSelectPlaceholderTrainingTypeAdjustment}`}>{getTypeTraining(trainingType)}</div>
                             <button className={`${isSelectTrainingTypeListVissible ? styles.appButtonNoBottomBorderRounds : ''} custom-select__button`} type="button" aria-label="Выберите одну из опций"
                               onClick={chooseTrainingTypeButtonClickHandler} onBlur={buttonBlurHandler}>
@@ -267,7 +262,7 @@ export function CreateTrainingPage(): JSX.Element {
                           </div>
                           <div className="custom-select custom-select--not-selected"><span
                             className="custom-select__label">Сколько времени потратим</span>
-                            <input hidden={true} name='trainingDuration' value={duration}/>
+                            <input hidden={true} name='trainingDuration' value={duration} />
                             <div className={`custom-select__placeholder ${styles.customSelectPlaceholderTrainingDurationAdjustment}`}>{duration}</div>
                             <button className={`${isSelectDurationListVissible ? styles.appButtonNoBottomBorderRounds : ''} custom-select__button`} type="button" aria-label="Выберите одну из опций"
                               onClick={chooseDurationButtonClickHandler} onBlur={buttonBlurHandler}>
@@ -299,7 +294,7 @@ export function CreateTrainingPage(): JSX.Element {
                           </div>
                           <div className="custom-select custom-select--not-selected"><span
                             className="custom-select__label">Выберите уровень тренировки</span>
-                            <input hidden={true} name='trainingLevel' value={trainingLevel}/>
+                            <input hidden={true} name='trainingLevel' value={trainingLevel} />
                             <div className="custom-select__placeholder">{getTrainingLevel(trainingLevel)}</div>
                             <button className={`${isSelectTrainingLevelListVissible ? styles.appButtonNoBottomBorderRounds : ''} custom-select__button`} type="button" aria-label="Выберите одну из опций"
                               onClick={chooseTrainingLevelButtonClickHandler} onBlur={buttonBlurHandler}>

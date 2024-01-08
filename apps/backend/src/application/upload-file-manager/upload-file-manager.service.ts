@@ -10,9 +10,9 @@ export class UploadFileManagerService {
   constructor() {
     this.logger = new Logger(UploadFileManagerService.name);
 
-    if (!existsSync(`${UPLOADS_FILES_PATH}/users-data`)) {
-      mkdirSync(`${UPLOADS_FILES_PATH}/users-data`);
-    }
+    // if (!existsSync(`${UPLOADS_FILES_PATH}/users-data`)) {
+    //   mkdirSync(`${UPLOADS_FILES_PATH}/users-data`);
+    // }
   }
 
   public saveAvatar(userId: string, file: Express.Multer.File) {

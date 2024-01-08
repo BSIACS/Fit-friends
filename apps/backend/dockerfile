@@ -1,0 +1,9 @@
+FROM node:lts-alpine
+WORKDIR /app
+COPY ./schema.prisma .
+COPY ./apps/backend/.env .
+COPY ./dist/apps/backend .
+RUN npm install --production
+RUN npm prune --production
+RUN npx prisma generate --schema ./schema.prisma
+CMD ["node", "./main.js"]

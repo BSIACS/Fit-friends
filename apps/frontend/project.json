@@ -19,7 +19,8 @@
         "styles": ["apps/frontend/src/assets/css/style.css"],
         "scripts": [],
         "isolatedConfig": true,
-        "webpackConfig": "apps/frontend/webpack.config.js"
+        "webpackConfig": "apps/frontend/webpack.config.js",
+        "generatePackageJson": true
       },
       "configurations": {
         "development": {
@@ -80,6 +81,22 @@
           "ci": true,
           "codeCoverage": true
         }
+      }
+    },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "docker build -f ./apps/frontend/dockerfile . --tag fit-friends.frontend --no-cache --force-rm"
+        ]
+      }
+    },
+    "compose": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          " docker-compose -f ./apps/frontend/docker-compose.stage.yml up"
+        ]
       }
     }
   },

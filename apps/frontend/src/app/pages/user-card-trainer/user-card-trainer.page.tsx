@@ -1,8 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { getAccessToken } from '../../services/token';
-import axios from 'axios';
-import { InternalAxiosRequestConfig } from 'axios';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import { getLocation, getTypeTrainingTag } from '../../utils/view-transform';
@@ -22,12 +19,8 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider, { Settings } from "react-slick";
 import { FriendsListDTO } from '../../dto/friends-list.dto';
+import { AuthorizationHeader, AxiosFactory } from '../../services/axios';
 
-const requestWithAccessTokenInterceptor = (config: InternalAxiosRequestConfig) => {
-  config.headers.Authorization = `Bearer ${getAccessToken()}`;
-
-  return config;
-}
 
 export function UserCardTrainerPage(): JSX.Element {
   const authoriztionData = useAppSelector(state => state.authorization.authoriztionData);
@@ -74,10 +67,12 @@ export function UserCardTrainerPage(): JSX.Element {
   //#region API
 
   const getTrainerData = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
-      const response = await axiosInstance.get<TrainerDTO>(`http://localhost:3042/api/users/detail/trainer/${id}`);
+
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .get<TrainerDTO>(`/users/detail/trainer/${id}`);
+
       setTrainer(response.data);
       setSubscribers([...response.data.subscribers as UUID[]]);
       setIsTrainerDataLoaded(true);
@@ -91,12 +86,12 @@ export function UserCardTrainerPage(): JSX.Element {
   }
 
   const getTrainingData = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
-      const response = await axiosInstance.post(`http://localhost:3042/api/trainings/catalogue`, {
-        trainerId: id
-      });
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .post(`/trainings/catalogue`, {
+          trainerId: id
+        });
       setTrainings(response.data);
       setIsTrainingsDataLoaded(true);
     }
@@ -107,10 +102,10 @@ export function UserCardTrainerPage(): JSX.Element {
   }
 
   const getFriendsData = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
-      const response = await axiosInstance.get<FriendsListDTO>(`http://localhost:3042/api/userAccount/friends/${authoriztionData?.userId}`);
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .get<FriendsListDTO>(`/userAccount/friends/${authoriztionData?.userId}`);
       const friends = response.data.friends?.map((item) => item.id);
       console.log(response.data.friends);
 
@@ -124,13 +119,13 @@ export function UserCardTrainerPage(): JSX.Element {
   }
 
   const addToFriends = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsFriendsDataLoaded(false);
-      await axiosInstance.post(`http://localhost:3042/api/userAccount/friends`, {
-        newFriendId: id
-      });
+      await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .post(`/userAccount/friends`, {
+          newFriendId: id
+        });
       if (friends && id) {
         setFriends([...friends, id]);
       }
@@ -143,13 +138,13 @@ export function UserCardTrainerPage(): JSX.Element {
   }
 
   const removeFromFriends = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsFriendsDataLoaded(false);
-      await axiosInstance.post(`http://localhost:3042/api/userAccount/friends/remove`, {
-        friendId: id
-      });
+      await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .post(`/userAccount/friends/remove`, {
+          friendId: id
+        });
 
       if (friends && id) {
         const indexToDelete = friends.indexOf(id);
@@ -166,13 +161,15 @@ export function UserCardTrainerPage(): JSX.Element {
   }
 
   const subscribeForNotification = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsSubscribersDataLoaded(false);
-      await axiosInstance.post(`http://localhost:3042/api/userAccount/subscribe`, {
-        trainerId: id
-      });
+
+      await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .post(`/userAccount/subscribe`, {
+          trainerId: id
+        });
+
       if (subscribers && id) {
         setSubscribers([...subscribers, id]);
       }
@@ -185,13 +182,15 @@ export function UserCardTrainerPage(): JSX.Element {
   }
 
   const unsubscribeFromNotification = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsSubscribersDataLoaded(false);
-      await axiosInstance.post(`http://localhost:3042/api/userAccount/unsubscribe`, {
-        trainerId: id
-      });
+
+      await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .post(`/userAccount/unsubscribe`, {
+          trainerId: id
+        });
+
       if (subscribers && id) {
         const indexToDelete = subscribers.indexOf(id);
         const newSubscribers = subscribers;
@@ -207,16 +206,16 @@ export function UserCardTrainerPage(): JSX.Element {
   }
 
   const getActualPersonalTrainingSuggestion = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsPersonalTrainingSuggestionDataLoaded(false);
-      const response = await axiosInstance.post<PersonalTrainingInvitationDTO>(`http://localhost:3042/api/trainingRequest/getUnderConsideration`,
-        {
-          responserId: id,
-        },
-      );
-      console.log('response.data - ', response.data.id);
+
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .post<PersonalTrainingInvitationDTO>(`/trainingRequest/getUnderConsideration`,
+          {
+            responserId: id,
+          },
+        );
 
       setActualPersonalTrainingSuggestion(response.data.id ? response.data : undefined);
       setIsPersonalTrainingSuggestionDataLoaded(true);
@@ -228,13 +227,15 @@ export function UserCardTrainerPage(): JSX.Element {
   }
 
   const createPersonalTrainingSuggestion = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsPersonalTrainingSuggestionDataLoaded(false);
-      const response = await axiosInstance.post<PersonalTrainingInvitationDTO>(`http://localhost:3042/api/trainingRequest`, {
-        responserId: id
-      });
+
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .post<PersonalTrainingInvitationDTO>(`/trainingRequest`, {
+          responserId: id
+        });
+
       setActualPersonalTrainingSuggestion(response.data);
       setIsPersonalTrainingSuggestionDataLoaded(true);
     }

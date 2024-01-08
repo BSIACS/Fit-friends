@@ -1,0 +1,9 @@
+version: '3.5'
+services:
+  fit-friends.frontend:
+    image: fit-friends.frontend
+    container_name: fit-friends.frontend
+    ports:
+      - '4200:4200'
+
+

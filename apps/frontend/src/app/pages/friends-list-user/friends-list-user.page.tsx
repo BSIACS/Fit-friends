@@ -2,9 +2,6 @@ import { useEffect, useState } from 'react';
 import { useAppSelector } from '../../hooks/useAppSelector';
 import { HeaderComponent } from '../../components/header/header.component';
 import { LoaderComponent } from '../../components/loader/loader.component';
-import axios from 'axios';
-import { InternalAxiosRequestConfig } from 'axios';
-import { getAccessToken } from '../../services/token';
 import { UserDTO } from '../../dto/user.dto';
 import { UserRoleEnum } from '../../types/user-role.enum';
 import { FriendsListItemUserComponent } from '../../components/friends-list-item-user/friends-list-item-user.component';
@@ -18,13 +15,9 @@ import { CooperativeTrainingInvitationDTO } from '../../dto/cooperative-training
 import { PersonalTrainingRequestStatusEnum } from '../../types/personal-training-request-status.enum';
 import { BadRequestPage } from '../bad-request/bad-request.page';
 import { FriendsListDTO } from '../../dto/friends-list.dto';
+import { AuthorizationHeader, AxiosFactory } from '../../services/axios';
 
 
-const requestWithAccessTokenInterceptor = (config: InternalAxiosRequestConfig) => {
-  config.headers.Authorization = `Bearer ${getAccessToken()}`;
-
-  return config;
-}
 
 export function FriendsListUserPage(): JSX.Element {
   const authoriztionData = useAppSelector(state => state.authorization.authoriztionData);
@@ -40,7 +33,6 @@ export function FriendsListUserPage(): JSX.Element {
 
   const [friendsNumber, setFriendsNumber] = useState<number>(0);
   const [currentPageNumber, setCurrentPageNumber] = useState<number>(1);
-
 
   const [isFriendsDataLoaded, setIsFriendsDataLoaded] = useState<boolean>(false);
   const [isCooperativeTrainingRequestsDataLoaded, setIsCooperativeTrainingRequestsDataLoaded] = useState<boolean>(false);
@@ -61,12 +53,13 @@ export function FriendsListUserPage(): JSX.Element {
   }, [authoriztionData]);
 
   const getFriendsData = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsFriendsDataLoaded(false);
-      const response = await axiosInstance.
-        get<FriendsListDTO>(`http://localhost:3042/api/userAccount/friends/${authoriztionData?.userId}?friendsPerPage=${6}&pageNumber=${currentPageNumber}`);
+
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .get<FriendsListDTO>(`/userAccount/friends/${authoriztionData?.userId}?friendsPerPage=${6}&pageNumber=${currentPageNumber}`);
+
       if (friends === undefined) {
         setFriends(response.data.friends);
       }
@@ -87,12 +80,13 @@ export function FriendsListUserPage(): JSX.Element {
 
   //Запросы на совместную тренировку к авторизованному пользователю
   const getCooperativeTrainingRequests = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsCooperativeTrainingRequestsDataLoaded(false);
-      const response = await axiosInstance.
-        post<PersonalTrainingInvitationDTO[]>(`http://localhost:3042/api/trainingRequest/getCooperativeTrainingsByResponserId`, {});
+
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .post<PersonalTrainingInvitationDTO[]>(`/trainingRequest/getCooperativeTrainingsByResponserId`, {});
+
       setCooperativeTrainingRequests(response.data);
       setIsCooperativeTrainingRequestsDataLoaded(true);
     }
@@ -104,12 +98,13 @@ export function FriendsListUserPage(): JSX.Element {
 
   //Ответы на запросы о совместной тренировке
   const getCooperativeTrainingResponses = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsCooperativeTrainingResponsesDataLoaded(false);
-      const response = await axiosInstance.
-        post<CooperativeTrainingInvitationDTO[]>(`http://localhost:3042/api/trainingRequest/getCooperativeTrainingsByRequesterId`, {});
+
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .post<CooperativeTrainingInvitationDTO[]>(`/trainingRequest/getCooperativeTrainingsByRequesterId`, {});
+
       setСooperativeTrainingResponses(response.data);
       setIsCooperativeTrainingResponsesDataLoaded(true);
     }
@@ -121,12 +116,13 @@ export function FriendsListUserPage(): JSX.Element {
 
   //Ответы на запросы о персональной тренировке от тренеров
   const getPersonalTrainingResponses = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsPersonalTrainingResponsesDataLoaded(false);
-      const response = await axiosInstance.
-        post<PersonalTrainingInvitationDTO[]>(`http://localhost:3042/api/trainingRequest/getPersonalTrainingsByRequesterId`, {});
+
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .post<PersonalTrainingInvitationDTO[]>(`/trainingRequest/getPersonalTrainingsByRequesterId`, {});
+
       setPersonalTrainingResponses(response.data);
       setIsPersonalTrainingResponsesDataLoaded(true);
     }
@@ -137,14 +133,16 @@ export function FriendsListUserPage(): JSX.Element {
   }
 
   const acceptInvitation = async (id: UUID) => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsPersonalTrainingResponsesDataLoaded(false);
-      const response = await axiosInstance.patch<PersonalTrainingInvitationDTO>(`http://localhost:3042/api/trainingRequest/cooperativeTraining`, {
-        id: id,
-        status: PersonalTrainingRequestStatusEnum.ACCEPTED
-      });
+
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .patch<PersonalTrainingInvitationDTO>(`/trainingRequest/cooperativeTraining`, {
+          id: id,
+          status: PersonalTrainingRequestStatusEnum.ACCEPTED
+        });
+
       setIsPersonalTrainingResponsesDataLoaded(true);
 
       return response.data;
@@ -156,14 +154,16 @@ export function FriendsListUserPage(): JSX.Element {
   }
 
   const rejectInvitation = async (id: UUID) => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsPersonalTrainingResponsesDataLoaded(false);
-      const response = await axiosInstance.patch<PersonalTrainingInvitationDTO>(`http://localhost:3042/api/trainingRequest/cooperativeTraining`, {
-        id: id,
-        status: PersonalTrainingRequestStatusEnum.REJECTED
-      });
+
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .patch<PersonalTrainingInvitationDTO>(`/trainingRequest/cooperativeTraining`, {
+          id: id,
+          status: PersonalTrainingRequestStatusEnum.REJECTED
+        });
+
       setIsPersonalTrainingResponsesDataLoaded(true);
 
       return response.data;
@@ -175,13 +175,15 @@ export function FriendsListUserPage(): JSX.Element {
   }
 
   const createCooperativeTrainingRequest = async (id: UUID) => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
       setIsCooperativeTrainingRequestsDataLoaded(false);
-      const response = await axiosInstance.post<PersonalTrainingInvitationDTO>(`http://localhost:3042/api/trainingRequest/cooperative`, {
-        responserId: id
-      });
+
+      const response = await AxiosFactory
+        .createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .post<PersonalTrainingInvitationDTO>(`/trainingRequest/cooperative`, {
+          responserId: id
+        });
+
       setCooperativeTrainingRequests([response.data]);
       setIsCooperativeTrainingRequestsDataLoaded(true);
 

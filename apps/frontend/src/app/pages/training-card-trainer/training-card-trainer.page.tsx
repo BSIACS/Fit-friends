@@ -2,25 +2,17 @@ import { useEffect, useRef, useState } from 'react';
 import { UUID } from '../../types/uuid.type';
 import { ReviewDTO } from '../../dto/review.dto';
 import { ReviewSideBarItemComponent } from '../../components/review-side-bar-item/review-side-bar-item';
-import axios from 'axios';
-import { InternalAxiosRequestConfig } from 'axios';
-import { getAccessToken } from '../../services/token';
 import { Link, useParams } from 'react-router-dom';
 import { TrainingDTO } from '../../dto/training.dto';
 import { BadRequestPage } from '../bad-request/bad-request.page';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import { AppRoutes } from '../../constants/app-routes.constants';
+import { AuthorizationHeader, AxiosFactory } from '../../services/axios';
 
-const requestWithAccessTokenInterceptor = (config: InternalAxiosRequestConfig) => {
-  config.headers.Authorization = `Bearer ${getAccessToken()}`;
-
-  return config;
-}
 
 export function TrainingCardTrainerPage(): JSX.Element {
   const [reviews, setReviews] = useState<ReviewDTO[]>([]);
-  const [trainingFormData, setTrainingFormData] = useState({ description: '' });
   const [training, setTraining] = useState<TrainingDTO>({});
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [isVideoReplacementInProgress, setIsVideoReplacementInProgress] = useState<boolean>(false);
@@ -40,10 +32,11 @@ export function TrainingCardTrainerPage(): JSX.Element {
   //#region API
 
   const getTrainingData = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
-      const response = await axiosInstance.post<TrainingDTO>(`http://localhost:3042/api/trainings/detail`, { id: id });
+
+      const response = await AxiosFactory.createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .post<TrainingDTO>(`/trainings/detail`, { id: id });
+
       setTraining(response.data);
       setIsTrainingDataLoaded(true);
     }
@@ -54,13 +47,14 @@ export function TrainingCardTrainerPage(): JSX.Element {
   }
 
   const updateTrainingData = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
-      console.log(training);
-
-      const response = await axiosInstance.patch<TrainingDTO>(`http://localhost:3042/api/trainerAccount/updateTraining`, { id: id, description: training.description, price: Number(training.price), isSpecial: training.isSpecial });
-      console.log('response - ', response.data);
+      const response = await AxiosFactory.createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .patch<TrainingDTO>(`/trainerAccount/updateTraining`, {
+          id: id,
+          description: training.description,
+          price: Number(training.price),
+          isSpecial: training.isSpecial
+        });
 
       setTraining(response.data);
       setIsTrainingDataLoaded(true);
@@ -72,10 +66,10 @@ export function TrainingCardTrainerPage(): JSX.Element {
   }
 
   const getReviewsData = async () => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.request.use(requestWithAccessTokenInterceptor);
     try {
-      const response = await axiosInstance.get<ReviewDTO[]>(`http://localhost:3042/api/reviews/${id}`);
+      const response = await AxiosFactory.createAxiosInstance({ authorizationHeader: AuthorizationHeader.ACCESS })
+        .get<ReviewDTO[]>(`/reviews/${id}`);
+
       setReviews(response.data.sort((item_1, item_2) => ((new Date(item_2.createdAt as string)).getTime() / 1000) - ((new Date(item_1.createdAt as string)).getTime() / 1000)));
       setIsReviewsLoaded(true);
     }
@@ -134,7 +128,7 @@ export function TrainingCardTrainerPage(): JSX.Element {
 
   return (
     <>
-      <LoaderComponent isHidden={isReviewsLoaded && isTrainingDataLoaded}/>
+      <LoaderComponent isHidden={isReviewsLoaded && isTrainingDataLoaded} />
       <div className="wrapper">
         <HeaderComponent />
         <main>
@@ -263,7 +257,7 @@ export function TrainingCardTrainerPage(): JSX.Element {
                         </div>
                       </form>
                     </div>
-                    <div className="training-video__buttons-wrapper" style={{marginTop: '15px'}}>
+                    <div className="training-video__buttons-wrapper" style={{ marginTop: '15px' }}>
                       <button className="btn training-video__button" type="button"
                         style={{ display: !isEditable ? 'block' : 'none' }} disabled>Приступить</button>
                       <div className="training-video__edit-buttons" style={{ display: isEditable ? 'grid' : 'none' }}>

@@ -16,7 +16,8 @@
         "tsConfig": "apps/backend/tsconfig.app.json",
         "assets": ["apps/backend/src/assets"],
         "isolatedConfig": true,
-        "webpackConfig": "apps/backend/webpack.config.js"
+        "webpackConfig": "apps/backend/webpack.config.js",
+        "generatePackageJson": true
       },
       "configurations": {
         "development": {},
@@ -92,6 +93,22 @@
       "options": {
         "command": "npx prisma db seed",
         "cwd": "apps/backend"
+      }
+    },
+    "deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "docker build -f ./apps/backend/dockerfile . --tag fit-friends.backend --no-cache --force-rm"
+        ]
+      }
+    },
+    "compose": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          " docker-compose -f ./apps/backend/docker-compose.stage.yml up"
+        ]
       }
     }
   },

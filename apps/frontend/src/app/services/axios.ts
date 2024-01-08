@@ -13,11 +13,18 @@ export enum AuthorizationHeader {
   NO_TOKEN = 'no_token',
 }
 
+export enum RequestBodyType {
+  JSON = 'json',
+  FORM_DATA = 'form-data',
+  NO_DATA = 'no_data',
+}
+
 /**
  * Тип описывающий конфигурационные параметры запроса
  */
-export type AxiosFactoryOptions = {
-  authorizationHeader: AuthorizationHeader;
+export class AxiosFactoryOptions  {
+  authorizationHeader?: AuthorizationHeader;
+  requestBodyType?: RequestBodyType
 }
 
 export class AxiosFactory {
@@ -26,8 +33,18 @@ export class AxiosFactory {
    * @param options конфигурационные параметры экземпляра axios
    */
   public static createAxiosInstance(options: AxiosFactoryOptions) {
+    let header;
+
+    if(options.requestBodyType === RequestBodyType.FORM_DATA){
+      header = {"Content-Type": "multipart/form-data" };
+    }
+    else if(options.requestBodyType === RequestBodyType.JSON){
+      header = {"Content-Type": "application/json"}
+    }
+
     const axiosInstance = axios.create({
       baseURL: REST_API_URL,
+      headers: header && header
     });
 
     if (options.authorizationHeader === AuthorizationHeader.ACCESS) {
@@ -37,6 +54,8 @@ export class AxiosFactory {
     else if (options.authorizationHeader === AuthorizationHeader.REFRESH) {
       axiosInstance.interceptors.request.use(this.requestWithRefreshTokenHeaderInterceptor);
     }
+
+
 
     return axiosInstance;
   }

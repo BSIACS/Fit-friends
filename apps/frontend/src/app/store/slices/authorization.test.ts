@@ -59,17 +59,17 @@ describe('Reducer: authorization', () => {
       })
   });
 
-  it('with the "setAuthorizationStatus" action should change the authorization status',()=>{
+  it('with the "setAuthorizationStatus" action should change the authorization status', () => {
     expect(authorizationSlice.reducer(initialState, setAuthorizationStatus(AuthorizationStatusEnum.AUTHORIZED)))
       .toEqual({...initialState, authoriztionStatus: AuthorizationStatusEnum.AUTHORIZED});
   });
 
-  it('with the "setAPIError" action should set correct error status',()=>{
+  it('with the "setAPIError" action should set correct error status', () => {
     expect(authorizationSlice.reducer(initialState, setAPIError('[email] Email address is already in use')))
       .toEqual({...initialState, emailAPIError: { isError: true, message: 'Email address is already in use' }});
   });
 
-  it('with the "setAPIError" action should set correct error status',()=>{
+  it('with the "setAPIError" action should set correct error status', () => {
     expect(authorizationSlice.reducer(initialState, setAPIError('[password] Password is not correct')))
       .toEqual({...initialState, passwordAPIError: { isError: true, message: 'Password is not correct' }});
   });
